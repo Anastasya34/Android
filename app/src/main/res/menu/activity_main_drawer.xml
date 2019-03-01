@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/general"
+            android:textSize = "20sp"
+            android:title="Главная" />
+        <item
+            android:id="@+id/my_books"
+            android:textSize = "20sp"
+            android:title="Мои книги" />
+        <item
+            android:id="@+id/create_report"
+            android:textSize = "20sp"
+            android:title="Создать заявку" />
+        <item
+            android:id="@+id/my_pofile"
+            android:textSize = "20sp"
+            android:title="Мой профиль" />
+    </group>
+
+</menu>
