@@ -28,15 +28,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class LibraryActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
-
-
+public class LibraryActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     final static String MSSQL_DB = "jdbc:jtds:sqlserver://ASUS\\SQLEXPRESS;databaseName=library";
     final static String MSSQL_LOGIN = "Asus\\Admin";
     final static String MSSQL_PASS= "";
     private static final int LOADER_ID = 734;
-
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +41,7 @@ public class LibraryActivity extends AppCompatActivity
         setContentView(R.layout.library_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -56,10 +50,6 @@ public class LibraryActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*Bundle asyncTaskLoaderParams = new Bundle();
-        LoaderManager loaderManager = getSupportLoaderManager();
-        Log.i("Restart!!!","Go");
-        loaderManager.restartLoader(LOADER_ID,asyncTaskLoaderParams,this);*/
     }
 
     @Override
@@ -71,11 +61,11 @@ public class LibraryActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
+    //для настроек
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
     }
 
@@ -85,29 +75,23 @@ public class LibraryActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
+        Log.d("onOptionsItemSelected", String.valueOf(id));
         return super.onOptionsItemSelected(item);
     }
 
+    //при выборе вкладки
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        /*if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        }*/
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (id == R.id.general) {
+            Log.d("select", "general");
+        } else if (id == R.id.my_books) {
+            Log.d("select", "books");
+        }
+        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
