@@ -13,8 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
-        android:text="Registration"
+        android:text="Регистрация"
         android:textSize="25dp"
+        android:gravity="center_horizontal"
         android:textStyle="bold"
         android:layout_gravity="center"/>
     <TextView
@@ -26,6 +27,7 @@
         android:text="Фамилия"/>
     <EditText
         android:id="@+id/surname_value"
+        android:inputType="textPersonName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
@@ -41,6 +43,7 @@
         android:id="@+id/firstName_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="textPersonName"
         android:layout_marginLeft="100dp"
         android:ems="10"/>
 
@@ -48,6 +51,7 @@
         android:id="@+id/secondName_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="textPersonName"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="20dp"
         android:text="Отчество"/>
@@ -55,6 +59,7 @@
         android:id="@+id/secondName_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="textPersonName"
         android:layout_marginLeft="100dp"
         android:ems="10"/>
 
@@ -99,6 +104,7 @@
         android:id="@+id/phone_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="phone"
         android:layout_marginLeft="100dp"
         android:ems="10" />
 
@@ -111,6 +117,7 @@
     <EditText
         android:id="@+id/email_value"
         android:layout_width="wrap_content"
+        android:inputType="textEmailAddress"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
         android:ems="10" />
@@ -135,7 +142,7 @@
         android:text="Password"
         android:layout_marginLeft="100dp" />
     <EditText
-        android:id="@+id/txtPwd"
+        android:id="@+id/password_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
@@ -147,14 +154,21 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
         android:onClick="LoginReg"
+        android:gravity="center"
         android:text="Login" />
+
+    <TextView android:id="@+id/errorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#ff0000"/>
+
     <TextView android:id="@+id/lnkLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="5dp"
         android:text="Already Registered? Login here"
         android:gravity="center"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:textColor="#3F51B5"
         android:onClick="test"/>
 </LinearLayout>

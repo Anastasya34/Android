@@ -6,39 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
         <TextView
             android:id="@+id/Login"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
             android:text="Авторизация"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
             android:id="@+id/user_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/Login"
-            android:layout_marginTop="75dp"
-            android:layout_marginLeft="10dp"
-            android:text="Пользователь:"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="60dp"
+            android:text="Логин:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/edit_user"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/user_text"
-            android:layout_marginLeft="35dp"
-            android:layout_toRightOf="@+id/user_text"
-            android:hint="введите имя " >
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:hint="введите логин " >
             <requestFocus />
         </EditText>
 
@@ -46,38 +43,24 @@
             android:id="@+id/password_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/user_text"
-            android:layout_below="@+id/user_text"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="60dp"
             android:text="Пароль:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/edit_password"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/password_text"
-            android:layout_alignLeft="@+id/edit_user"
-            android:layout_alignRight="@+id/edit_user"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
             android:hint="введите пароль"
             android:inputType="textPassword" />
 
-        <TextView
-            android:id="@+id/attempts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/password_text"
-            android:layout_below="@+id/password_text"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="4dp"
-            android:visibility="invisible"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/attempts"
-            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
         <Button
@@ -96,26 +79,15 @@
 
 
         <TextView
-            android:id="@+id/number_of_attempts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/user_text"
-            android:layout_alignTop="@+id/attempts"
-            android:visibility="invisible" />
-
-        <TextView
             android:id="@+id/login_locked"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="invisible"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="57dp"
-            android:layout_alignRight="@+id/edit_password"
-            android:layout_alignEnd="@+id/edit_password"
-            android:layout_alignLeft="@+id/attempts"
-            android:layout_alignStart="@+id/attempts" />
+            android:textColor="#ff0000" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

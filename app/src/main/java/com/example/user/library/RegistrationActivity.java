@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.sql.Connection;
@@ -17,55 +18,108 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
-public class RegistrationActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Map<Integer,String>> {
+public class RegistrationActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>> {
     final static String MSSQL_DB = "jdbc:jtds:sqlserver://ASUS;databaseName=library;integratedSecurity=true";
     final static String MSSQL_LOGIN = "AllowUser";
     final static String MSSQL_PASS= "AllowUser";
     private static final int LOADER_DORM = 734;
     private static final int LOADER_ROOM = 2;
-    OnItemSelectedListener itemSelectedListener;
+    private static final int LOADER_REGISTRATION = 3;
+    OnItemSelectedListener itemSelectedListenerDormitory;
+    OnItemSelectedListener itemSelectedListenerRoom;
     Spinner dormList;
+    Spinner roomList;
+    String selectedDormitory;
+    String selectedRoom;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity);
         dormList = (Spinner) findViewById(R.id.dormitories);
-        Spinner roomList = (Spinner) findViewById(R.id.rooms);
-        Bundle asyncTaskLoaderParams = new Bundle();
-        Log.i("onCreate!", "loader");
-        LoaderManager loaderManager = getSupportLoaderManager();
-        loaderManager.initLoader(LOADER_DORM, asyncTaskLoaderParams,this);
-        itemSelectedListener = new OnItemSelectedListener() {
+        roomList = (Spinner) findViewById(R.id.rooms);
+
+        itemSelectedListenerDormitory = new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // Получаем выбранный объект
-                String dormitory = (String)parent.getItemAtPosition(position);
+                selectedDormitory = (String)parent.getItemAtPosition(position);
                 Bundle loaderRoomBundleParams = new Bundle();
-                loaderRoomBundleParams.putString("DormitoryName", dormitory);
+                loaderRoomBundleParams.putString("DormitoryName", selectedDormitory);
                 LoaderManager loaderRoomManager = getSupportLoaderManager();
                 loaderRoomManager.restartLoader(LOADER_ROOM, loaderRoomBundleParams,RegistrationActivity.this);
-                Log.d("item", dormitory);
+                Log.d("item", selectedDormitory);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         };
 
+        itemSelectedListenerRoom = new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Получаем выбранный объект
+                selectedRoom = (String)parent.getItemAtPosition(position);
+                Log.d("item", selectedDormitory);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        };
+
+        Bundle asyncTaskLoaderParams = new Bundle();
+        LoaderManager loaderManager = getSupportLoaderManager();
+        loaderManager.initLoader(LOADER_DORM, asyncTaskLoaderParams,this);
+
+
 
     }
-    // Обрабатываем нажатие кнопки "Войти":
+    // Обрабатываем нажатие кнопки "Зарегистрироваться":
     public void LoginReg(View view) {
-        // Выполняем переход на другой экран:
-        Intent intent = new Intent(RegistrationActivity.this, LibraryActivity.class);
-        startActivity(intent);
+        EditText fistName =  findViewById(R.id.firstName_value);
+        EditText secondName =  findViewById(R.id.secondName_value);
+        EditText surName =  findViewById(R.id.surname_value);
+        EditText phone =  findViewById(R.id.phone_value);
+        EditText email =  findViewById(R.id.email_value);
+        EditText login =  findViewById(R.id.login_value);
+        EditText password =  findViewById(R.id.password_value);
+
+        Bundle loaderRegistrParams = new Bundle();
+        loaderRegistrParams.putString("fistName", fistName.getText().toString());
+        loaderRegistrParams.putString("secondName", secondName.getText().toString());
+        loaderRegistrParams.putString("surName", surName.getText().toString());
+        loaderRegistrParams.putString("phone", phone.getText().toString());
+        loaderRegistrParams.putString("email", email.getText().toString());
+        loaderRegistrParams.putString("login", login.getText().toString());
+        loaderRegistrParams.putString("password", password.getText().toString());
+        loaderRegistrParams.putString("DormitoryName", selectedDormitory);
+        loaderRegistrParams.putString("RoomNumber", selectedRoom);
+        LoaderManager loaderManager = getSupportLoaderManager();
+        loaderManager.initLoader(LOADER_REGISTRATION, loaderRegistrParams,this);
+
+
+}
+
+    public Connection getConnection(){
+        try {
+            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+            Connection connect = DriverManager.getConnection(MSSQL_DB, MSSQL_LOGIN, MSSQL_PASS);
+            return connect;
+        } catch (ClassNotFoundException e) {
+            Log.d("!ClassNotFoundException", e.toString());
+            e.printStackTrace();
+        } catch (SQLException e) {
+            Log.d("!ConnectionException", e.toString());
+            e.printStackTrace();
+        }
+        return null;
     }
     @Override
-    public Loader<Map<Integer,String>> onCreateLoader(final int id, final Bundle args) {
-        return new AsyncTaskLoader<Map<Integer,String>>(this) {
+    public Loader<ArrayList<String> > onCreateLoader(final int id, final Bundle args) {
+        return new AsyncTaskLoader<ArrayList<String> >(this) {
             @Override
             public void onStartLoading() {
                 Log.d("!StartLoader: ", String.valueOf(id));
@@ -75,84 +129,111 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
             }
 
             @Override
-            public Map<Integer,String> loadInBackground() {
+            public ArrayList<String>  loadInBackground() {
                 Log.d("!loadInBackground","kjhgf");
                 switch (id) {
                     case LOADER_DORM: {
                         ResultSet dormitories = null;
-                        Map<Integer, String> dormitoriesName = new HashMap<Integer, String>();
+                        ArrayList<String>  dormitoriesName = new ArrayList<>();
                         //similar to doInBackground of AsyncTask
-                        try {
-                            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                            Connection connect = null;
+                        Connection connect = getConnection();
+                        if (connect != null) {
+                            Log.d("!Success !", "connect");
                             Statement st = null;
-                            ResultSet rooms = null;
                             try {
-                                connect = DriverManager.getConnection(MSSQL_DB, MSSQL_LOGIN, MSSQL_PASS);
-                                if (connect != null) {
-                                    Log.d("!Success !", "connect");
-                                    st = connect.createStatement();
-                                    dormitories = st.executeQuery("SELECT dorm_id, namedorm FROM [library].[dbo].[dormitory] ");
-                                    while (dormitories.next()) {
-                                        dormitoriesName.put(dormitories.getInt("dorm_id"), dormitories.getString("namedorm"));
-                                    }
-
+                                st = connect.createStatement();
+                                dormitories = st.executeQuery("SELECT namedorm_id FROM [library].[dbo].[dormitory] ORDER BY number");
+                                int i=0;
+                                while (dormitories.next()) {
+                                    dormitoriesName.add( dormitories.getString("namedorm_id"));
+                                    Log.d("!namedorm"+String.valueOf(i), dormitories.getString("namedorm_id"));
+                                    i++;
                                 }
                             } catch (SQLException e) {
-                                Log.d("!Error!", e.toString());
-
                                 e.printStackTrace();
-                            } finally {
-                                try {
-                                    if (dormitories != null) dormitories.close();
-                                    if (st != null) st.close();
-                                    if (connect != null) connect.close();
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e.getMessage());
-                                }
                             }
-                        } catch (ClassNotFoundException e) {
-                            Log.d("!ClassNotFoundException", e.toString());
-                            e.printStackTrace();
+
+                            try {
+                                if (dormitories != null) dormitories.close();
+                                if (st != null) st.close();
+                                if (connect != null) connect.close();
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e.getMessage());
+
+                            }
                         }
                         return dormitoriesName;
                     }
                     case LOADER_ROOM:{
                         ResultSet rooms = null;
-                        Map<Integer, String> roomsName = new HashMap<Integer, String>();
-                        try {
-                            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                            Connection connect = null;
+                        ArrayList<String> roomsName = new ArrayList<>();
+
+                        Connection connect = getConnection();
+                        if (connect != null) {
+                            Log.d("!Success rooms!", "connect");
                             Statement st = null;
                             try {
-                                connect = DriverManager.getConnection(MSSQL_DB, MSSQL_LOGIN, MSSQL_PASS);
-                                if (connect != null) {
-                                    Log.d("!Success rooms!", "connect");
-                                    st = connect.createStatement();
-                                    /*rooms = st.executeQuery("SELECT roomnumber FROM [library].[dbo].[room] WHERE fk_dorm = "+String.valueOf());
-                                    while (rooms.next()) {
-                                        dormitoriesName.put(dormitories.getInt("dorm_id"), dormitories.getString("namedorm"));
-                                    }*/
-
-                                }
+                                st = connect.createStatement();
+                                rooms = st.executeQuery("SELECT room_id, roomnumber FROM [library].[dbo].[room] WHERE fk_dorm = '"+String.valueOf(args.getString("DormitoryName")+"' ORDER BY roomnumber"));
+                             while (rooms.next()) {
+                                 roomsName.add(String.valueOf(rooms.getInt("roomnumber")));
+                             }
                             } catch (SQLException e) {
-                                Log.d("!Error!", e.toString());
-
                                 e.printStackTrace();
-                            } finally {
-                                try {
-                                    if (rooms != null) rooms.close();
-                                    if (st != null) st.close();
-                                    if (connect != null) connect.close();
-                                } catch (SQLException e) {
-                                    throw new RuntimeException(e.getMessage());
-                                }
                             }
-                        } catch (ClassNotFoundException e) {
-                            Log.d("!ClassNotFoundException", e.toString());
-                            e.printStackTrace();
+
+                            try {
+                                if (rooms != null) rooms.close();
+                                if (st != null) st.close();
+                                connect.close();
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e.getMessage());
+                            }
                         }
                         return roomsName;
+                    }
+                    case LOADER_REGISTRATION: {
+                        String successInsert = "true";
+                        ArrayList<String> success = new ArrayList<>();
+                        ResultSet rooms_id = null;
+                        Connection connect = getConnection();
+                        if (connect != null) {
+                            Statement st = null;
+                            try {
+                                st = connect.createStatement();
+                                String query = "SELECT room_id  FROM [library].[dbo].[room] WHERE fk_dorm = '"+args.getString("DormitoryName")+"' AND roomnumber="+args.getString("RoomNumber");
+                                Log.d("!query", query);
+                                rooms_id = st.executeQuery(query);
+                                if (rooms_id.next()) {
+                                    st.executeUpdate("INSERT INTO [library].[dbo].[userreader] (" +
+                                            "[userfirstname], " +
+                                            "[usersecondname], " +
+                                            "[usersurname], " +
+                                            "[fk_room], " +
+                                            "[phonenumber], " +
+                                            "[userlogin], " +
+                                            "[userpassword], " +
+                                            "[fk_dorm])" +
+                                            " VALUES ("
+                                            +"'"+ args.getString("fistName") + "', "
+                                            +"'"+ args.getString("secondName") + "', "
+                                            +"'"+ args.getString("surName") + "', "
+                                            + String.valueOf(rooms_id.getInt("room_id")) + ", "
+                                            +"'"+ args.getString("phone") + "', "
+                                            +"'"+ args.getString("login") + "', "
+                                            + "'"+args.getString("password") + "', "
+                                            +"'"+ args.getString("DormitoryName") + "')"
+                                    );
+                                }
+                            } catch (SQLException e) {
+                                Log.d("!InsertException", e.toString());
+                                successInsert = "false";
+                                e.printStackTrace();
+                            }
+                            success.add(successInsert);
+                            return success;
+
+                        }
                     }
                 }
                 return null;
@@ -162,16 +243,32 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
 
 
     @Override
-    public void onLoadFinished(Loader<Map<Integer,String>> loader, Map<Integer,String> data) {
-        Log.d("data ", data.values().toString());
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new ArrayList<String>(data.values()));
-        // Определяем разметку для использования при выборе элемента
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Применяем адаптер к элементу spinner
+    public void onLoadFinished(Loader<ArrayList<String> > loader, ArrayList<String>  data) {
+        //Log.d("data ", data.toString());
+
         switch (loader.getId()) {
             case LOADER_DORM:{
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data);
+                // Определяем разметку для использования при выборе элемента
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                // Применяем адаптер к элементу spinner
                 dormList.setAdapter(adapter);
-                dormList.setOnItemSelectedListener(itemSelectedListener);
+                dormList.setOnItemSelectedListener(itemSelectedListenerDormitory);
+                break;
+            }
+            case LOADER_ROOM:{
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data);
+                // Определяем разметку для использования при выборе элемента
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                // Применяем адаптер к элементу spinner
+                roomList.setAdapter(adapter);
+                roomList.setOnItemSelectedListener(itemSelectedListenerRoom);
+                break;
+            }
+            case LOADER_REGISTRATION:{
+                // Выполняем переход на другой экран:
+                Intent intent = new Intent(RegistrationActivity.this, LibraryActivity.class);
+                startActivity(intent);
                 break;
             }
         }
@@ -180,7 +277,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
     }
 
     @Override
-    public void onLoaderReset(Loader<Map<Integer,String>> loader) {
+    public void onLoaderReset(Loader<ArrayList<String> > loader) {
         Log.d("!onLoaderReset","kjhgf");
 
     }
