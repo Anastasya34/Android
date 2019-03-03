@@ -104,12 +104,13 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                                 String password = args.getString("Password");
                                 result1 = st.executeQuery("SELECT * FROM [library].[dbo].[userreader] " +
                                                             "WHERE userlogin = '"+username+"' AND userpassword = '"+password+"'");
-                                Log.d("result", String.valueOf(result1.next()));
+                                //Log.d("result", String.valueOf(result1.next()));
                                 //Log.d("result", String.valueOf(result1.first()));
 
                                 if (result1.next()){
                                     Intent intent = new Intent(MainActivity.this, LibraryActivity.class);
                                     startActivity(intent);
+                                    return  null;
                                 }
                                 else {
                                     result1 = st.executeQuery("SELECT * FROM [library].[dbo].[administration] " +
@@ -154,8 +155,8 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        Log.d("data", data);
-        if (data == "Not Found"){
+        //Log.d("data", data);
+        if (data !=null && data == "Not Found"){
             Log.d("data", data);
             loginLocked.setText("Неверный логин или пароль");
             loginLocked.setVisibility(View.VISIBLE);
