@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bookCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/book_icon"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/book"
+            android:cropToPadding="false"
+            android:padding="16dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/book_img" />
+
+        <TextView
+            android:id="@+id/book_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/book_icon"
+            android:text="@string/book_name"
+            android:textSize="30sp"
+            android:layout_toEndOf="@+id/book_icon" />
+
+        <TextView
+            android:id="@+id/book_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/book_name"
+            android:layout_toRightOf="@+id/book_icon"
+            android:text="@string/book_description"
+            android:layout_toEndOf="@+id/book_icon" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
