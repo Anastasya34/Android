@@ -6,4 +6,8 @@
     <string name="nav_header_title">Library</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="settings">Settings</string>
+    <string name="searchingText">Поиск</string>
+    <string name="book_name">Название книги</string>
+    <string name="book">книга</string>
+    <string name="book_description">Описание книги</string>
 </resources>
