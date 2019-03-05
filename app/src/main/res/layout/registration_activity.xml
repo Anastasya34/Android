@@ -126,8 +126,8 @@
             android:id="@+id/login_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Логин"
-            android:layout_marginLeft="100dp" />
+            android:layout_marginLeft="100dp"
+            android:text="Логин" />
         <EditText
             android:id="@+id/login_value"
             android:layout_width="wrap_content"
@@ -139,28 +139,32 @@
         android:id="@+id/thirdTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Password"
-        android:layout_marginLeft="100dp" />
-    <EditText
-        android:id="@+id/password_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
-        android:inputType="textPassword"
-        android:ems="10" />
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:onClick="LoginReg"
-        android:gravity="center"
-        android:text="Login" />
+        android:text="Пароль"/>
+
+        <EditText
+            android:id="@+id/password_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="LoginReg"
+            android:text="Login" />
 
     <TextView android:id="@+id/errorMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#ff0000"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible"
+        android:textSize="15dp"
+        android:textColor="#ff0000"/>
 
     <TextView android:id="@+id/lnkLogin"
         android:layout_width="match_parent"

@@ -36,6 +36,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
     Spinner roomList;
     String selectedDormitory;
     String selectedRoom;
+    TextView errorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         setContentView(R.layout.registration_activity);
         dormList = (Spinner) findViewById(R.id.dormitories);
         roomList = (Spinner) findViewById(R.id.rooms);
-
+        errorMessage = findViewById(R.id.errorMessage);
         itemSelectedListenerDormitory = new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -87,20 +88,37 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         EditText login =  findViewById(R.id.login_value);
         EditText password =  findViewById(R.id.password_value);
 
+        String fistNameString =  fistName.getText().toString();
+        String secondNameString =  secondName.getText().toString();
+        String surNameString =  surName.getText().toString();
+        String phoneString =  phone.getText().toString();
+        String emailString =  email.getText().toString();
+        String loginString =  login.getText().toString();
+        String passwordString =  password.getText().toString();
+        if (fistNameString.isEmpty()
+                || secondNameString.isEmpty()
+                || surNameString.isEmpty()
+                || phoneString.isEmpty()
+                || emailString.isEmpty()
+                || loginString.isEmpty()
+                || passwordString.isEmpty()){
+
+            errorMessage.setText("Все поля должны быть заполнены");
+            errorMessage.setVisibility(View.VISIBLE);
+            return;
+        }
         Bundle loaderRegistrParams = new Bundle();
-        loaderRegistrParams.putString("fistName", fistName.getText().toString());
-        loaderRegistrParams.putString("secondName", secondName.getText().toString());
-        loaderRegistrParams.putString("surName", surName.getText().toString());
-        loaderRegistrParams.putString("phone", phone.getText().toString());
-        loaderRegistrParams.putString("email", email.getText().toString());
-        loaderRegistrParams.putString("login", login.getText().toString());
-        loaderRegistrParams.putString("password", password.getText().toString());
+        loaderRegistrParams.putString("fistName", fistNameString);
+        loaderRegistrParams.putString("secondName", secondNameString);
+        loaderRegistrParams.putString("surName", surNameString);
+        loaderRegistrParams.putString("phone", phoneString);
+        loaderRegistrParams.putString("email", emailString);
+        loaderRegistrParams.putString("login", loginString);
+        loaderRegistrParams.putString("password", passwordString);
         loaderRegistrParams.putString("DormitoryName", selectedDormitory);
         loaderRegistrParams.putString("RoomNumber", selectedRoom);
         LoaderManager loaderManager = getSupportLoaderManager();
-        loaderManager.initLoader(LOADER_REGISTRATION, loaderRegistrParams,this);
-
-
+        loaderManager.restartLoader(LOADER_REGISTRATION, loaderRegistrParams,this);
 }
 
     public Connection getConnection(){
@@ -193,7 +211,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                         return roomsName;
                     }
                     case LOADER_REGISTRATION: {
-                        String successInsert = "true";
+                        String successResult = "success";
                         ArrayList<String> success = new ArrayList<>();
                         ResultSet rooms_id = null;
                         Connection connect = getConnection();
@@ -201,7 +219,14 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                             Statement st = null;
                             try {
                                 st = connect.createStatement();
-                                String query = "SELECT room_id  FROM [library].[dbo].[room] WHERE fk_dorm = '"+args.getString("DormitoryName")+"' AND roomnumber="+args.getString("RoomNumber");
+                                String query = "SELECT userreader_id FROM [library].[dbo].[userreader] WHERE userlogin = '"+args.getString("login")+ "'";
+                                ResultSet existUser =  st.executeQuery(query);
+                                if (existUser.next()) {
+                                    successResult = "alreadyExist";
+                                    success.add(successResult);
+                                    return success;
+                                }
+                                query = "SELECT room_id  FROM [library].[dbo].[room] WHERE fk_dorm = '"+args.getString("DormitoryName")+"' AND roomnumber="+args.getString("RoomNumber");
                                 Log.d("!query", query);
                                 rooms_id = st.executeQuery(query);
                                 if (rooms_id.next()) {
@@ -227,10 +252,10 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                                 }
                             } catch (SQLException e) {
                                 Log.d("!InsertException", e.toString());
-                                successInsert = "false";
+                                successResult = "errorInsert";
                                 e.printStackTrace();
                             }
-                            success.add(successInsert);
+                            success.add(successResult);
                             return success;
 
                         }
@@ -267,6 +292,17 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
             }
             case LOADER_REGISTRATION:{
                 // Выполняем переход на другой экран:
+                String result = data.get(0);
+                if (result == "alreadyExist"){
+                    errorMessage.setText("Извините, логин уже занят");
+                    errorMessage.setVisibility(View.VISIBLE);
+                    break;
+                }
+                if (result == "errorInsert"){
+                    errorMessage.setText("Что-то пошло не так, обратитесь к администратору");
+                    errorMessage.setVisibility(View.VISIBLE);
+                    break;
+                }
                 Intent intent = new Intent(RegistrationActivity.this, LibraryActivity.class);
                 startActivity(intent);
                 break;
