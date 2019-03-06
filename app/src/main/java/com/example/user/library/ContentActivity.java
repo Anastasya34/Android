@@ -1,33 +1,47 @@
 package com.example.user.library;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-
+import android.support.v7.widget.RecyclerView;;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ContentActivity extends AppCompatActivity{
-    final static String MSSQL_DB = "jdbc:jtds:sqlserver://ASUS\\SQLEXPRESS;databaseName=library";
-    final static String MSSQL_LOGIN = "Asus\\Admin";
-    final static String MSSQL_PASS = "";
-    private static final int LOADER_ID = 734;
+public class ContentActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+
 
     private EditText searchRequest;
     private RecyclerView booksView;
     private List<Book> books;
+    DrawerLayout drawer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
+        setContentView(R.layout.library_activity);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         booksView = findViewById(R.id.ViewBooks);
-
         LinearLayoutManager llm = new LinearLayoutManager(this);
         booksView.setLayoutManager(llm);
         booksView.setHasFixedSize(true);
@@ -49,5 +63,11 @@ public class ContentActivity extends AppCompatActivity{
     private void initializeAdapter(){
         BookListAdapter adapter = new BookListAdapter(books);
         booksView.setAdapter(adapter);
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
     }
 }

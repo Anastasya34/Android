@@ -303,7 +303,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                     errorMessage.setVisibility(View.VISIBLE);
                     break;
                 }
-                Intent intent = new Intent(RegistrationActivity.this, LibraryActivity.class);
+                Intent intent = new Intent(RegistrationActivity.this, ContentActivity.class);
                 startActivity(intent);
                 break;
             }

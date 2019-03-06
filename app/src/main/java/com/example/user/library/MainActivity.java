@@ -108,7 +108,7 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                                 //Log.d("result", String.valueOf(result1.first()));
 
                                 if (result1.next()){
-                                    Intent intent = new Intent(MainActivity.this, LibraryActivity.class);
+                                    Intent intent = new Intent(MainActivity.this, ContentActivity.class);
                                     startActivity(intent);
                                     return  null;
                                 }
@@ -117,7 +117,7 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                                             "WHERE adminlogin = '"+username+"' AND adminpassword = '"+password+"'");
 
                                     if (result1.next()){
-                                        Intent intent = new Intent(MainActivity.this, LibraryActivity.class);
+                                        Intent intent = new Intent(MainActivity.this, ContentActivity.class);
                                         startActivity(intent);
                                     }
                                     else {

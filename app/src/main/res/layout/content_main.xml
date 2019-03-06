@@ -8,6 +8,7 @@
     tools:context=".LibraryActivity"
     tools:showIn="@layout/app_bar_main">
 
+
     <EditText
         android:id="@+id/book_search"
         style="@style/EditTextStyle"
