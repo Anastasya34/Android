@@ -7,30 +7,33 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".LibraryActivity"
     tools:showIn="@layout/app_bar_main">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Поиск"
-        android:layout_marginLeft="20dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        style="@style/EditTextStyle"/>
-
-        <EditText
-        android:id="@+id/editText"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/search"
-        android:inputType="textPersonName"
+    <EditText
+        android:id="@+id/book_search"
         style="@style/EditTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autofillHints=""
+        android:hint="@string/searchingText"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/ViewBooks"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="o" />
 
-        />
-    </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ViewBooks"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/book_search">
+
+    </android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>
