@@ -1,20 +1,21 @@
 package com.example.user.library;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,8 +34,13 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
     private Button login;
     private TextView loginLocked;
 
+    private Intent startIntent;
+    private RequestResultReceiver requestResultReceiver;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -43,24 +49,31 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
         password = (EditText) findViewById(R.id.edit_password);
         login = (Button) findViewById(R.id.button_login);
         loginLocked = (TextView) findViewById(R.id.login_locked);
-        Bundle asyncTaskLoaderParams = new Bundle();
+        //Bundle asyncTaskLoaderParams = new Bundle();
         Log.i("onCreate!", "loader");
-        LoaderManager loaderManager = getSupportLoaderManager();
+        //LoaderManager loaderManager = getSupportLoaderManager();
         //Loader<String> loader = loaderManager.getLoader(LOADER_ID);
-        loaderManager.initLoader(LOADER_ID, asyncTaskLoaderParams,this);
-
+        //loaderManager.initLoader(LOADER_ID, asyncTaskLoaderParams,this);
+        requestResultReceiver = new RequestResultReceiver(new Handler());
+        startIntent = new Intent(MainActivity.this, DbService.class);
         }
 
     // Обрабатываем нажатие кнопки "Войти":
     public void Login(View view) {
+        Log.d("Main", "Login");
+//        Bundle asyncTaskLoaderParams = new Bundle();
+//        asyncTaskLoaderParams.putString("Button", "Login");
+//        asyncTaskLoaderParams.putString("Password", password.getText().toString());
+//        asyncTaskLoaderParams.putString("UserName", username.getText().toString());
 
-        Bundle asyncTaskLoaderParams = new Bundle();
-        asyncTaskLoaderParams.putString("Button", "Login");
-        asyncTaskLoaderParams.putString("Password", password.getText().toString());
-        asyncTaskLoaderParams.putString("UserName", username.getText().toString());
+        //Intent startIntent = new Intent(MainActivity.this, DbService.class);
+        startIntent.putExtra("receiver", requestResultReceiver);
+        startIntent.putExtra("request", "SELECT * FROM [library].[dbo].[userreader] " +
+                "WHERE userlogin = '" + username.getText().toString() + "' AND userpassword = '" + password.getText().toString() + "'");
+        startService(startIntent);
 
-        LoaderManager loaderManager = getSupportLoaderManager();
-        loaderManager.restartLoader(LOADER_ID, asyncTaskLoaderParams,this);
+        //LoaderManager loaderManager = getSupportLoaderManager();
+        //loaderManager.restartLoader(LOADER_ID, asyncTaskLoaderParams,this);
     }
 
     // Обрабатываем нажатие кнопки "Зарегистироваться":
@@ -87,7 +100,6 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                 Log.d("!loadInBackground","kjhgf");
 
                 //similar to doInBackground of AsyncTask
-                JSONArray resultSet = new JSONArray();
                 try {
                     Class.forName("net.sourceforge.jtds.jdbc.Driver");
                     Connection con = null;
@@ -102,8 +114,10 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                             if (buttonType == "Login"){
                                 String username = args.getString("UserName");
                                 String password = args.getString("Password");
-                                result1 = st.executeQuery("SELECT * FROM [library].[dbo].[userreader] " +
-                                                            "WHERE userlogin = '"+username+"' AND userpassword = '"+password+"'");
+                                //TODO:добавить запрос
+
+//                                result1 = st.executeQuery("SELECT * FROM [library].[dbo].[userreader] " +
+//                                                            "WHERE userlogin = '"+username+"' AND userpassword = '"+password+"'");
                                 //Log.d("result", String.valueOf(result1.next()));
                                 //Log.d("result", String.valueOf(result1.first()));
 
@@ -156,16 +170,49 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
         //Log.d("data", data);
-        if (data !=null && data == "Not Found"){
+
+        if (data != null && data == "Not Found") {
             Log.d("data", data);
             loginLocked.setText("Неверный логин или пароль");
             loginLocked.setVisibility(View.VISIBLE);
         }
+
     }
 
     @Override
     public void onLoaderReset(Loader<String> loader) {
         Log.d("!onLoaderReset","kjhgf");
+
+    }
+
+    private class RequestResultReceiver extends ResultReceiver {
+
+        public RequestResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+                    loginLocked.setText("Неверный логин или пароль");
+                    loginLocked.setVisibility(View.VISIBLE);
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.d("data", resultData.getString("JSONString"));
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
 
     }
 
