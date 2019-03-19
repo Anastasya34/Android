@@ -17,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.ExecutionException;
 
 public class DbService extends IntentService {
 
@@ -42,7 +43,14 @@ public class DbService extends IntentService {
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "onCreate");
-        new AsyncRequest().execute();
+        try {
+            new AsyncRequest().execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

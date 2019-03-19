@@ -10,4 +10,11 @@
     <string name="book_name">Название книги</string>
     <string name="book">книга</string>
     <string name="book_description">Описание книги</string>
+    <string name="title_activity_menu_library">MenuLibrary</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello">Книги</string>
 </resources>

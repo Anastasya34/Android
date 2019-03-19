@@ -1,6 +1,7 @@
 package com.example.user.library;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -204,9 +205,21 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                     String jsonString = resultData.getString("JSONString");
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            Log.d("data", "Неверный логин или пароль");
+                            loginLocked.setText("Неверный логин или пароль");
+                            loginLocked.setVisibility(View.VISIBLE);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                    loginLocked.setText("Авторизация успешна");
+                    loginLocked.setTextColor(Color.GREEN);
+                    loginLocked.setVisibility(View.VISIBLE);
+
+                    Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+                    startActivity(intent);
 
                     Log.d("data", resultData.getString("JSONString"));
                     break;
