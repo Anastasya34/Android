@@ -43,6 +43,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
     public BookViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.book_card, viewGroup, false);
         BookViewHolder bvh = new BookViewHolder(v);
+
         return bvh;
     }
 

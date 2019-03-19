@@ -10,7 +10,7 @@
 
 
     <EditText
-        android:id="@+id/book_search"
+        android:id="@+id/book_search1"
         style="@style/EditTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -18,14 +18,14 @@
         android:autofillHints=""
         android:hint="@string/searchingText"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/ViewBooks"
+        app:layout_constraintBottom_toTopOf="@+id/ViewBooks1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:targetApi="o" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/ViewBooks"
+        android:id="@+id/ViewBooks1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/book_search">
+        app:layout_constraintTop_toBottomOf="@+id/book_search1">
 
     </android.support.v7.widget.RecyclerView>
 
