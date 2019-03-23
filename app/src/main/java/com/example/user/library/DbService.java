@@ -12,12 +12,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class DbService extends IntentService {
 
@@ -31,8 +39,10 @@ public class DbService extends IntentService {
 
     final String LOG_TAG = "DbService";
 
-    private Connection con = null;
+    private volatile Connection con = null;
     private Statement st = null;
+
+    private AsyncTask<String, Integer, Void> exec = null;
 
     public DbService() {
         super(DbService.class.getName());
@@ -43,13 +53,18 @@ public class DbService extends IntentService {
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "onCreate");
-        try {
-            new AsyncRequest().execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+
+        readSettings();
+
+        exec = new AsyncRequest().execute();
+
+//        try {
+//            new AsyncRequest().execute().get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -63,6 +78,23 @@ public class DbService extends IntentService {
         JSONArray resultSet = new JSONArray();
         ResultSet rs = null;
         try {
+            try {
+                exec.get(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            }
+//            if(con==null)
+//            {
+//                try {
+//                    Thread.sleep(200);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
             if (con != null) {
                 rs = st.executeQuery(query);
                 if (rs != null) {
@@ -79,6 +111,9 @@ public class DbService extends IntentService {
                     bundle.putSerializable("JSONString", resultSet.toString());
                     receiver.send(REQUEST_SUCCESS, bundle);
                 }
+            } else {
+                bundle.putSerializable("SQLException", "no connection");
+                receiver.send(REQUEST_ERROR, bundle);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +142,48 @@ public class DbService extends IntentService {
     }
 
     private void readSettings() {
-        //File file = new File(Context.getFilesDir(), SETTINGS_FILE);
+        FileInputStream file = null;
+        byte[] settings = new byte[100];
+        try {
+            file = openFileInput(SETTINGS_FILE);
+            file.read(settings);
+
+        } catch (FileNotFoundException e) {
+            writeSettings();
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (file != null)
+                    file.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d(LOG_TAG, "readSettings: " + settings.toString());
+    }
+
+    private void writeSettings() {
+        File file = new File(this.getApplicationContext().getFilesDir(), SETTINGS_FILE);
+        FileWriter fileWriter = null;
+        BufferedWriter bufferedWriter = null;
+        String settings = "MSSQL_DB : jdbc:jtds:sqlserver://dertosh.ddns.net:49173;databaseName=library";
+        try {
+            fileWriter = new FileWriter(file);
+            bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(settings);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     class AsyncRequest extends AsyncTask<String, Integer, Void> {

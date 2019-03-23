@@ -68,6 +68,11 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
 //        asyncTaskLoaderParams.putString("UserName", username.getText().toString());
 
         //Intent startIntent = new Intent(MainActivity.this, DbService.class);
+
+        loginLocked.setText("Авторизация...");
+        loginLocked.setTextColor(Color.BLACK);
+        loginLocked.setVisibility(View.VISIBLE);
+
         startIntent.putExtra("receiver", requestResultReceiver);
         startIntent.putExtra("request", "SELECT * FROM [library].[dbo].[userreader] " +
                 "WHERE userlogin = '" + username.getText().toString() + "' AND userpassword = '" + password.getText().toString() + "'");
@@ -194,10 +199,11 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
 
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
+            loginLocked.setTextColor(Color.RED);
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("data", resultData.getString("SQLException"));
-                    loginLocked.setText("Неверный логин или пароль");
+                    loginLocked.setText("Ошибка подключения");
                     loginLocked.setVisibility(View.VISIBLE);
                     break;
 
@@ -209,19 +215,19 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                             Log.d("data", "Неверный логин или пароль");
                             loginLocked.setText("Неверный логин или пароль");
                             loginLocked.setVisibility(View.VISIBLE);
+                        } else {
+                            loginLocked.setText("Авторизация успешна");
+                            loginLocked.setTextColor(Color.GREEN);
+                            loginLocked.setVisibility(View.VISIBLE);
+
+                            Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+                            startActivity(intent);
+                            Log.d("data", resultData.getString("JSONString"));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    loginLocked.setText("Авторизация успешна");
-                    loginLocked.setTextColor(Color.GREEN);
-                    loginLocked.setVisibility(View.VISIBLE);
-
-                    Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
-                    startActivity(intent);
-
-                    Log.d("data", resultData.getString("JSONString"));
                     break;
             }
             super.onReceiveResult(resultCode, resultData);
