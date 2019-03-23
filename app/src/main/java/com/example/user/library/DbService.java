@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,17 +31,17 @@ public class DbService extends IntentService {
     public static final int REQUEST_SUCCESS = 2;
     public static final int REQUEST_ERROR = 3;
 
-    static final String SETTINGS_FILE = "settings.config";
-    static String MSSQL_DB = "jdbc:jtds:sqlserver://dertosh.ddns.net:49173;databaseName=library";
-    static String MSSQL_LOGIN = "ReadingUser";
-    static String MSSQL_PASS = "Reading1234";
+    final static String SETTINGS_FILE = "settings.json";
+    private static String MSSQL_DB = "jdbc:jtds:sqlserver://ASUS;databaseName=library;integratedSecurity=true";
+    private static String MSSQL_LOGIN = "AllowUser";
+    private static String MSSQL_PASS = "AllowUser";
 
     final String LOG_TAG = "DbService";
 
     private volatile Connection con = null;
     private Statement st = null;
 
-    private AsyncTask<String, Integer, Void> exec = null;
+    private AsyncTask<String, Void, Connection> exec = null;
 
     public DbService() {
         super(DbService.class.getName());
@@ -54,24 +53,18 @@ public class DbService extends IntentService {
         super.onCreate();
         Log.d(LOG_TAG, "onCreate");
 
-        readSettings();
+        readSettings();//TODO: забиндить сервис
 
         exec = new AsyncRequest().execute();
-
-//        try {
-//            new AsyncRequest().execute().get();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         Log.d(LOG_TAG, "onHandleIntent");
-        String query = intent != null ? intent.getStringExtra("request") : null;
+        if (intent == null)
+            return;
+        String query = intent.getStringExtra("request");
         final ResultReceiver receiver = intent.getParcelableExtra("receiver");
         Bundle bundle = new Bundle();
 
@@ -79,7 +72,7 @@ public class DbService extends IntentService {
         ResultSet rs = null;
         try {
             try {
-                exec.get(2, TimeUnit.SECONDS);
+                con = exec.get(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -87,15 +80,8 @@ public class DbService extends IntentService {
             } catch (TimeoutException e) {
                 e.printStackTrace();
             }
-//            if(con==null)
-//            {
-//                try {
-//                    Thread.sleep(200);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
             if (con != null) {
+                st = con.createStatement();
                 rs = st.executeQuery(query);
                 if (rs != null) {
                     int columnCount = rs.getMetaData().getColumnCount();
@@ -126,7 +112,7 @@ public class DbService extends IntentService {
             try {
                 if (rs != null) rs.close();
             } catch (SQLException e) {
-                throw new RuntimeException(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -142,43 +128,67 @@ public class DbService extends IntentService {
     }
 
     private void readSettings() {
+
+        String filePath = getExternalFilesDir(null) + "/" + SETTINGS_FILE;
+        File getFilePath = new File(filePath);
         FileInputStream file = null;
-        byte[] settings = new byte[100];
+        byte[] settings = new byte[200];
         try {
-            file = openFileInput(SETTINGS_FILE);
+            file = new FileInputStream(getFilePath);
             file.read(settings);
+            String text = new String(settings);
+            JSONObject obj = new JSONObject(text);
+
+            MSSQL_DB = (String) obj.get("MSSQL_DB");
+            MSSQL_LOGIN = (String) obj.get("MSSQL_LOGIN");
+            MSSQL_PASS = (String) obj.get("MSSQL_PASS");
+            Log.d(LOG_TAG, "readSettings: " + "MSSQL_DB: " + MSSQL_DB);
 
         } catch (FileNotFoundException e) {
             writeSettings();
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (file != null)
+                if (file != null) {
                     file.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        Log.d(LOG_TAG, "readSettings: " + settings.toString());
     }
 
     private void writeSettings() {
-        File file = new File(this.getApplicationContext().getFilesDir(), SETTINGS_FILE);
-        FileWriter fileWriter = null;
-        BufferedWriter bufferedWriter = null;
-        String settings = "MSSQL_DB : jdbc:jtds:sqlserver://dertosh.ddns.net:49173;databaseName=library";
+        File file = new File(this.getApplicationContext().getExternalFilesDir(null), SETTINGS_FILE);
+
+
+        JSONObject object = new JSONObject();
         try {
+            object.put("MSSQL_DB", MSSQL_DB);
+            object.put("MSSQL_LOGIN", MSSQL_LOGIN);
+            object.put("MSSQL_PASS", MSSQL_PASS);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        FileWriter fileWriter = null;
+
+        try {
+
             fileWriter = new FileWriter(file);
-            bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(settings);
+            fileWriter.write(object.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                fileWriter.close();
+                if (fileWriter != null) {
+                    fileWriter.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -186,24 +196,22 @@ public class DbService extends IntentService {
 
     }
 
-    class AsyncRequest extends AsyncTask<String, Integer, Void> {
+    static class AsyncRequest extends AsyncTask<String, Void, Connection> {
 
         @Override
-        protected Void doInBackground(String... arg) {
+        protected Connection doInBackground(String... arg) {
+            Connection con = null;
             try {
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
                 try {
                     con = DriverManager.getConnection(MSSQL_DB, MSSQL_LOGIN, MSSQL_PASS);
-                    if (con != null) {
-                        st = con.createStatement();
-                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            return null;
+            return con;
         }
 
     }
