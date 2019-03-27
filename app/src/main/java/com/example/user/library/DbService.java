@@ -3,7 +3,9 @@ package com.example.user.library;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -43,6 +45,8 @@ public class DbService extends IntentService {
 
     private AsyncTask<String, Void, Connection> exec = null;
 
+    private final IBinder mBinder = new DbBinder();
+
     public DbService() {
         super(DbService.class.getName());
 
@@ -53,7 +57,7 @@ public class DbService extends IntentService {
         super.onCreate();
         Log.d(LOG_TAG, "onCreate");
 
-        readSettings();//TODO: забиндить сервис
+        readSettings();
 
         exec = new AsyncRequest().execute();
 
@@ -64,6 +68,13 @@ public class DbService extends IntentService {
         Log.d(LOG_TAG, "onHandleIntent");
         if (intent == null)
             return;
+        try {
+            if ((con == null) || con.isClosed()) resetConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            resetConnection();
+        }
+
         String query = intent.getStringExtra("request");
         final ResultReceiver receiver = intent.getParcelableExtra("receiver");
         Bundle bundle = new Bundle();
@@ -75,10 +86,13 @@ public class DbService extends IntentService {
                 con = exec.get(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                resetConnection();
             } catch (ExecutionException e) {
                 e.printStackTrace();
+                resetConnection();
             } catch (TimeoutException e) {
                 e.printStackTrace();
+                resetConnection();
             }
             if (con != null) {
                 st = con.createStatement();
@@ -100,6 +114,7 @@ public class DbService extends IntentService {
             } else {
                 bundle.putSerializable("SQLException", "no connection");
                 receiver.send(REQUEST_ERROR, bundle);
+                resetConnection();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -139,7 +154,7 @@ public class DbService extends IntentService {
             String text = new String(settings);
             JSONObject obj = new JSONObject(text);
 
-            MSSQL_DB = (String) obj.get("MSSQL_DB");
+            MSSQL_DB = obj.get("MSSQL_DB") + ";Connect Timeout=3";
             MSSQL_LOGIN = (String) obj.get("MSSQL_LOGIN");
             MSSQL_PASS = (String) obj.get("MSSQL_PASS");
             Log.d(LOG_TAG, "readSettings: " + "MSSQL_DB: " + MSSQL_DB);
@@ -201,9 +216,11 @@ public class DbService extends IntentService {
         @Override
         protected Connection doInBackground(String... arg) {
             Connection con = null;
+            //do {
             try {
                 Class.forName("net.sourceforge.jtds.jdbc.Driver");
                 try {
+                    DriverManager.setLoginTimeout(3);
                     con = DriverManager.getConnection(MSSQL_DB, MSSQL_LOGIN, MSSQL_PASS);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -211,8 +228,24 @@ public class DbService extends IntentService {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+            //}while (con == null);
             return con;
         }
 
+    }
+
+    public void resetConnection() {
+        if (exec.getStatus() == AsyncTask.Status.FINISHED) exec = new AsyncRequest().execute();
+    }
+
+    public class DbBinder extends Binder {
+        DbService getService() {
+            return DbService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
     }
 }

@@ -1,9 +1,12 @@
 package com.example.user.library;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -29,6 +32,9 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
     final static String MSSQL_LOGIN = "AllowUser";
     final static String MSSQL_PASS= "AllowUser";
     private static final int LOADER_ID = 734;
+
+    final String LOG_TAG = "Library";
+
     // Объявляем об использовании следующих объектов:
     private EditText username;
     private EditText password;
@@ -36,7 +42,10 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
     private TextView loginLocked;
 
     private Intent startIntent;
+    private ServiceConnection sConn;
+    private DbService dbService;
     private RequestResultReceiver requestResultReceiver;
+    private boolean bound = false;
 
 
     @Override
@@ -57,7 +66,26 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
         //loaderManager.initLoader(LOADER_ID, asyncTaskLoaderParams,this);
         requestResultReceiver = new RequestResultReceiver(new Handler());
         startIntent = new Intent(MainActivity.this, DbService.class);
+
+        sConn = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                Log.d(LOG_TAG, "MainActivity onServiceConnected");
+                DbService.DbBinder binder = (DbService.DbBinder) iBinder;
+                dbService = binder.getService();
+                bound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d(LOG_TAG, "MainActivity onServiceDisconnected");
+                bound = false;
+            }
+        };
+
+        if (!bound) bindService(startIntent, sConn, BIND_AUTO_CREATE);
         }
+
 
     // Обрабатываем нажатие кнопки "Войти":
     public void Login(View view) {
@@ -205,6 +233,7 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
                     Log.d("data", resultData.getString("SQLException"));
                     loginLocked.setText("Ошибка подключения");
                     loginLocked.setVisibility(View.VISIBLE);
+                    dbService.resetConnection();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -232,6 +261,21 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
             }
             super.onReceiveResult(resultCode, resultData);
         }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bound) {
+            unbindService(sConn);
+            bound = false;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
 
     }
 
