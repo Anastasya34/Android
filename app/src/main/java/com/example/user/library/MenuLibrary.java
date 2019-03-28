@@ -1,6 +1,5 @@
 package com.example.user.library;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -33,7 +32,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            fragmentManager.beginTransaction().replace(R.id.container, (Fragment)ContentActivity.class.newInstance()).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) BooksList.class.newInstance()).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -87,7 +86,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
             case R.id.general:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на ProposalActivity:
-                fragmentClass = ContentActivity.class;
+                fragmentClass = BooksList.class;
                 break;
             case R.id.my_proposal:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
@@ -97,23 +96,27 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
         }
 
 
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("Error", e.getMessage());
+        if (fragmentClass != null) {
 
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("Error", e.getMessage());
+
+            }
+
+            // Вставляем фрагмент, заменяя текущий фрагмент
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            // Выделяем выбранный пункт меню в шторке
+            item.setChecked(true);
+            // Выводим выбранный пункт в заголовке
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
         }
 
-        // Вставляем фрагмент, заменяя текущий фрагмент
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
-        // Выделяем выбранный пункт меню в шторке
-        item.setChecked(true);
-        // Выводим выбранный пункт в заголовке
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
 
         return false;
     }
