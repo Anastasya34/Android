@@ -10,7 +10,17 @@
     <string name="book_name">Название книги</string>
     <string name="book">книга</string>
     <string name="book_description">Описание книги</string>
+    <string name="my_proposal">Мои заявки</string>
+    <string name="create_proposal">Создать заявку</string>
     <string name="title_activity_menu_library">MenuLibrary</string>
+
+
+    <string-array name="proposal_list_item">
+        <item>Создать заявку</item>
+        <item>Активные заявки</item>
+        <item>История</item>
+    </string-array>
+
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="action_settings">Settings</string>
 

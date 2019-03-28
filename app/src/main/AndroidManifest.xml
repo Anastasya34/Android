@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.library">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -12,43 +10,45 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MenuLibrary"
-            android:label="@string/title_activity_menu_library"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".LibraryActivity"
-            android:label="@string/app_name"
+            android:name=".MenuLibrary"
+            android:label="@string/nav_header_title"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="com.example.user.library.RegistrationActivity"
             android:parentActivityName=".MainActivity"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MainActivity">
+            </meta-data>
         </activity>
         <activity
-            android:name=".RegistrationActivity"
-            android:label="@string/app_name"
+            android:name="com.example.user.library.ContentActivity"
             android:parentActivityName=".MainActivity"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MainActivity">
+            </meta-data>
         </activity>
         <activity
-            android:name=".ContentActivity"
-            android:label="@string/app_name"
+            android:name="com.example.user.library.ProposalActivity"
             android:parentActivityName=".MainActivity"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MainActivity">
+            </meta-data>
         </activity>
 
         <service android:name=".DbService" />

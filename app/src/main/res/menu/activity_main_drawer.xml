@@ -13,9 +13,9 @@
             android:textSize = "20sp"
             android:title="Мои книги" />
         <item
-            android:id="@+id/create_report"
+            android:id="@+id/my_proposal"
             android:textSize = "20sp"
-            android:title="Создать заявку" />
+            android:title="@string/my_proposal"/>
         <item
             android:id="@+id/my_pofile"
             android:textSize = "20sp"
