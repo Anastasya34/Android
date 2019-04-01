@@ -27,4 +27,16 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello">Книги</string>
+    <string name="my_profile">Мой профиль</string>
+    <string name="Profile">Профиль</string>
+    <string name="firstName">Имя</string>
+    <string name="secondName">Отчество</string>
+    <string name="surName">Фамилия</string>
+    <string name="birthday">День рождения</string>
+    <string name="dormitories">Общежитие</string>
+    <string name="room">Комната</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="phone">Телефон</string>
+    <string name="save">Сохранить</string>
 </resources>

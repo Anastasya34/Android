@@ -47,14 +47,14 @@
         android:layout_marginLeft="100dp"
         android:ems="10"/>
 
-    <TextView
-        android:id="@+id/secondName_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="20dp"
-        android:text="Отчество"/>
+        <TextView
+            android:id="@+id/secondName_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="20dp"
+            android:inputType="textPersonName"
+            android:text="Отчество" />
     <EditText
         android:id="@+id/secondName_value"
         android:layout_width="wrap_content"
