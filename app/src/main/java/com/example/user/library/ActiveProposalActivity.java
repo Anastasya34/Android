@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ActiveProposalActivity extends Fragment {
-    private ActiveProposalActivity.RequestResultReceiver requestResultReceiver;
+    //private ActiveProposalActivity.RequestResultReceiver requestResultReceiver;
     private RecyclerView recyclerView;
     private ProposalAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -53,7 +53,7 @@ public class ActiveProposalActivity extends Fragment {
         startIntent = new Intent(getActivity(), DbService.class);
         String querySelectUser = "SELECT userreader_id FROM [library].[dbo].[userreader]";
         String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [library].[dbo].[proposal] WHERE fk_userreader = ''";
-        startIntent.putExtra("receiver", requestResultReceiver);
+        //startIntent.putExtra("receiver", requestResultReceiver);
         startIntent.putExtra("request", querySelectUser);
         startIntent.putExtra("permission", "user");
 

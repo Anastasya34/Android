@@ -19,7 +19,7 @@
     <string-array name="proposal_list_item">
         <item>Создать заявку</item>
         <item>Активные заявки</item>
-        <item>История</item>
+        <!--item>История</item-->
     </string-array>
 
 </resources>

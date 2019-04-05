@@ -166,7 +166,7 @@
         android:textSize="15dp"
         android:textColor="#ff0000"/>
 
-    <TextView android:id="@+id/lnkLogin"
+    <!--TextView android:id="@+id/lnkLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -174,6 +174,6 @@
         android:gravity="center"
         android:textSize="15dp"
         android:textColor="#3F51B5"
-        android:onClick="test"/>
+        android:onClick="test"/-->
 </LinearLayout>
 </ScrollView>
