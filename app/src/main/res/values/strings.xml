@@ -39,4 +39,5 @@
     <string name="password">Пароль</string>
     <string name="phone">Телефон</string>
     <string name="save">Сохранить</string>
+    <string name="Edit">Редактирование</string>
 </resources>

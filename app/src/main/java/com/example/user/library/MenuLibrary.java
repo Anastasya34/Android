@@ -1,5 +1,6 @@
 package com.example.user.library;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,9 +16,16 @@ import android.view.MenuItem;
 
 public class MenuLibrary extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawer;
+    private int user_id = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+
+        user_id = intent.getIntExtra("user_id", -1);
+
         setContentView(R.layout.left_panel);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -82,6 +90,9 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
         Class fragmentClass = null;
         // получим идентификатор выбранного пункта меню
         int id = item.getItemId();
+
+        Bundle args = new Bundle();
+
         switch (id) {
             case R.id.general:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
@@ -97,6 +108,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на Profile:
                 fragmentClass = Profile.class;
+                args.putInt(Profile.ARG_USER_ID, user_id);
 
         }
 
@@ -105,6 +117,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
 
             try {
                 fragment = (Fragment) fragmentClass.newInstance();
+                fragment.setArguments(args);
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("Error", e.getMessage());

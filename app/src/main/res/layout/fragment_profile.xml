@@ -21,13 +21,12 @@
                 android:id="@+id/profile_View"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="0"
                 android:text="@string/Profile"
                 android:textSize="36sp"
                 android:textStyle="bold" />
 
             <Space
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
@@ -35,9 +34,8 @@
                 android:id="@+id/editMode_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_column="2"
                 android:switchPadding="10dp"
-                android:text="Редактирование" />
+                android:text="@string/Edit" />
         </LinearLayout>
 
         <TableLayout
@@ -67,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="1"
                     android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:inputType="none|textPersonName" />
             </TableRow>
 
             <TableRow

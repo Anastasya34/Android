@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -135,7 +136,11 @@ public class MainActivity extends AppCompatActivity {
                             loginLocked.setTextColor(Color.GREEN);
                             loginLocked.setVisibility(View.VISIBLE);
 
+                            JSONObject rec = resultSet.getJSONObject(0);
+                            int userreader_id = rec.getInt("userreader_id");
+
                             Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+                            intent.putExtra("user_id", userreader_id);
                             startActivity(intent);
                             Log.d("data", resultData.getString("JSONString"));
                         }

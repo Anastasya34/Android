@@ -91,13 +91,12 @@ public class BooksList extends Fragment {
                     String jsonString = resultData.getString("JSONString");
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
+                        books = new ArrayList<>();
                         if (resultSet.length() == 0) {
                             Log.d("data", "пустой");
-                            books = new ArrayList<>();
+
                             break;
                         }
-
-                        books = new ArrayList<>();
 
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject rec = resultSet.getJSONObject(i);
