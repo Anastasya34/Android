@@ -12,6 +12,7 @@
     <string name="book_description">Описание книги</string>
     <string name="my_proposal">Мои заявки</string>
     <string name="create_proposal">Создать заявку</string>
+    <string name="current_proposal">Текущие заявки:</string>
     <string name="title_activity_menu_library">MenuLibrary</string>
 
 

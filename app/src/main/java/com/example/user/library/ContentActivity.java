@@ -36,6 +36,24 @@ public class ContentActivity extends Fragment {
         booksView = rootView.findViewById(R.id.ViewBooks);
         searchRequest = rootView.findViewById(R.id.book_search);
         booksView.setLayoutManager(new LinearLayoutManager(getActivity()));
+       /* RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = layoutManager.getChildCount();//смотрим сколько элементов на экране
+                int totalItemCount = layoutManager.getItemCount();//сколько всего элементов
+                int firstVisibleItems = layoutManager.findFirstVisibleItemPosition();//какая позиция первого элемента
+
+                if (!isLoading) {//проверяем, грузим мы что-то или нет, эта переменная должна быть вне класса  OnScrollListener
+                    if ( (visibleItemCount+firstVisibleItems) >= totalItemCount) {
+                        isLoading = true;//ставим флаг что мы попросили еще элемены
+                        if(loadingListener != null){
+                            loadingListener.loadMoreItems(totalItemCount);//тут я использовал калбэк который просто говорит наружу что нужно еще элементов и с какой позиции начинать загрузку
+                        }
+                    }
+                }
+            }
+        };*/
         initializeData();
         initializeAdapter();
         return rootView;
