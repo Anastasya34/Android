@@ -76,6 +76,7 @@ public class DbService extends IntentService {
         }
 
         String query = intent.getStringExtra("request");
+        String type = intent.getStringExtra("type");
         final ResultReceiver receiver = intent.getParcelableExtra("receiver");
         Bundle bundle = new Bundle();
 
@@ -96,20 +97,29 @@ public class DbService extends IntentService {
             }
             if (con != null) {
                 st = con.createStatement();
-                rs = st.executeQuery(query);
-                if (rs != null) {
-                    int columnCount = rs.getMetaData().getColumnCount();
-                    // Сохранение данных в JSONArray
-                    while (rs.next()) {
-                        JSONObject rowObject = new JSONObject();
-                        for (int i = 1; i <= columnCount; i++) {
-                            rowObject.put(rs.getMetaData().getColumnName(i), (rs.getString(i) != null) ? rs.getString(i) : "");
-                        }
-                        resultSet.put(rowObject);
-                    }
-                    Log.d(LOG_TAG, "SQL: " + resultSet.toString());
-                    bundle.putSerializable("JSONString", resultSet.toString());
+                if (type != null && type.equals("update")) {
+                    int n_strings = st.executeUpdate(query);
+                    Log.d(LOG_TAG, "SQL: number of strings:" + n_strings);
+                    bundle.putSerializable("n_strings", n_strings);
                     receiver.send(REQUEST_SUCCESS, bundle);
+
+                } else {
+                    rs = st.executeQuery(query);
+
+                    if (rs != null) {
+                        int columnCount = rs.getMetaData().getColumnCount();
+                        // Сохранение данных в JSONArray
+                        while (rs.next()) {
+                            JSONObject rowObject = new JSONObject();
+                            for (int i = 1; i <= columnCount; i++) {
+                                rowObject.put(rs.getMetaData().getColumnName(i), (rs.getString(i) != null) ? rs.getString(i) : "");
+                            }
+                            resultSet.put(rowObject);
+                        }
+                        Log.d(LOG_TAG, "SQL: " + resultSet.toString());
+                        bundle.putSerializable("JSONString", resultSet.toString());
+                        receiver.send(REQUEST_SUCCESS, bundle);
+                    }
                 }
             } else {
                 bundle.putSerializable("SQLException", "no connection");

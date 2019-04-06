@@ -2,6 +2,7 @@ package com.example.user.library;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,10 +16,14 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 /**
@@ -40,21 +45,36 @@ public class Profile extends Fragment {
     private String mParam2;
 
     private Intent startIntent;
-    private DbService dbService;
+    //private DbService dbService;
     private RequestResultReceiver requestResultReceiver;
+    private UpdateResultReceiver updateResultReceiver;
 
     private OnFragmentInteractionListener mListener;
 
     private int mUser_id = -1;
 
+    //интерфейс
     private Switch editModeSwitch;
     private EditText firstName;
+    private EditText secondName;
+    private EditText surName;
+    private EditText birthday;
+    private EditText phone;
+    private EditText email;
+    private EditText login;
+    private EditText password;
+    private TableRow password_row;
+    private ArrayList<EditText> listProfile = new ArrayList<>();
+    private String user_password;
+    private TextView status;
+
     private Button saveEditButton;
 
 
     public Profile() {
         // Required empty public constructor
         requestResultReceiver = new RequestResultReceiver(new Handler());
+        updateResultReceiver = new UpdateResultReceiver(new Handler());
     }
 
     /**
@@ -97,30 +117,84 @@ public class Profile extends Fragment {
         editModeSwitch = view.findViewById(R.id.editMode_switch);
         saveEditButton = view.findViewById(R.id.saveEdit_button);
 
+        saveEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                setEditTextMasState(true);
+                status.setTextColor(Color.BLACK);
+                status.setText("Сохранение ...");
+                status.setVisibility(View.VISIBLE);
+
+                if (!password.getText().toString().equals(user_password)) {
+                    status.setText("Неверный пароль ...");
+                    status.setTextColor(Color.RED);
+                    status.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                startIntent.putExtra("receiver", updateResultReceiver);
+                startIntent.putExtra("type", "update");
+                startIntent.putExtra("request",
+                        "UPDATE [library].[dbo].[userreader] SET " +
+                                "[userfirstname]=\'" + firstName.getText() +
+                                "\',[usersecondname]=\'" + secondName.getText() +
+                                "\',[usersurname]=\'" + surName.getText() +
+                                "\',[phonenumber]=\'" + phone.getText() +
+                                "\',[userlogin]=\'" + login.getText() +
+                                "\'WHERE [userreader_id] = " + mUser_id + ";");
+                getActivity().startService(startIntent);
+            }
+        });
+
+        password = view.findViewById(R.id.password_edit);
+        password_row = view.findViewById(R.id.password_Row);
+
         firstName = view.findViewById(R.id.firstName_edit);
-        firstName.setFocusable(false);
-        firstName.setFocusableInTouchMode(false);
-        firstName.setClickable(false);
+        listProfile.add(firstName);
+        secondName = view.findViewById(R.id.secondName_edit);
+        listProfile.add(secondName);
+        surName = view.findViewById(R.id.surName_edit);
+        listProfile.add(surName);
+        birthday = view.findViewById(R.id.birthday_edit);
+        listProfile.add(birthday);
+        phone = view.findViewById(R.id.phone_edit);
+        listProfile.add(phone);
+        email = view.findViewById(R.id.email_edit);
+        listProfile.add(email);
+        login = view.findViewById(R.id.login_edit);
+        listProfile.add(login);
+
+        status = view.findViewById(R.id.status_View);
+
+        setEditTextMasState(false);
 
         editModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    firstName.setFocusable(true);
-                    firstName.setFocusableInTouchMode(true);
-                    firstName.setClickable(true);
+
+                    setEditTextMasState(true);
+                    //password_row
+                    password_row.setVisibility(View.VISIBLE);
+                    //save button
                     saveEditButton.setVisibility(View.VISIBLE);
                 } else {
-                    firstName.setFocusable(false);
-                    firstName.setFocusableInTouchMode(false);
-                    firstName.setClickable(false);
+
+                    setEditTextMasState(false);
+                    //password_row
+                    password_row.setVisibility(View.INVISIBLE);
+                    //save button
                     saveEditButton.setVisibility(View.INVISIBLE);
+                    status.setVisibility(View.INVISIBLE);
+
                 }
             }
         });
 
         startIntent.putExtra("receiver", requestResultReceiver);
+
         startIntent.putExtra("request", "SELECT * FROM [library].[dbo].[userreader] WHERE userreader_id = " + String.valueOf(mUser_id) + ";");
         getActivity().startService(startIntent);
 
@@ -180,7 +254,7 @@ public class Profile extends Fragment {
                 case DbService.REQUEST_ERROR:
                     Log.d("data", resultData.getString("SQLException"));
 
-                    dbService.resetConnection();
+                    //dbService.resetConnection();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -192,8 +266,14 @@ public class Profile extends Fragment {
                             break;
                         }
                         JSONObject rec = resultSet.getJSONObject(0);
-                        String firstName_str = rec.getString("userfirstname");
-                        firstName.setText(firstName_str);
+                        firstName.setText(rec.getString("userfirstname"));
+                        secondName.setText(rec.getString("usersecondname"));
+                        surName.setText(rec.getString("usersurname"));
+                        birthday.setText(rec.getString("age")); ////TODO: поменять на дату
+                        phone.setText(rec.getString("phonenumber"));
+                        //email.setText(rec.getString("userfirstname")); //TODO: добавить в БД
+                        login.setText(rec.getString("userlogin"));
+                        user_password = rec.getString("userpassword"); //TODO: нормальную проверку
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -204,6 +284,53 @@ public class Profile extends Fragment {
             super.onReceiveResult(resultCode, resultData);
         }
 
+    }
+
+    private class UpdateResultReceiver extends ResultReceiver {
+
+        public UpdateResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+
+                    //dbService.resetConnection();
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    int n_strings = resultData.getInt("n_strings");
+                    if (n_strings > 0) {
+                        Log.d("data", "успех " + String.valueOf(n_strings));
+                        status.setTextColor(Color.GREEN);
+                        status.setText("Профиль обновлен!");
+                        status.setVisibility(View.VISIBLE);
+                    } else {
+                        Log.d("data", "ошибка " + String.valueOf(n_strings));
+                        status.setTextColor(Color.RED);
+                        status.setText("Профиль не обновлен!");
+                        status.setVisibility(View.VISIBLE);
+                    }
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    private void setEditTextMasState(boolean state) {
+        for (EditText editText : listProfile) {
+            setEditTextState(editText, state);
+        }
+    }
+
+    private void setEditTextState(EditText editText, boolean state) {
+        editText.setEnabled(state);
+        if (!state) editText.setTextColor(Color.BLACK);
     }
 
 }

@@ -248,7 +248,8 @@
             <TableRow
                 android:id="@+id/password_Row"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="invisible">
 
                 <TextView
                     android:id="@+id/password_View"
@@ -275,6 +276,15 @@
             android:layout_weight="0"
             android:text="@string/save"
             android:layout_gravity="center_vertical|center_horizontal"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/status_View"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Сохранение..."
+            android:textSize="24sp"
             android:visibility="invisible" />
 
     </LinearLayout>
