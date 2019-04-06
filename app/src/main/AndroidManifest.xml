@@ -16,6 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MenuLibrary"
             android:label="@string/nav_header_title"
@@ -30,26 +31,7 @@
                 android:value=".MainActivity">
             </meta-data>
         </activity>
-        <activity
-            android:name="com.example.user.library.ContentActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity">
-            </meta-data>
-        </activity>
-        <activity
-            android:name="com.example.user.library.ProposalActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity">
-            </meta-data>
-        </activity>
+
 
         <service android:name=".DbService" />
     </application>

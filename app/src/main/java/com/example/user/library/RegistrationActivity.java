@@ -2,6 +2,7 @@ package com.example.user.library;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -303,7 +304,8 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                     errorMessage.setVisibility(View.VISIBLE);
                     break;
                 }
-                Intent intent = new Intent(RegistrationActivity.this, ContentActivity.class);
+
+                Intent intent = new Intent(RegistrationActivity.this, MenuLibrary.class);
                 startActivity(intent);
                 break;
             }
