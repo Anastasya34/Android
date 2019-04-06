@@ -2,16 +2,18 @@ package com.example.user.library;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,14 +22,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.AdapterView;
-import android.widget.TextView;
-
 public class RegistrationActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>> {
-    final static String MSSQL_DB = "jdbc:jtds:sqlserver://ASUS;databaseName=library;integratedSecurity=true";
-    final static String MSSQL_LOGIN = "AllowUser";
-    final static String MSSQL_PASS= "AllowUser";
+    final static String MSSQL_DB = "jdbc:jtds:sqlserver://dertosh.ddns.net:49173;databaseName=library;integratedSecurity=true";
+    final static String MSSQL_LOGIN = "ReadingUser";
+    final static String MSSQL_PASS = "Reading1234";
     private static final int LOADER_DORM = 734;
     private static final int LOADER_ROOM = 2;
     private static final int LOADER_REGISTRATION = 3;
