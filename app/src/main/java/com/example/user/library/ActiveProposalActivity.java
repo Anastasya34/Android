@@ -2,25 +2,15 @@ package com.example.user.library;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ActiveProposalActivity extends Fragment {
     //private ActiveProposalActivity.RequestResultReceiver requestResultReceiver;
@@ -51,8 +41,8 @@ public class ActiveProposalActivity extends Fragment {
         proposals.add(test2);
         //запрос
         startIntent = new Intent(getActivity(), DbService.class);
-        String querySelectUser = "SELECT userreader_id FROM [library].[dbo].[userreader]";
-        String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [library].[dbo].[proposal] WHERE fk_userreader = ''";
+        String querySelectUser = "SELECT userreader_id FROM [userreader]";
+        String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = ''";
         //startIntent.putExtra("receiver", requestResultReceiver);
         startIntent.putExtra("request", querySelectUser);
         startIntent.putExtra("permission", "user");

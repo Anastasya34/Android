@@ -195,7 +195,7 @@ public class Profile extends Fragment {
 
         startIntent.putExtra("receiver", requestResultReceiver);
 
-        startIntent.putExtra("request", "SELECT * FROM [library].[dbo].[userreader] WHERE userreader_id = " + String.valueOf(mUser_id) + ";");
+        startIntent.putExtra("request", "SELECT * FROM [userreader] WHERE userreader_id = " + String.valueOf(mUser_id) + ";");
         getActivity().startService(startIntent);
 
 

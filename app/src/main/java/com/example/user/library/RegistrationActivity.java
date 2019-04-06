@@ -23,7 +23,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class RegistrationActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>> {
-    final static String MSSQL_DB = "jdbc:jtds:sqlserver://dertosh.ddns.net:49173;databaseName=library;integratedSecurity=true";
+    final static String MSSQL_DB = "jdbc:jtds:sqlserver://dertosh.ddns.net:49173;databaseName=LibraryNew;integratedSecurity=true";
     final static String MSSQL_LOGIN = "ReadingUser";
     final static String MSSQL_PASS = "Reading1234";
     private static final int LOADER_DORM = 734;
@@ -159,7 +159,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                             Statement st = null;
                             try {
                                 st = connect.createStatement();
-                                dormitories = st.executeQuery("SELECT namedorm_id FROM [library].[dbo].[dormitory] ORDER BY number");
+                                dormitories = st.executeQuery("SELECT namedorm_id FROM [dormitory] ORDER BY number");
                                 int i=0;
                                 while (dormitories.next()) {
                                     dormitoriesName.add( dormitories.getString("namedorm_id"));
@@ -191,7 +191,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                             Statement st = null;
                             try {
                                 st = connect.createStatement();
-                                rooms = st.executeQuery("SELECT room_id, roomnumber FROM [library].[dbo].[room] WHERE fk_dorm = '"+String.valueOf(args.getString("DormitoryName")+"' ORDER BY roomnumber"));
+                                rooms = st.executeQuery("SELECT room_id, roomnumber FROM [room] WHERE fk_dorm = '" + String.valueOf(args.getString("DormitoryName") + "' ORDER BY roomnumber"));
                              while (rooms.next()) {
                                  roomsName.add(String.valueOf(rooms.getInt("roomnumber")));
                              }
@@ -218,18 +218,18 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                             Statement st = null;
                             try {
                                 st = connect.createStatement();
-                                String query = "SELECT userreader_id FROM [library].[dbo].[userreader] WHERE userlogin = '"+args.getString("login")+ "'";
+                                String query = "SELECT userreader_id FROM [userreader] WHERE userlogin = '" + args.getString("login") + "'";
                                 ResultSet existUser =  st.executeQuery(query);
                                 if (existUser.next()) {
                                     successResult = "alreadyExist";
                                     success.add(successResult);
                                     return success;
                                 }
-                                query = "SELECT room_id  FROM [library].[dbo].[room] WHERE fk_dorm = '"+args.getString("DormitoryName")+"' AND roomnumber="+args.getString("RoomNumber");
+                                query = "SELECT room_id  FROM [room] WHERE fk_dorm = '" + args.getString("DormitoryName") + "' AND roomnumber=" + args.getString("RoomNumber");
                                 Log.d("!query", query);
                                 rooms_id = st.executeQuery(query);
                                 if (rooms_id.next()) {
-                                    st.executeUpdate("INSERT INTO [library].[dbo].[userreader] (" +
+                                    st.executeUpdate("INSERT INTO [userreader] (" +
                                             "[userfirstname], " +
                                             "[usersecondname], " +
                                             "[usersurname], " +

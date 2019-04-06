@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         loginLocked.setVisibility(View.VISIBLE);
 
         startIntent.putExtra("receiver", requestResultReceiver);
-        startIntent.putExtra("request", "SELECT * FROM [library].[dbo].[userreader] " +
+        startIntent.putExtra("request", "SELECT * FROM [userreader] " +
                 "WHERE userlogin = '" + username.getText().toString() + "' AND userpassword = '" + password.getText().toString() + "'");
         startService(startIntent);
 
