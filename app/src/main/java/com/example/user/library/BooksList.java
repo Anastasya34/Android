@@ -100,7 +100,7 @@ public class BooksList extends Fragment {
 
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject rec = resultSet.getJSONObject(i);
-                            books.add(new Book(rec.getString("book_id"), rec.getString("bookname")));
+                            books.add(new Book(rec.getString("bookname"), rec.getString("book_id")));
                         }
                         BookListAdapter adapter = new BookListAdapter(books);
                         booksView.setAdapter(adapter);

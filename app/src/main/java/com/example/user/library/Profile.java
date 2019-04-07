@@ -35,14 +35,9 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class Profile extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_USER_ID = "user_id";
-    public static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    //private int user_id;
-    private String mParam2;
 
     private Intent startIntent;
     //private DbService dbService;
@@ -53,12 +48,11 @@ public class Profile extends Fragment {
 
     private int mUser_id = -1;
 
-    //интерфейс
-    private Switch editModeSwitch;
     private EditText firstName;
     private EditText secondName;
     private EditText surName;
     private EditText birthday;
+    private EditText room;
     private EditText phone;
     private EditText email;
     private EditText login;
@@ -81,16 +75,14 @@ public class Profile extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param user_id Parameter 1.
-     * @param param2 Parameter 2.
+     * @param user_id user id.
      * @return A new instance of fragment Profile.
      */
     // TODO: Rename and change types and number of parameters
-    public static Profile newInstance(int user_id, String param2) {
+    public static Profile newInstance(int user_id) {
         Profile fragment = new Profile();
         Bundle args = new Bundle();
         args.putInt(ARG_USER_ID, user_id);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -103,7 +95,6 @@ public class Profile extends Fragment {
 
         if (getArguments() != null) {
             mUser_id = getArguments().getInt(ARG_USER_ID);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -114,7 +105,8 @@ public class Profile extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        editModeSwitch = view.findViewById(R.id.editMode_switch);
+        //интерфейс
+        Switch editModeSwitch = view.findViewById(R.id.editMode_switch);
         saveEditButton = view.findViewById(R.id.saveEdit_button);
 
         saveEditButton.setOnClickListener(new View.OnClickListener() {
@@ -127,7 +119,7 @@ public class Profile extends Fragment {
                 status.setVisibility(View.VISIBLE);
 
                 if (!password.getText().toString().equals(user_password)) {
-                    status.setText("Неверный пароль ...");
+                    status.setText("Неверный пароль!");
                     status.setTextColor(Color.RED);
                     status.setVisibility(View.VISIBLE);
                     return;
@@ -136,7 +128,7 @@ public class Profile extends Fragment {
                 startIntent.putExtra("receiver", updateResultReceiver);
                 startIntent.putExtra("type", "update");
                 startIntent.putExtra("request",
-                        "UPDATE [library].[dbo].[userreader] SET " +
+                        "UPDATE [userreader] SET " +
                                 "[userfirstname]=\'" + firstName.getText() +
                                 "\',[usersecondname]=\'" + secondName.getText() +
                                 "\',[usersurname]=\'" + surName.getText() +
@@ -158,6 +150,8 @@ public class Profile extends Fragment {
         listProfile.add(surName);
         birthday = view.findViewById(R.id.birthday_edit);
         listProfile.add(birthday);
+        room = view.findViewById(R.id.room_edit);
+        listProfile.add(room);
         phone = view.findViewById(R.id.phone_edit);
         listProfile.add(phone);
         email = view.findViewById(R.id.email_edit);
@@ -243,7 +237,7 @@ public class Profile extends Fragment {
 
     private class RequestResultReceiver extends ResultReceiver {
 
-        public RequestResultReceiver(Handler handler) {
+        RequestResultReceiver(Handler handler) {
             super(handler);
         }
 
@@ -270,6 +264,7 @@ public class Profile extends Fragment {
                         secondName.setText(rec.getString("usersecondname"));
                         surName.setText(rec.getString("usersurname"));
                         birthday.setText(rec.getString("age")); ////TODO: поменять на дату
+                        room.setText(rec.getString("fk_room"));
                         phone.setText(rec.getString("phonenumber"));
                         //email.setText(rec.getString("userfirstname")); //TODO: добавить в БД
                         login.setText(rec.getString("userlogin"));
@@ -288,7 +283,7 @@ public class Profile extends Fragment {
 
     private class UpdateResultReceiver extends ResultReceiver {
 
-        public UpdateResultReceiver(Handler handler) {
+        UpdateResultReceiver(Handler handler) {
             super(handler);
         }
 
