@@ -10,10 +10,11 @@ import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     // Объявляем об использовании следующих объектов:
     private EditText username;
     private EditText password;
-    private Button login;
     private TextView loginLocked;
 
     private Intent startIntent;
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private DbService dbService;
     private RequestResultReceiver requestResultReceiver;
     private boolean bound = false;
+    private boolean userLoginFlag = false;
 
 
     @Override
@@ -45,13 +46,10 @@ public class MainActivity extends AppCompatActivity {
         // Связываемся с элементами нашего интерфейса:
         username = (EditText) findViewById(R.id.edit_user);
         password = (EditText) findViewById(R.id.edit_password);
-        login = (Button) findViewById(R.id.button_login);
         loginLocked = (TextView) findViewById(R.id.login_locked);
-        //Bundle asyncTaskLoaderParams = new Bundle();
+
         Log.i("onCreate!", "loader");
-        //LoaderManager loaderManager = getSupportLoaderManager();
-        //Loader<String> loader = loaderManager.getLoader(LOADER_ID);
-        //loaderManager.initLoader(LOADER_ID, asyncTaskLoaderParams,this);
+
         requestResultReceiver = new RequestResultReceiver(new Handler());
         startIntent = new Intent(MainActivity.this, DbService.class);
 
@@ -78,24 +76,19 @@ public class MainActivity extends AppCompatActivity {
     // Обрабатываем нажатие кнопки "Войти":
     public void Login(View view) {
         Log.d("Main", "Login");
-//        Bundle asyncTaskLoaderParams = new Bundle();
-//        asyncTaskLoaderParams.putString("Button", "Login");
-//        asyncTaskLoaderParams.putString("Password", password.getText().toString());
-//        asyncTaskLoaderParams.putString("UserName", username.getText().toString());
-
-        //Intent startIntent = new Intent(MainActivity.this, DbService.class);
 
         loginLocked.setText("Авторизация...");
         loginLocked.setTextColor(Color.BLACK);
         loginLocked.setVisibility(View.VISIBLE);
+
+        userLoginFlag = false;
 
         startIntent.putExtra("receiver", requestResultReceiver);
         startIntent.putExtra("request", "SELECT * FROM [userreader] " +
                 "WHERE userlogin = '" + username.getText().toString() + "' AND userpassword = '" + password.getText().toString() + "'");
         startService(startIntent);
 
-        //LoaderManager loaderManager = getSupportLoaderManager();
-        //loaderManager.restartLoader(LOADER_ID, asyncTaskLoaderParams,this);
+
     }
 
     // Обрабатываем нажатие кнопки "Зарегистироваться":
@@ -128,21 +121,42 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
                         if (resultSet.length() == 0) {
-                            Log.d("data", "Неверный логин или пароль");
-                            loginLocked.setText("Неверный логин или пароль");
-                            loginLocked.setVisibility(View.VISIBLE);
+                            if (userLoginFlag) {
+                                Log.d("data", "Неверный логин или пароль");
+                                loginLocked.setText("Неверный логин или пароль");
+                                loginLocked.setVisibility(View.VISIBLE);
+                            } else {
+                                userLoginFlag = true;
+                                startIntent.putExtra("receiver", requestResultReceiver);
+                                startIntent.putExtra("request", "SELECT * FROM [administration] " +
+                                        "WHERE adminlogin = '" + username.getText().toString() + "' AND adminpassword = '" + password.getText().toString() + "'");
+                                startService(startIntent);
+                            }
                         } else {
                             loginLocked.setText("Авторизация успешна");
                             loginLocked.setTextColor(Color.GREEN);
                             loginLocked.setVisibility(View.VISIBLE);
 
                             JSONObject rec = resultSet.getJSONObject(0);
-                            int userreader_id = rec.getInt("userreader_id");
-
-                            Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
-                            intent.putExtra("user_id", userreader_id);
-                            startActivity(intent);
-                            Log.d("data", resultData.getString("JSONString"));
+                            if (userLoginFlag) {
+                                userLoginFlag = false;
+                                int adminId = rec.getInt("admin_id"); //TODO: добавить переход на активити админа
+//                                Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+//                                intent.putExtra("admin_id", adminId);
+//                                startActivity(intent);
+                                Log.d("data", resultData.getString("JSONString"));
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        "Панель админа!",
+                                        Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER, 0, 0);
+                                toast.show();
+                            } else {
+                                int userreader_id = rec.getInt("userreader_id");
+                                Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+                                intent.putExtra("user_id", userreader_id);
+                                startActivity(intent);
+                                Log.d("data", resultData.getString("JSONString"));
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
