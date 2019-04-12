@@ -103,6 +103,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на ProposalActivity:
                 fragmentClass = ProposalActivity.class;
+                args.putInt(ProposalActivity.USER_ID, user_id);
                 break;
             case R.id.my_profile:
                 Log.d("onOptionsItemSelected", String.valueOf(id));

@@ -23,9 +23,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class RegistrationActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>> {
-    final static String MSSQL_DB = "jdbc:jtds:sqlserver://dertosh.ddns.net:49173;databaseName=LibraryNew;integratedSecurity=true";
-    final static String MSSQL_LOGIN = "ReadingUser";
-    final static String MSSQL_PASS = "Reading1234";
+    final static String MSSQL_DB = "jdbc:jtds:sqlserver://ASUS;databaseName=library;integratedSecurity=true";
+    private static String MSSQL_LOGIN = "AllowUser";
+    private static String MSSQL_PASS = "AllowUser";
+
     private static final int LOADER_DORM = 734;
     private static final int LOADER_ROOM = 2;
     private static final int LOADER_REGISTRATION = 3;
@@ -118,7 +119,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         loaderRegistrParams.putString("RoomNumber", selectedRoom);
         LoaderManager loaderManager = getSupportLoaderManager();
         loaderManager.restartLoader(LOADER_REGISTRATION, loaderRegistrParams,this);
-}
+    }
 
     public Connection getConnection(){
         try {
@@ -192,9 +193,9 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                             try {
                                 st = connect.createStatement();
                                 rooms = st.executeQuery("SELECT room_id, roomnumber FROM [room] WHERE fk_dorm = '" + String.valueOf(args.getString("DormitoryName") + "' ORDER BY roomnumber"));
-                             while (rooms.next()) {
-                                 roomsName.add(String.valueOf(rooms.getInt("roomnumber")));
-                             }
+                                while (rooms.next()) {
+                                    roomsName.add(String.valueOf(rooms.getInt("roomnumber")));
+                                }
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }

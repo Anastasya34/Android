@@ -1,5 +1,6 @@
 package com.example.user.library;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class ProposalActivity extends Fragment {
+    public static final String USER_ID = "user_id";
+    public static int user_id = -1;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            user_id = getArguments().getInt(USER_ID);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,6 +41,8 @@ public class ProposalActivity extends Fragment {
                 // Создадим новый фрагмент
                 Fragment fragment = null;
                 Class fragmentClass = null;
+                Bundle args = new Bundle();
+
                 // получим идентификатор выбранного пункта меню
                 switch (position) {
                     case 0:
@@ -39,12 +52,14 @@ public class ProposalActivity extends Fragment {
                         break;
                     case 1:
                         fragmentClass = ActiveProposalActivity.class;
+                        args.putInt("user_id", user_id);
                         break;
                 }
 
 
                 try {
                     fragment = (Fragment) fragmentClass.newInstance();
+                    fragment.setArguments(args);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.d("Error", e.getMessage());

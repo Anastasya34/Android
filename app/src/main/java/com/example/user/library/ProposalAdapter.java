@@ -35,8 +35,8 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
 
         public void setData(String name, String status, String date) {
             bookName.setText(name);
-            proposalStatus.setText(status);
-            proposalcreateDate.setText(date);
+            proposalStatus.setText("Статус: "+status);
+            proposalcreateDate.setText("Дата создания заявки: "+date);
         }
 
 
