@@ -76,17 +76,24 @@ public class MainActivity extends AppCompatActivity {
     // Обрабатываем нажатие кнопки "Войти":
     public void Login(View view) {
         Log.d("Main", "Login");
+        loginLocked.setVisibility(View.INVISIBLE);
 
-        loginLocked.setText("Авторизация...");
-        loginLocked.setTextColor(Color.BLACK);
-        loginLocked.setVisibility(View.VISIBLE);
+        if (username.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
+            loginLocked.setText("Все поля должны быть заполнены!");
+            loginLocked.setTextColor(Color.RED);
+            loginLocked.setVisibility(View.VISIBLE);
+        } else {
+            loginLocked.setText("Авторизация...");
+            loginLocked.setTextColor(Color.BLACK);
+            loginLocked.setVisibility(View.VISIBLE);
 
-        userLoginFlag = false;
+            userLoginFlag = false;
 
-        startIntent.putExtra("receiver", requestResultReceiver);
-        startIntent.putExtra("request", "SELECT * FROM [userreader] " +
-                "WHERE userlogin = '" + username.getText().toString() + "' AND userpassword = '" + password.getText().toString() + "'");
-        startService(startIntent);
+            startIntent.putExtra("receiver", requestResultReceiver);
+            startIntent.putExtra("request", "SELECT * FROM [userreader] " +
+                    "WHERE userlogin = '" + username.getText().toString() + "' AND userpassword = '" + password.getText().toString() + "'");
+            startService(startIntent);
+        }
 
 
     }
