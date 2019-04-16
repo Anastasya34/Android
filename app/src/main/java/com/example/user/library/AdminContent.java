@@ -22,9 +22,6 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-
-        user_id = intent.getIntExtra("user_id", -1);
-
         setContentView(R.layout.admin_left_panel);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -39,7 +36,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminMainFragment.class.newInstance()).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminBooksUsersFragment.class.newInstance()).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -85,7 +82,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         // Создадим новый фрагмент
-       /* Fragment fragment = null;
+        Fragment fragment = null;
         Class fragmentClass = null;
         // получим идентификатор выбранного пункта меню
         int id = item.getItemId();
@@ -93,22 +90,11 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
         Bundle args = new Bundle();
 
         switch (id) {
-            case R.id.general:
+            case R.id.info_book:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на ProposalActivity:
-                fragmentClass = BooksList.class;
+                fragmentClass = AdminBooksUsersFragment.class;
                 break;
-            case R.id.my_proposal:
-                Log.d("onOptionsItemSelected", String.valueOf(id));
-                // Выполняем переход на ProposalActivity:
-                fragmentClass = ProposalActivity.class;
-                break;
-            case R.id.my_profile:
-                Log.d("onOptionsItemSelected", String.valueOf(id));
-                // Выполняем переход на Profile:
-                fragmentClass = Profile.class;
-                args.putInt(Profile.ARG_USER_ID, user_id);
-
         }
 
 
@@ -130,10 +116,10 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
             item.setChecked(true);
             // Выводим выбранный пункт в заголовке
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.adm_drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }
-*/
+
 
         return false;
     }
