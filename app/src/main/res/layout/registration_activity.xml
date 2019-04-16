@@ -5,8 +5,9 @@
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
         android:id="@+id/loginscrn"
@@ -84,16 +85,16 @@
             android:layout_marginLeft="100dp"
             android:layout_marginTop="20dp"
             android:text=" Комната"/>
-    <Spinner
-            android:id="@+id/rooms"
-            android:layout_width="match_parent"
+
+        <EditText
+            android:id="@+id/room_value"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
-        android:layout_marginRight="70dp"
-        android:ems="10"
-        />
+            android:ems="10"
+            android:inputType="numberDecimal" />
 
-    <TextView
+        <TextView
         android:id="@+id/phone_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -156,7 +157,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="LoginReg"
-            android:text="Login" />
+            android:text="Зарегистрироваться" />
 
     <TextView android:id="@+id/errorMessage"
         android:layout_width="wrap_content"
