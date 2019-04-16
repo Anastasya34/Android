@@ -4,11 +4,19 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/general"
-            android:textSize = "20sp"
-            android:title="Тест" />
 
+        <item
+            android:id="@+id/info_book"
+            android:textSize = "20sp"
+            android:title="Книги" />
+        <item
+            android:id="@+id/info_user"
+            android:textSize = "20sp"
+            android:title="Пользователи" />
+        <item
+            android:id="@+id/proposals"
+            android:textSize = "20sp"
+            android:title="Заявки" />
     </group>
 
 </menu>

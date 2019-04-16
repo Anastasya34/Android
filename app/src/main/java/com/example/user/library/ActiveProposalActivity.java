@@ -55,10 +55,13 @@ public class ActiveProposalActivity extends Fragment {
 
     private void fillStatusDictionary(){
         stasusDictionary.put(0, "заявка отправлена");
-        stasusDictionary.put(1, "заявка на рассмотрении");
+        stasusDictionary.put(1, "заявка обрабатывается");
         stasusDictionary.put(2, "заявка отклонена");
         stasusDictionary.put(3, "заявка одобрена");
-        stasusDictionary.put(4, "заявка закрыта");
+        stasusDictionary.put(4, "книга на руках");
+        stasusDictionary.put(5, "заявка закрыта");
+        stasusDictionary.put(6, "заявка расформирована");
+
     }
 
     @Override
