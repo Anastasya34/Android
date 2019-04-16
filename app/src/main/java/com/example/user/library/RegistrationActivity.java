@@ -31,16 +31,15 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
     private RequestResultRoomReceiver requestResultRoomReceiver;
     private RequestResultCheckReceiver requestResultCheckReceiver;
     private String selectedDormitory;
-    private String selectedRoom;
+    //private String selectedRoom;
     private TextView errorMessage;
     private volatile int user_id = -1;
     private volatile String fk_room = "";
     private boolean sendFlag = false;
     private volatile boolean loginExist = true;
-    private volatile boolean emailExist = true;
+    //private volatile boolean emailExist = true;
     private volatile boolean phoneExist = true;
     private EditText login;
-    private EditText phone;
     private EditText email;
     private EditText roomValue;
 
@@ -54,7 +53,7 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
         startIntent = new Intent(this, DbService.class);
 
         AdapterRequestResultReceiver adapterRequestResultReceiver = new AdapterRequestResultReceiver(new Handler());
-        AdapterRequestResultReceiver roomAdapterRequestResultReceiver = new AdapterRequestResultReceiver(new Handler());
+
         updateResultReceiver = new UpdateResultReceiver(new Handler());
         requestResultRoomReceiver = new RequestResultRoomReceiver(new Handler());
 
@@ -66,7 +65,6 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
         // Применяем адаптер к элементу spinner
         roomValue = findViewById(R.id.room_value);
 
-        roomAdapterRequestResultReceiver.setArgs(adapter);
 
         Spinner dormList = (Spinner) findViewById(R.id.dormitories);
 
@@ -130,7 +128,7 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
         requestResultCheckReceiver.errorMSG = "Данный номер телефона уже используется!";
         requestResultCheckReceiver.type = 1;
 
-        phone = findViewById(R.id.phone_value);
+        EditText phone = findViewById(R.id.phone_value);
         phone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -619,7 +617,7 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
     }
 
 
-    public class InputFilterMinMax implements InputFilter {
+    public static class InputFilterMinMax implements InputFilter {
 
         private int min, max;
 

@@ -8,13 +8,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -43,6 +47,7 @@ public class Profile extends Fragment {
     //private DbService dbService;
     private RequestResultReceiver requestResultReceiver;
     private UpdateResultReceiver updateResultReceiver;
+    private RequestResultRoomReceiver requestResultRoomReceiver;
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,14 +66,19 @@ public class Profile extends Fragment {
     private ArrayList<EditText> listProfile = new ArrayList<>();
     private String user_password;
     private TextView status;
+    private Spinner dormList;
+    private ArrayAdapter<String> dormAdapter;
 
     private Button saveEditButton;
+    private String selectedDormitory;
 
+    private TextView item;
 
     public Profile() {
         // Required empty public constructor
         requestResultReceiver = new RequestResultReceiver(new Handler());
         updateResultReceiver = new UpdateResultReceiver(new Handler());
+        requestResultRoomReceiver = new RequestResultRoomReceiver(new Handler());
     }
 
     /**
@@ -161,7 +171,44 @@ public class Profile extends Fragment {
 
         status = view.findViewById(R.id.status_View);
 
+        dormList = view.findViewById(R.id.dormitories_spinner);
+        dormList.setEnabled(false);
+        AdapterRequestResultReceiver adapterRequestResultReceiver = new AdapterRequestResultReceiver(new Handler());
+
+        dormAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, new ArrayList<String>());
+        // Определяем разметку для использования при выборе элемента
+        dormAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Применяем адаптер к элементу spinner
+        dormList.setAdapter(dormAdapter);
+        dormList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Получаем выбранный объект
+                selectedDormitory = (String) parent.getItemAtPosition(position);
+
+                startIntent.putExtra("receiver", requestResultRoomReceiver);
+                startIntent.putExtra("type", "select");
+                startIntent.putExtra("request", "SELECT MAX([roomnumber]) AS maxRoom " +
+                        " FROM [room] WHERE [fk_dorm] = '" + selectedDormitory + "';");
+                getActivity().startService(startIntent);
+
+                Log.d("item", selectedDormitory);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        adapterRequestResultReceiver.setArgs(dormAdapter);
+
+        startIntent.putExtra("receiver", adapterRequestResultReceiver);
+        startIntent.putExtra("type", "select");
+        startIntent.putExtra("request", "SELECT namedorm_id FROM [dormitory]");
+        getActivity().startService(startIntent);
+
         setEditTextMasState(false);
+
 
         editModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -174,21 +221,24 @@ public class Profile extends Fragment {
                     password_row.setVisibility(View.VISIBLE);
                     //save button
                     saveEditButton.setVisibility(View.VISIBLE);
-                } else {
+                    dormList.setEnabled(true);
 
+                } else {
                     setEditTextMasState(false);
                     //password_row
                     password_row.setVisibility(View.INVISIBLE);
                     //save button
                     saveEditButton.setVisibility(View.INVISIBLE);
                     status.setVisibility(View.INVISIBLE);
-
+                    dormList.setEnabled(false);
+                    //TextView v = (TextView) dormList.getSelectedItem();
+                    //v.setTextColor(Color.BLACK);
                 }
             }
         });
 
         startIntent.putExtra("receiver", requestResultReceiver);
-
+        startIntent.putExtra("type", "select");
         startIntent.putExtra("request", "SELECT * FROM [userreader] WHERE userreader_id = " + String.valueOf(mUser_id) + ";");
         getActivity().startService(startIntent);
 
@@ -264,11 +314,18 @@ public class Profile extends Fragment {
                         secondName.setText(rec.getString("usersecondname"));
                         surName.setText(rec.getString("usersurname"));
                         birthday.setText(rec.getString("age")); ////TODO: поменять на дату
-                        room.setText(rec.getString("fk_room"));
+
                         phone.setText(rec.getString("phonenumber"));
                         //email.setText(rec.getString("userfirstname")); //TODO: добавить в БД
                         login.setText(rec.getString("userlogin"));
                         user_password = rec.getString("userpassword"); //TODO: нормальную проверку
+
+                        dormList.setSelection(dormAdapter.getPosition(rec.getString("fk_dorm")));
+
+                        startIntent.putExtra("receiver", new RequestResultIntReceiver(new Handler()));
+                        startIntent.putExtra("type", "select");
+                        startIntent.putExtra("request", "SELECT roomnumber FROM [room] WHERE room_id = " + rec.getString("fk_room"));
+                        getActivity().startService(startIntent);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -316,6 +373,139 @@ public class Profile extends Fragment {
         }
 
     }
+
+    private class RequestResultIntReceiver extends ResultReceiver {
+
+        public RequestResultIntReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            Log.d("data", "пусто");
+                        } else {
+                            room.setText(String.valueOf(resultSet.getJSONObject(0).getInt("roomnumber")));
+                        }
+                        break;
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    private class AdapterRequestResultReceiver extends ResultReceiver {
+
+        AdapterRequestResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        private ArrayAdapter adapter = null;
+
+        void setArgs(ArrayAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            ArrayList<String> list = new ArrayList<>();
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            Log.d("data", "пусто");
+                            break;
+                        }
+
+                        for (int i = 0; i < resultSet.length(); i++) {
+                            JSONObject o = resultSet.getJSONObject(i);
+                            list.add(o.getString(o.keys().next()));
+                        }
+
+                        if (adapter != null) {
+                            adapter.clear();
+
+                            for (String s : list) {
+                                Log.d("List", s);
+                                adapter.add(s);
+                            }
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    private class RequestResultRoomReceiver extends ResultReceiver {
+
+        public RequestResultRoomReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            Log.d("data", "пусто");
+                        } else {
+                            int roomsMax = resultSet.getJSONObject(0).getInt("maxRoom");
+                            Log.d("data", "user_id: " + roomsMax);
+                            room.setFilters(new InputFilter[]{new RegistrationActivity.InputFilterMinMax(1, roomsMax)});
+                            room.setText(room.getText());
+                        }
+
+                        break;
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
 
     private void setEditTextMasState(boolean state) {
         for (EditText editText : listProfile) {
