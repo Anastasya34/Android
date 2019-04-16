@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -116,7 +117,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
             item.setChecked(true);
             // Выводим выбранный пункт в заголовке
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.adm_drawer_layout);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }
 
