@@ -110,7 +110,6 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
                 // Выполняем переход на Profile:
                 fragmentClass = Profile.class;
                 args.putInt(Profile.ARG_USER_ID, user_id);
-
         }
 
 

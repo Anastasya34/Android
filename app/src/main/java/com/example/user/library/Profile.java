@@ -42,6 +42,7 @@ public class Profile extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_USER_ID = "user_id";
+    public static final String ARG_EDITABLE = "editable";
 
     private Intent startIntent;
     //private DbService dbService;
@@ -52,6 +53,7 @@ public class Profile extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private int mUser_id = -1;
+    private boolean mEditable = false;
 
     private EditText firstName;
     private EditText secondName;
@@ -84,17 +86,22 @@ public class Profile extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      * @param user_id user id.
+     * @param editable make profile editable
      * @return A new instance of fragment Profile.
      */
     // TODO: Rename and change types and number of parameters
-    public static Profile newInstance(int user_id) {
+    public static Profile newInstance(int user_id, boolean editable) {
         Profile fragment = new Profile();
         Bundle args = new Bundle();
         args.putInt(ARG_USER_ID, user_id);
+        args.putBoolean(ARG_EDITABLE, editable);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static Profile newInstance(int user_id) {
+        return newInstance(user_id, true);
     }
 
     @Override
@@ -105,6 +112,7 @@ public class Profile extends Fragment {
 
         if (getArguments() != null) {
             mUser_id = getArguments().getInt(ARG_USER_ID);
+            mEditable = getArguments().getBoolean(ARG_EDITABLE, true);
         }
     }
 
@@ -117,6 +125,7 @@ public class Profile extends Fragment {
 
         //интерфейс
         Switch editModeSwitch = view.findViewById(R.id.editMode_switch);
+        if (!mEditable) editModeSwitch.setVisibility(View.INVISIBLE);
         saveEditButton = view.findViewById(R.id.saveEdit_button);
 
         saveEditButton.setOnClickListener(new View.OnClickListener() {
