@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MenuLibrary extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class AdminContent extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawer;
     private int user_id = -1;
 
@@ -26,21 +26,21 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
 
         user_id = intent.getIntExtra("user_id", -1);
 
-        setContentView(R.layout.left_panel);
+        setContentView(R.layout.admin_left_panel);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer = (DrawerLayout) findViewById(R.id.adm_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.adm_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) BooksList.class.newInstance()).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminMainFragment.class.newInstance()).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -62,7 +62,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.menu_library, menu);
+        // getMenuInflater().inflate(R.menu.menu_library, menu);
         return true;
     }
 
@@ -86,7 +86,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         // Создадим новый фрагмент
-        Fragment fragment = null;
+       /* Fragment fragment = null;
         Class fragmentClass = null;
         // получим идентификатор выбранного пункта меню
         int id = item.getItemId();
@@ -103,7 +103,6 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на ProposalActivity:
                 fragmentClass = ProposalActivity.class;
-                args.putInt(ProposalActivity.USER_ID, user_id);
                 break;
             case R.id.my_profile:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
@@ -135,7 +134,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }
-
+*/
 
         return false;
     }

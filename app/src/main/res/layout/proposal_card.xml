@@ -34,7 +34,10 @@
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/book_cover"
             android:text="@string/book_name"
-            android:textSize="28sp"
+            android:textColor="@android:color/black"
+            android:paddingTop = "4dp"
+            android:paddingLeft = "7dp"
+            android:textSize="21dp"
             android:layout_toEndOf="@+id/book_cover" />
 
         <TextView
@@ -43,15 +46,23 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/book_name"
             android:layout_toRightOf="@+id/book_cover"
+            android:textColor="@android:color/black"
+            android:paddingTop = "4dp"
+            android:paddingLeft = "7dp"
+            android:textSize="18dp"
             android:text="@string/book_description"
             android:layout_toEndOf="@+id/book_cover" />
 
         <TextView
             android:id="@+id/proposal_date"
+            android:paddingTop = "4dp"
+            android:paddingLeft = "7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/proposal_status"
             android:layout_toRightOf="@+id/book_cover"
+            android:textColor="@android:color/black"
+            android:textSize="18dp"
             android:text="@string/book_description"
             android:layout_toEndOf="@+id/book_cover" />
     </RelativeLayout>

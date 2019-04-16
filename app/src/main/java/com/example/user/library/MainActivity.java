@@ -10,11 +10,9 @@ import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         if (!bound) bindService(startIntent, sConn, BIND_AUTO_CREATE);
-        }
+    }
 
 
     // Обрабатываем нажатие кнопки "Войти":
@@ -147,16 +145,10 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject rec = resultSet.getJSONObject(0);
                             if (userLoginFlag) {
                                 userLoginFlag = false;
-                                int adminId = rec.getInt("admin_id"); //TODO: добавить переход на активити админа
-//                                Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
-//                                intent.putExtra("admin_id", adminId);
-//                                startActivity(intent);
-                                Log.d("data", resultData.getString("JSONString"));
-                                Toast toast = Toast.makeText(getApplicationContext(),
-                                        "Панель админа!",
-                                        Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();
+                                int adminId = rec.getInt("admin_id");
+                                Intent intent = new Intent(MainActivity.this, AdminContent.class);
+                                intent.putExtra("admin_id", adminId);
+                                startActivity(intent);
                             } else {
                                 int userreader_id = rec.getInt("userreader_id");
                                 Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
