@@ -8,47 +8,52 @@
     tools:context=".RegistrationActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/loginscrn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:text="Регистрация"
-        android:textSize="25dp"
-        android:gravity="center_horizontal"
-        android:textStyle="bold"
-        android:layout_gravity="center"/>
-    <TextView
-        android:id="@+id/surname_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="20dp"
-        android:text="Фамилия"/>
-    <EditText
-        android:id="@+id/surname_value"
-        android:inputType="textPersonName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:ems="10"/>
-    <TextView
-        android:id="@+id/firstName_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="20dp"
-        android:text="Имя"/>
-    <EditText
-        android:id="@+id/firstName_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:layout_marginLeft="100dp"
-        android:ems="10"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/loginscrn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="80dp"
+            android:gravity="center_horizontal"
+            android:text="Регистрация"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/surname_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="20dp"
+            android:text="Фамилия" />
+
+        <EditText
+            android:id="@+id/surname_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/firstName_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="20dp"
+            android:text="Имя" />
+
+        <EditText
+            android:id="@+id/firstName_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:ems="10"
+            android:inputType="textPersonName" />
 
         <TextView
             android:id="@+id/secondName_text"
@@ -58,35 +63,53 @@
             android:layout_marginTop="20dp"
             android:inputType="textPersonName"
             android:text="Отчество" />
-    <EditText
-        android:id="@+id/secondName_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:layout_marginLeft="100dp"
-        android:ems="10"/>
 
-    <TextView
+        <EditText
+            android:id="@+id/secondName_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/birthday_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/birthday" />
+
+        <EditText
+            android:id="@+id/birthday_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:ems="10"
+            android:inputType="date" />
+
+        <TextView
             android:id="@+id/dormitories_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
             android:layout_marginTop="20dp"
-            android:text="Общежитие"/>
-    <Spinner
-            android:id="@+id/dormitories"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:layout_marginRight="70dp" />
+            android:text="Общежитие" />
 
-    <TextView
+        <Spinner
+            android:id="@+id/dormitories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="70dp" />
+
+        <TextView
             android:id="@+id/rooms_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
             android:layout_marginTop="20dp"
-            android:text=" Комната"/>
+            android:text=" Комната" />
 
         <EditText
             android:id="@+id/room_value"
@@ -97,33 +120,35 @@
             android:inputType="numberDecimal" />
 
         <TextView
-        android:id="@+id/phone_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Телефон"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="100dp" />
-    <EditText
-        android:id="@+id/phone_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:layout_marginLeft="100dp"
-        android:ems="10" />
+            android:id="@+id/phone_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="20dp"
+            android:text="Телефон" />
 
-    <TextView
-        android:id="@+id/email_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:layout_marginLeft="100dp" />
-    <EditText
-        android:id="@+id/email_value"
-        android:layout_width="wrap_content"
-        android:inputType="textEmailAddress"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:ems="10" />
+        <EditText
+            android:id="@+id/phone_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:ems="10"
+            android:inputType="phone" />
+
+        <TextView
+            android:id="@+id/email_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:text="Email" />
+
+        <EditText
+            android:id="@+id/email_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
 
         <TextView
             android:id="@+id/login_text"
@@ -131,6 +156,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
             android:text="Логин" />
+
         <EditText
             android:id="@+id/login_value"
             android:layout_width="wrap_content"
@@ -138,12 +164,12 @@
             android:layout_marginLeft="100dp"
             android:ems="10" />
 
-    <TextView
-        android:id="@+id/thirdTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="100dp"
-        android:text="Пароль"/>
+        <TextView
+            android:id="@+id/thirdTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:text="Пароль" />
 
         <EditText
             android:id="@+id/password_value"
@@ -161,15 +187,16 @@
             android:onClick="LoginReg"
             android:text="Зарегистрироваться" />
 
-    <TextView android:id="@+id/errorMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:visibility="invisible"
-        android:textSize="15dp"
-        android:textColor="#ff0000"/>
+        <TextView
+            android:id="@+id/errorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#ff0000"
+            android:textSize="15dp"
+            android:visibility="invisible" />
 
-    <!--TextView android:id="@+id/lnkLogin"
+        <!--TextView android:id="@+id/lnkLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -178,5 +205,5 @@
         android:textSize="15dp"
         android:textColor="#3F51B5"
         android:onClick="test"/-->
-</LinearLayout>
+    </LinearLayout>
 </ScrollView>

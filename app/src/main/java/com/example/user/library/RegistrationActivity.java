@@ -1,5 +1,6 @@
 package com.example.user.library;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,9 +44,11 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
     private EditText login;
     private EditText email;
     private EditText roomValue;
+    private EditText birthday;
 
     private Intent startIntent;
     private UpdateResultReceiver updateResultReceiver;
+    private DatePickerDialog datePickerDialog;
 
 
     @Override
@@ -54,11 +58,34 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
 
         AdapterRequestResultReceiver adapterRequestResultReceiver = new AdapterRequestResultReceiver(new Handler());
 
+        datePickerDialog = new DatePickerDialog(
+                RegistrationActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                String date = String.valueOf(day) + "." + String.valueOf(month + 1) + "." + String.valueOf(year);
+                birthday.setText(date);
+            }
+        }, 1990, 1, 1);
+
+
+
+
+
         updateResultReceiver = new UpdateResultReceiver(new Handler());
         requestResultRoomReceiver = new RequestResultRoomReceiver(new Handler());
 
         setContentView(R.layout.registration_activity);
 
+        birthday = findViewById(R.id.birthday_value);
+
+        birthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                datePickerDialog.show();
+            }
+        });
+
+        birthday.setFocusable(false);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, new ArrayList<String>());
         // Определяем разметку для использования при выборе элемента
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -187,6 +214,7 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
         editList.add(phone);
         editList.add(email);
         editList.add(login);
+        editList.add(birthday);
         editList.add(password);
         editList.add(room);
 
@@ -203,6 +231,7 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
         String loginString =  login.getText().toString();
         String passwordString =  password.getText().toString();
         String selectedRoom = roomValue.getText().toString();
+        String birthdayString = birthday.getText().toString();
 
         Spinner dormList = findViewById(R.id.dormitories);
         dormList.setEnabled(false);
@@ -231,6 +260,7 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
                 || emailString.isEmpty()
                 || loginString.isEmpty()
                         || selectedRoom.isEmpty()
+                        || birthdayString.isEmpty()
                         || passwordString.isEmpty())) {
 
             errorMessage.setTextColor(Color.RED);
@@ -244,7 +274,7 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
             startIntent.putExtra("request", "SELECT room_id FROM [room] WHERE roomnumber = " + room.getText().toString() + " AND fk_dorm = \'" + selectedDormitory + "\';");
             startService(startIntent);
 
-            new sendInsertTask().execute(fistNameString, secondNameString, surNameString, phoneString, loginString, passwordString, selectedDormitory);
+            new sendInsertTask().execute(fistNameString, secondNameString, surNameString, birthdayString, phoneString, emailString, loginString, passwordString, selectedDormitory);
 
         }
 
@@ -590,8 +620,10 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
                     "[userfirstname], " +
                     "[usersecondname], " +
                     "[usersurname], " +
+                    "[birthday], " +
                     "[fk_room], " +
                     "[phonenumber], " +
+                    "[email], " +
                     "[userlogin], " +
                     "[userpassword], " +
                     "[fk_dorm])" +
@@ -599,15 +631,17 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
                     + "\'" + strings[0] + "\', "
                     + "\'" + strings[1] + "\', "
                     + "\'" + strings[2] + "\', "
-                    + fk_room + ", "
                     + "\'" + strings[3] + "\', "
+                    + fk_room + ", "
                     + "\'" + strings[4] + "\', "
                     + "\'" + strings[5] + "\', "
-                    + "\'" + strings[6] + "\')";
+                    + "\'" + strings[6] + "\', "
+                    + "\'" + strings[7] + "\', "
+                    + "\'" + strings[8] + "\')";
 
             Log.d("query", query);
 
-            updateResultReceiver.setLogin(strings[4]);
+            updateResultReceiver.setLogin(strings[6]);
             startIntent.putExtra("receiver", updateResultReceiver);
             startIntent.putExtra("type", "update");
             startIntent.putExtra("request", query);

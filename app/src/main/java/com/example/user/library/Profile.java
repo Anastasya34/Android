@@ -1,5 +1,6 @@
 package com.example.user.library;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -27,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 
@@ -43,6 +46,8 @@ public class Profile extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String ARG_USER_ID = "user_id";
     public static final String ARG_EDITABLE = "editable";
+
+    private DatePickerDialog datePickerDialog;
 
     private Intent startIntent;
     //private DbService dbService;
@@ -109,6 +114,14 @@ public class Profile extends Fragment {
         super.onCreate(savedInstanceState);
 
         startIntent = new Intent(getActivity(), DbService.class);
+        datePickerDialog = new DatePickerDialog(
+                getContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                String date = String.valueOf(day) + "." + String.valueOf(month + 1) + "." + String.valueOf(year);
+                birthday.setText(date);
+            }
+        }, 1990, 1, 1);
 
         if (getArguments() != null) {
             mUser_id = getArguments().getInt(ARG_USER_ID);
@@ -151,6 +164,8 @@ public class Profile extends Fragment {
                                 "[userfirstname]=\'" + firstName.getText() +
                                 "\',[usersecondname]=\'" + secondName.getText() +
                                 "\',[usersurname]=\'" + surName.getText() +
+                                "\',[birthday]=\'" + birthday.getText() +
+                                "\',[email]=\'" + email.getText() +
                                 "\',[phonenumber]=\'" + phone.getText() +
                                 "\',[userlogin]=\'" + login.getText() +
                                 "\'WHERE [userreader_id] = " + mUser_id + ";");
@@ -177,6 +192,13 @@ public class Profile extends Fragment {
         listProfile.add(email);
         login = view.findViewById(R.id.login_edit);
         listProfile.add(login);
+
+        birthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                datePickerDialog.show();
+            }
+        });
 
         status = view.findViewById(R.id.status_View);
 
@@ -231,6 +253,7 @@ public class Profile extends Fragment {
                     //save button
                     saveEditButton.setVisibility(View.VISIBLE);
                     dormList.setEnabled(true);
+                    birthday.setFocusable(false);
 
                 } else {
                     setEditTextMasState(false);
@@ -322,10 +345,17 @@ public class Profile extends Fragment {
                         firstName.setText(rec.getString("userfirstname"));
                         secondName.setText(rec.getString("usersecondname"));
                         surName.setText(rec.getString("usersurname"));
-                        birthday.setText(rec.getString("age")); ////TODO: поменять на дату
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            LocalDate date = LocalDate.parse(rec.getString("birthday"));
+                            String dateString = String.valueOf(date.getDayOfMonth()) + "." + String.valueOf(date.getMonthValue() + 1) + "." + String.valueOf(date.getYear());
+                            birthday.setText(dateString);
+                            Log.d("data", String.valueOf(date.getYear()));
+                            datePickerDialog.getDatePicker().updateDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+                        }
 
                         phone.setText(rec.getString("phonenumber"));
-                        //email.setText(rec.getString("userfirstname")); //TODO: добавить в БД
+                        email.setText(rec.getString("email"));
                         login.setText(rec.getString("userlogin"));
                         user_password = rec.getString("userpassword"); //TODO: нормальную проверку
 
