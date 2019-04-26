@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayoutBooks"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".BooksList">
@@ -10,33 +11,113 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/book_search"
-            style="@style/EditTextStyle"
+        <TableLayout
+            android:id="@+id/tableSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autofillHints=""
-            android:hint="@string/searchingText"
-            android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/ViewBooks"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:targetApi="o" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ToggleButton
+                    android:id="@+id/toggleButton_searching"
+                    style="?attr/searchViewStyle"
+                    android:layout_width="44dp"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:textAppearance="@style/TextAppearance.AppCompat"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteX="0dp" />
+
+                <EditText
+                    android:id="@+id/book_search"
+                    style="@android:style/Widget.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints=""
+                    android:hint="@string/searchingText"
+                    android:inputType="text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:targetApi="o" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/row_author"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/view_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Автор"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/author_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    tools:visibility="visible" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/themeView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="тема"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/themeSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/searchButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="поиск" />
+            </TableRow>
+        </TableLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/ViewBooks"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/book_search">
+            app:layout_constraintTop_toBottomOf="@+id/tableSearch">
 
         </android.support.v7.widget.RecyclerView>
+
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

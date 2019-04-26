@@ -118,7 +118,7 @@ public class Profile extends Fragment {
                 getContext(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                String date = String.valueOf(day) + "." + String.valueOf(month + 1) + "." + String.valueOf(year);
+                String date = day + "." + (month + 1) + "." + year;
                 birthday.setText(date);
             }
         }, 1990, 1, 1);
