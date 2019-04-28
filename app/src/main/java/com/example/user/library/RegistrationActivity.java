@@ -6,6 +6,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.text.InputFilter;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -318,5 +320,41 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         Log.d("!onLoaderReset","kjhgf");
 
     }
+
+
+    public static class InputFilterMinMax implements InputFilter {
+
+        private int min, max;
+
+        InputFilterMinMax(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        public InputFilterMinMax(String min, String max) {
+            this.min = Integer.parseInt(min);
+            this.max = Integer.parseInt(max);
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            try {
+                // Remove the string out of destination that is to be replaced
+                String newVal = dest.toString().substring(0, dstart) + dest.toString().substring(dend, dest.toString().length());
+                // Add the new string in
+                newVal = newVal.substring(0, dstart) + source.toString() + newVal.substring(dstart, newVal.length());
+                int input = Integer.parseInt(newVal);
+                if (isInRange(min, max, input))
+                    return null;
+            } catch (NumberFormatException ignored) {
+            }
+            return "";
+        }
+
+        private boolean isInRange(int a, int b, int c) {
+            return b > a ? c >= a && c <= b : c >= b && c <= a;
+        }
+    }
+
 
 }

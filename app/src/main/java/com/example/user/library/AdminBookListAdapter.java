@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AdminBookListAdapter extends RecyclerView.Adapter<AdminBookListAdapter.BookViewHolder> {
     List<Book> books;
-    private ClickListener adminClickListener;
+    private BookClickListener adminBookClickListener;
 
     public class BookViewHolder extends RecyclerView.ViewHolder {
 
@@ -33,19 +33,27 @@ public class AdminBookListAdapter extends RecyclerView.Adapter<AdminBookListAdap
                 @Override
                 public void onClick(View v) {
                     //User user = books.get(getLayoutPosition());
-                    adminClickListener.onItemClick(getAdapterPosition(), v);
+                    adminBookClickListener.onItemClick(getAdapterPosition(), v);
                 }
             });
         }
     }
 
-    public interface ClickListener {
+    public interface BookClickListener {
         void onItemClick(int position, View v);
     }
-
-    AdminBookListAdapter(List<Book> books, ClickListener adminClickListener){
+    AdminBookListAdapter(List<Book> books){
         this.books = books;
-        this.adminClickListener = adminClickListener;
+        this.adminBookClickListener = new BookClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+
+            }
+        };
+    }
+    AdminBookListAdapter(List<Book> books, BookClickListener adminBookClickListener){
+        this.books = books;
+        this.adminBookClickListener = adminBookClickListener;
     }
 
     @Override

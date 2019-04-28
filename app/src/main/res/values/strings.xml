@@ -41,4 +41,10 @@
     <string name="phone">Телефон</string>
     <string name="save">Сохранить</string>
     <string name="Edit">Редактирование</string>
+    <string name="link_user_profile"><u>Профиль пользователя</u></string>
+    <string name="link_user_proposal_history"><u>Посмотреть историю заявок</u></string>
+    <string name="user_books_list">Список книг на руках у пользователя: </string>
+    <string name="save_process">Сохранение...</string>
+
+
 </resources>

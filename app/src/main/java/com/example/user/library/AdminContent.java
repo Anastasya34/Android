@@ -37,7 +37,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminBooksUsersFragment.class.newInstance()).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminBooksFragment.class.newInstance()).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -94,7 +94,12 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
             case R.id.info_book:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на ProposalActivity:
-                fragmentClass = AdminBooksUsersFragment.class;
+                fragmentClass = AdminBooksFragment.class;
+                break;
+            case R.id.info_user:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                // Выполняем переход на ProposalActivity:
+                fragmentClass = AdminUsersFragment.class;
                 break;
         }
 

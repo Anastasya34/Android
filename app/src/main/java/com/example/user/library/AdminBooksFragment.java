@@ -26,8 +26,8 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdminBooksUsersFragment extends Fragment {
-    AdminBookListAdapter.ClickListener adminClickListener;
+public class AdminBooksFragment extends Fragment {
+    AdminBookListAdapter.BookClickListener adminBookClickListener;
     private EditText searchRequest;
     private RecyclerView booksView;
     private List<Book> books;
@@ -36,7 +36,7 @@ public class AdminBooksUsersFragment extends Fragment {
     private Intent startIntent;
     private RequestResultReceiver requestResultReceiver;
 
-    public AdminBooksUsersFragment() {
+    public AdminBooksFragment() {
         // Required empty public constructor
     }
 
@@ -66,7 +66,7 @@ public class AdminBooksUsersFragment extends Fragment {
         startIntent.putExtra("receiver", requestResultReceiver);
         startIntent.putExtra("request", "SELECT book_id, bookname FROM book WHERE book.bookname LIKE '%" + searchRequest.getText() + "%';");
         rootView.getContext().startService(startIntent);
-        adminClickListener = new AdminBookListAdapter.ClickListener() {
+        adminBookClickListener = new AdminBookListAdapter.BookClickListener() {
             @Override
             public void onItemClick(int position, View v) {
                 // Создадим новый фрагмент
@@ -129,7 +129,7 @@ public class AdminBooksUsersFragment extends Fragment {
                             JSONObject rec = resultSet.getJSONObject(i);
                             books.add(new Book(rec.getString("bookname"), rec.getString("book_id")));
                         }
-                        AdminBookListAdapter adapter = new AdminBookListAdapter(books, adminClickListener);
+                        AdminBookListAdapter adapter = new AdminBookListAdapter(books, adminBookClickListener);
                         booksView.setAdapter(adapter);
 
                     } catch (JSONException e) {
