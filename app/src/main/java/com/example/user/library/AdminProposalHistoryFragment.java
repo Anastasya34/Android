@@ -109,7 +109,7 @@ public class AdminProposalHistoryFragment extends Fragment {
                             JSONObject row = resultSet.getJSONObject(i);
                             bookId = row.getString("book1_id");
                             bookStatus = Integer.valueOf(row.getString("bookstatus"));
-                            bookIdForProposal.put(bookId, new Proposal(0, bookId, stasusDictionary.get(bookStatus), row.getString("issuedate") ));
+                            bookIdForProposal.put(bookId, new Proposal(bookId,0, stasusDictionary.get(bookStatus), row.getString("issuedate") ));
                         }
                         Log.d("After", bookIdForProposal.keySet().toString());
                         String querySelectBook = "SELECT book_id, bookname FROM [book] WHERE book_id IN ";

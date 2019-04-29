@@ -98,9 +98,13 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.info_user:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
-                // Выполняем переход на ProposalActivity:
                 fragmentClass = AdminUsersFragment.class;
                 break;
+            case R.id.proposals:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                fragmentClass = AdminProposalsFragment.class;
+                break;
+
         }
 
 

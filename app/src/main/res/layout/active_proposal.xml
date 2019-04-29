@@ -18,6 +18,13 @@
         android:textSize="24dp"
         android:gravity="center_horizontal" />
 
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rViewProposal"
         android:layout_width="match_parent"

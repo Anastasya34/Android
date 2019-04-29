@@ -99,6 +99,12 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
                 // Выполняем переход на ProposalActivity:
                 fragmentClass = BooksList.class;
                 break;
+            case R.id.my_books:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                // Выполняем переход на ProposalActivity:
+                args.putInt(ProposalActivity.USER_ID, user_id);
+                fragmentClass = ActiveProposalActivity.class;
+                break;
             case R.id.my_proposal:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на ProposalActivity:

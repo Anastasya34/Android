@@ -45,6 +45,7 @@
     <string name="link_user_proposal_history"><u>Посмотреть историю заявок</u></string>
     <string name="user_books_list">Список книг на руках у пользователя: </string>
     <string name="save_process">Сохранение...</string>
+    <string name="confirm_return">Оформить возврат книги</string>
 
 
 </resources>

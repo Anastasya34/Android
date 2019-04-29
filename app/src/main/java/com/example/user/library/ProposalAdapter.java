@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
@@ -13,10 +14,20 @@ import java.util.List;
 public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.ProposalViewHolder> {
     private Context context;
     List<Proposal> proposals;
+    private BookReturnClickListener bookReturnClickListener;
 
+    public interface BookReturnClickListener {
+        void onBookReturnButtonClick(int position, View v);
+    }
     public ProposalAdapter(Context context, List<Proposal> proposals) {
         this.context = context;
         this.proposals = proposals;
+    }
+    public ProposalAdapter(Context context, List<Proposal> proposals,BookReturnClickListener bookReturnClickListener) {
+        this.context = context;
+        this.proposals = proposals;
+        this.bookReturnClickListener = bookReturnClickListener;
+
     }
 
     public class ProposalViewHolder extends RecyclerView.ViewHolder {
@@ -24,6 +35,7 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
         private TextView bookName;
         private TextView proposalStatus;
         private TextView proposalcreateDate;
+        private Button returnButton;
 
         public ProposalViewHolder(View itemView) {
             super(itemView);
@@ -31,12 +43,23 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
             bookName = itemView.findViewById(R.id.book_name);
             proposalStatus = itemView.findViewById(R.id.proposal_status);
             proposalcreateDate = itemView.findViewById(R.id.proposal_date);
+            returnButton = itemView.findViewById(R.id.return_book_button);
+            returnButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //User user = books.get(getLayoutPosition());
+                    bookReturnClickListener.onBookReturnButtonClick(getAdapterPosition(), v);
+                }
+            });
         }
 
         public void setData(String name, String status, String date) {
             bookName.setText(name);
             proposalStatus.setText("Статус: "+status);
             proposalcreateDate.setText("Дата создания заявки: "+date);
+            if (status.equals(Constants.stasusDictionary.get(5))){
+                returnButton.setVisibility(View.GONE);
+            }
         }
 
 

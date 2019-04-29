@@ -5,13 +5,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,24 +21,28 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ActiveProposalActivity extends Fragment {
     public static final String USER_ID = "user_id";
+    private ProgressBar spinner;
     public static int user_id = -1;
     public static Map<String, Proposal> bookIdForProposal;
+    private ProposalAdapter.BookReturnClickListener bookReturnClickListener;
     View rootView;
     //private ActiveProposalActivity.RequestResultReceiver requestResultReceiver;
     private RecyclerView recyclerView;
     private ProposalAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Proposal> proposals;
-    private ArrayMap<Integer, String> stasusDictionary = new ArrayMap<>();
     private Intent startIntent;
     private Intent startIntentBook;
-    private ActiveProposalActivity.RequestResultReceiver requestProposalReceiver;
-    private ActiveProposalActivity.RequestBookReceiver requestBookReceiver;
+    private ActiveProposalActivity.RequestResultReceiver selectProposalReceiver;
+    private ActiveProposalActivity.RequestBookReceiver selectBookReceiver;
+    private ActiveProposalActivity.UpdateProposalReceiver updateProposalReceiver;
+    String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = %s AND bookstatus IN (4,5)";
+    String queryUpdateProposal = "UPDATE [proposal] SET bookstatus = '%s' WHERE fk_userreader = %s AND book1_id = %s;";
+
     String querySelectBook;
 
     @Override
@@ -46,45 +52,62 @@ public class ActiveProposalActivity extends Fragment {
         if (getArguments() != null) {
             user_id = getArguments().getInt(USER_ID);
         }
-        requestProposalReceiver = new ActiveProposalActivity.RequestResultReceiver(new Handler());
-        requestBookReceiver = new ActiveProposalActivity.RequestBookReceiver(new Handler());
+
+        selectProposalReceiver = new ActiveProposalActivity.RequestResultReceiver(new Handler());
+        selectBookReceiver = new ActiveProposalActivity.RequestBookReceiver(new Handler());
         startIntent = new Intent(getActivity(), DbService.class);
         startIntentBook = new Intent(getActivity(), DbService.class);
-        fillStatusDictionary();
-    }
 
-    private void fillStatusDictionary(){
-        stasusDictionary.put(0, "заявка отправлена");
-        stasusDictionary.put(1, "заявка обрабатывается");
-        stasusDictionary.put(2, "заявка отклонена");
-        stasusDictionary.put(3, "заявка одобрена");
-        stasusDictionary.put(4, "книга на руках");
-        stasusDictionary.put(5, "заявка закрыта");
-        stasusDictionary.put(6, "заявка расформирована");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.active_proposal, container, false);
+        TextView userProposalText = rootView.findViewById(R.id.current_proposal);
+        spinner = rootView.findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
+        userProposalText.setText("Книги: ");
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rViewProposal);
         layoutManager = new LinearLayoutManager(rootView.getContext());
-        // specify an adapter (see also next example)
-        Proposal test = new Proposal(0,"Название книги","Статус","01.01.19");
-        Proposal test2 = new Proposal(0,"Название книги2","Статус","01.01.19");
-
-        /*proposals = new ArrayList<>();
-        proposals.add(test);
-        proposals.add(test2);*/
         //запрос
         Log.d("User ID", String.valueOf(user_id));
-        String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = "+String.valueOf(user_id);
+        querySelectProposals = String.format(querySelectProposals, String.valueOf(user_id));//"SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = "+String.valueOf(user_id) + " AND bookstatus IN (4,5)";
         //startIntent.putExtra("receiver", requestResultReceiver);
         startIntent.putExtra("request", querySelectProposals);
-        startIntent.putExtra("receiver", requestProposalReceiver);
+        startIntent.putExtra("receiver", selectProposalReceiver);
         startIntent.putExtra("type", "select");
         getActivity().startService(startIntent);
+        bookReturnClickListener = new ProposalAdapter.BookReturnClickListener(){
+            @Override
+            public void onBookReturnButtonClick(int position, View v) {
+                onClickReturnBook(position, v);
+            }
+        };
         return rootView;
+    }
+
+    public void onClickReturnBook(int position, View v){
+        updateProposalReceiver = new ActiveProposalActivity.UpdateProposalReceiver(new Handler());
+        Intent startIntentUpdate = new Intent(getActivity(), DbService.class);
+        String bookId = proposals.get(position).bookId;
+        Log.d("onClickReturnBook", bookId);
+        String queryUpdate = String.format(queryUpdateProposal, String.valueOf(5), String.valueOf(user_id), bookId);
+        Log.d("query", queryUpdate);
+        startIntentUpdate.putExtra("request", queryUpdate);
+        startIntentUpdate.putExtra("receiver", updateProposalReceiver);
+        startIntentUpdate.putExtra("type", "update");
+        getActivity().startService(startIntentUpdate);
+        spinner.setVisibility(View.VISIBLE);
+
+        bookReturnClickListener = new ProposalAdapter.BookReturnClickListener(){
+            @Override
+            public void onBookReturnButtonClick(int position, View v) {
+                onClickReturnBook(position, v);
+            }
+        };
+        getActivity().startService(startIntent);
+        spinner.setVisibility(View.GONE);
     }
 
     private class RequestResultReceiver extends ResultReceiver {
@@ -115,7 +138,7 @@ public class ActiveProposalActivity extends Fragment {
                             JSONObject row = resultSet.getJSONObject(i);
                             bookId = row.getString("book1_id");
                             bookStatus = Integer.valueOf(row.getString("bookstatus"));
-                            bookIdForProposal.put(bookId, new Proposal(0, bookId, stasusDictionary.get(bookStatus), row.getString("issuedate") ));
+                            bookIdForProposal.put(bookId, new Proposal(bookId,0, Constants.stasusDictionary.get(bookStatus), row.getString("issuedate") ));
                         }
                         Log.d("After", bookIdForProposal.keySet().toString());
                         String querySelectBook = "SELECT book_id, bookname FROM [book] WHERE book_id IN ";
@@ -124,7 +147,7 @@ public class ActiveProposalActivity extends Fragment {
                                 .replace("]",")");
                         System.out.println(querySelectBook+booksId);
                         startIntentBook.putExtra("request", querySelectBook + booksId);
-                        startIntentBook.putExtra("receiver", requestBookReceiver);
+                        startIntentBook.putExtra("receiver", selectBookReceiver);
                         startIntentBook.putExtra("type", "select");
                         getActivity().startService(startIntentBook);
                     } catch (JSONException e) {
@@ -166,7 +189,7 @@ public class ActiveProposalActivity extends Fragment {
 
                         proposals = new ArrayList<>(bookIdForProposal.values());
                         Log.d("prpsize", String.valueOf(proposals.size()));
-                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals);
+                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener);
                         // use a linear layout manager
                         layoutManager = new LinearLayoutManager(rootView.getContext());
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -176,6 +199,28 @@ public class ActiveProposalActivity extends Fragment {
                     }
                     Log.d("bookName2", bookIdForProposal.values().toString());
                     Log.d("data", resultData.getString("JSONString"));
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    private class UpdateProposalReceiver extends ResultReceiver {
+
+        public UpdateProposalReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    Log.d("success","eeeeee");
                     break;
             }
             super.onReceiveResult(resultCode, resultData);
