@@ -10,7 +10,8 @@
     <string name="book_name">Название книги</string>
     <string name="book">книга</string>
     <string name="book_description">Описание книги</string>
-    <string name="my_proposal">Мои заявки</string>
+    <string name="my_proposal">Активные заявки</string>
+    <string name="proposal_history">История заявок</string>
     <string name="create_proposal">Создать заявку</string>
     <string name="current_proposal">Текущие заявки:</string>
     <string name="title_activity_menu_library">MenuLibrary</string>
@@ -46,6 +47,9 @@
     <string name="user_books_list">Список книг на руках у пользователя: </string>
     <string name="save_process">Сохранение...</string>
     <string name="confirm_return">Оформить возврат книги</string>
+    <string name="add_book">Оформить заявку</string>
+    <string name="cancel_proposal">Отменить заявку</string>
+
 
 
 </resources>

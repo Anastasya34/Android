@@ -38,9 +38,13 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) BooksList.class.newInstance()).commit();
+            Bundle args = new Bundle();
+            args.putInt(Constants.USER_ID, user_id);
+            Fragment fragment = (Fragment) BooksList.class.newInstance();
+            fragment.setArguments(args);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -92,30 +96,33 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
         int id = item.getItemId();
 
         Bundle args = new Bundle();
+        args.putInt(Constants.USER_ID, user_id);
 
         switch (id) {
             case R.id.general:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
-                // Выполняем переход на ProposalActivity:
+                // Выполняем переход на UserMyProposalsFragment:
                 fragmentClass = BooksList.class;
                 break;
             case R.id.my_books:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
-                // Выполняем переход на ProposalActivity:
-                args.putInt(ProposalActivity.USER_ID, user_id);
-                fragmentClass = ActiveProposalActivity.class;
+                // Выполняем переход на UserMyProposalsFragment:
+                fragmentClass = UserMyBooksFragment.class;
                 break;
             case R.id.my_proposal:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
-                // Выполняем переход на ProposalActivity:
-                fragmentClass = ProposalActivity.class;
-                args.putInt(ProposalActivity.USER_ID, user_id);
+                // Выполняем переход на UserMyProposalsFragment:
+                fragmentClass = UserMyProposalsFragment.class;
+                break;
+            case R.id.proposal_history:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                // Выполняем переход на UserMyProposalsFragment:
+                fragmentClass = UserProposalsHistoryFragment.class;
                 break;
             case R.id.my_profile:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на Profile:
                 fragmentClass = Profile.class;
-                args.putInt(Profile.ARG_USER_ID, user_id);
 
         }
 

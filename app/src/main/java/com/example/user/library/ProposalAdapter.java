@@ -15,7 +15,7 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
     private Context context;
     List<Proposal> proposals;
     private BookReturnClickListener bookReturnClickListener;
-
+    private String type;
     public interface BookReturnClickListener {
         void onBookReturnButtonClick(int position, View v);
     }
@@ -23,11 +23,11 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
         this.context = context;
         this.proposals = proposals;
     }
-    public ProposalAdapter(Context context, List<Proposal> proposals,BookReturnClickListener bookReturnClickListener) {
+    public ProposalAdapter(Context context, List<Proposal> proposals,BookReturnClickListener bookReturnClickListener, String type) {
         this.context = context;
         this.proposals = proposals;
         this.bookReturnClickListener = bookReturnClickListener;
-
+        this.type = type;
     }
 
     public class ProposalViewHolder extends RecyclerView.ViewHolder {
@@ -44,6 +44,7 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
             proposalStatus = itemView.findViewById(R.id.proposal_status);
             proposalcreateDate = itemView.findViewById(R.id.proposal_date);
             returnButton = itemView.findViewById(R.id.return_book_button);
+            returnButton.setVisibility(View.GONE);
             returnButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -57,8 +58,13 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
             bookName.setText(name);
             proposalStatus.setText("Статус: "+status);
             proposalcreateDate.setText("Дата создания заявки: "+date);
-            if (status.equals(Constants.stasusDictionary.get(5))){
-                returnButton.setVisibility(View.GONE);
+            if (status.equals(Constants.stasusDictionary.get(0)) && type.equals("UserMyProposalsFragment")){
+                returnButton.setVisibility(View.VISIBLE);
+                returnButton.setText(R.string.cancel_proposal);
+            }
+            if (status.equals(Constants.stasusDictionary.get(5))&& type.equals("UserMyBooksFragment")){
+                returnButton.setVisibility(View.VISIBLE);
+                returnButton.setText(R.string.confirm_return);
             }
         }
 

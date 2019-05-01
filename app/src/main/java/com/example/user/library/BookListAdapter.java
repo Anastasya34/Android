@@ -2,22 +2,29 @@ package com.example.user.library;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookViewHolder> {
+    public interface ButtonClickListener {
+        void onButtonClick(int position, View v);
+    }
+    private ButtonClickListener buttonClickListener;
 
-    public static class BookViewHolder extends RecyclerView.ViewHolder {
+    public class BookViewHolder extends RecyclerView.ViewHolder {
 
         CardView bookCardView;
         TextView bookName;
         TextView bookDescription;
         ImageView bookImage;
+        private Button ussueProposalButton;
 
         BookViewHolder(View itemView) {
             super(itemView);
@@ -25,6 +32,14 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
             bookName = itemView.findViewById(R.id.book_name);
             bookDescription = itemView.findViewById(R.id.book_info);
             bookImage = itemView.findViewById(R.id.book_icon);
+            ussueProposalButton = itemView.findViewById(R.id.issue_proposal_button);
+            ussueProposalButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //User user = books.get(getLayoutPosition());
+                    buttonClickListener.onButtonClick(getAdapterPosition(), v);
+                }
+            });
         }
     }
 
@@ -32,6 +47,11 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
 
     BookListAdapter(List<Book> books){
         this.books = books;
+    }
+
+    BookListAdapter(List<Book> books, ButtonClickListener buttonClickListener){
+        this.books = books;
+        this.buttonClickListener = buttonClickListener;
     }
 
     @Override
@@ -49,6 +69,10 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
 
     @Override
     public void onBindViewHolder(BookViewHolder bookViewHolder, int i) {
+        if (books.get(i).already_get) {
+            Log.d("already_get", books.get(i).bookId);
+            bookViewHolder.ussueProposalButton.setVisibility(View.GONE);
+        }
         bookViewHolder.bookName.setText(books.get(i).name);
         bookViewHolder.bookDescription.setText(books.get(i).description);
         //personViewHolder.bookImage.setImageResource(books.get(i).imageId);

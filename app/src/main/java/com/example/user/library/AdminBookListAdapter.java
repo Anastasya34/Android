@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ public class AdminBookListAdapter extends RecyclerView.Adapter<AdminBookListAdap
         TextView bookName;
         TextView bookDescription;
         ImageView bookImage;
+        private Button ussueProposalButton;
 
         BookViewHolder(View itemView) {
             super(itemView);
@@ -27,8 +29,8 @@ public class AdminBookListAdapter extends RecyclerView.Adapter<AdminBookListAdap
             bookName = itemView.findViewById(R.id.book_name);
             bookDescription = itemView.findViewById(R.id.book_info);
             bookImage = itemView.findViewById(R.id.book_icon);
-
-
+            ussueProposalButton =  itemView.findViewById(R.id.issue_proposal_button);
+            ussueProposalButton.setVisibility(View.GONE);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

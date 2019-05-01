@@ -45,5 +45,16 @@
             android:layout_toRightOf="@+id/book_icon"
             android:text="@string/book_description"
             android:layout_toEndOf="@+id/book_icon" />
+
+        <Button
+            android:id="@+id/issue_proposal_button"
+            style="android:attr/buttonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/book_info"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="onClickReturnBook"
+            android:text="@string/add_book" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

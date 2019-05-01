@@ -17,6 +17,10 @@
             android:textSize = "20sp"
             android:title="@string/my_proposal"/>
         <item
+            android:id="@+id/proposal_history"
+            android:textSize = "20sp"
+            android:title="@string/proposal_history"/>
+        <item
             android:id="@+id/my_profile"
             android:textSize="20sp"
             android:title="@string/my_profile" />
