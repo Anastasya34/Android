@@ -65,5 +65,14 @@
             android:textSize="18dp"
             android:text="@string/book_description"
             android:layout_toEndOf="@+id/book_cover" />
+        <Button
+            android:id="@+id/return_book_button"
+            style="android:attr/buttonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/proposal_date"
+            android:layout_centerHorizontal="true"
+            android:onClick="onClickReturnBook"
+            android:text="@string/confirm_return" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

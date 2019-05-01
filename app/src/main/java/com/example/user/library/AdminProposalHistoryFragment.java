@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,12 +20,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class ActiveProposalActivity extends Fragment {
+public class AdminProposalHistoryFragment extends Fragment {
     public static final String USER_ID = "user_id";
-    public static int user_id = -1;
+    public static String user_id = "-1";
     public static Map<String, Proposal> bookIdForProposal;
     View rootView;
     //private ActiveProposalActivity.RequestResultReceiver requestResultReceiver;
@@ -35,8 +35,8 @@ public class ActiveProposalActivity extends Fragment {
     private ArrayMap<Integer, String> stasusDictionary = new ArrayMap<>();
     private Intent startIntent;
     private Intent startIntentBook;
-    private ActiveProposalActivity.RequestResultReceiver requestProposalReceiver;
-    private ActiveProposalActivity.RequestBookReceiver requestBookReceiver;
+    private AdminProposalHistoryFragment.RequestResultReceiver requestProposalReceiver;
+    private AdminProposalHistoryFragment.RequestBookReceiver requestBookReceiver;
     String querySelectBook;
 
     @Override
@@ -44,10 +44,10 @@ public class ActiveProposalActivity extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d("GetArguments", String.valueOf(getArguments()));
         if (getArguments() != null) {
-            user_id = getArguments().getInt(USER_ID);
+            user_id = getArguments().getString(USER_ID);
         }
-        requestProposalReceiver = new ActiveProposalActivity.RequestResultReceiver(new Handler());
-        requestBookReceiver = new ActiveProposalActivity.RequestBookReceiver(new Handler());
+        requestProposalReceiver = new AdminProposalHistoryFragment.RequestResultReceiver(new Handler());
+        requestBookReceiver = new AdminProposalHistoryFragment.RequestBookReceiver(new Handler());
         startIntent = new Intent(getActivity(), DbService.class);
         startIntentBook = new Intent(getActivity(), DbService.class);
         fillStatusDictionary();
@@ -67,16 +67,10 @@ public class ActiveProposalActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.active_proposal, container, false);
+        TextView userProposalText = rootView.findViewById(R.id.current_proposal);
+        userProposalText.setText("Заявки читателя");
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rViewProposal);
         layoutManager = new LinearLayoutManager(rootView.getContext());
-        // specify an adapter (see also next example)
-        Proposal test = new Proposal(0,"Название книги","Статус","01.01.19");
-        Proposal test2 = new Proposal(0,"Название книги2","Статус","01.01.19");
-
-        /*proposals = new ArrayList<>();
-        proposals.add(test);
-        proposals.add(test2);*/
-        //запрос
         Log.d("User ID", String.valueOf(user_id));
         String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = "+String.valueOf(user_id);
         //startIntent.putExtra("receiver", requestResultReceiver);
@@ -115,7 +109,7 @@ public class ActiveProposalActivity extends Fragment {
                             JSONObject row = resultSet.getJSONObject(i);
                             bookId = row.getString("book1_id");
                             bookStatus = Integer.valueOf(row.getString("bookstatus"));
-                            bookIdForProposal.put(bookId, new Proposal(0, bookId, stasusDictionary.get(bookStatus), row.getString("issuedate") ));
+                            bookIdForProposal.put(bookId, new Proposal(bookId,0, stasusDictionary.get(bookStatus), row.getString("issuedate") ));
                         }
                         Log.d("After", bookIdForProposal.keySet().toString());
                         String querySelectBook = "SELECT book_id, bookname FROM [book] WHERE book_id IN ";

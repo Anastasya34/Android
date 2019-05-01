@@ -10,9 +10,17 @@ public class Proposal{
     public String bookName;
     public String proposalStatus;
     public String proposalcreateDate;
+    public String bookId;
 
+    public Proposal(String bookId, int imageId, String proposalStatus, String proposalcreateDate) {
+        this.bookId = bookId;
+        this.imageId = imageId;
+        this.proposalStatus = proposalStatus;
+        this.proposalcreateDate = proposalcreateDate;
+    }
 
-    public Proposal(int imageId, String bookName, String proposalStatus, String proposalcreateDate) {
+    public Proposal(String bookId, int imageId, String bookName, String proposalStatus, String proposalcreateDate) {
+        this.bookId = bookId;
         this.imageId = imageId;
         this.bookName = bookName;
         this.proposalStatus = proposalStatus;

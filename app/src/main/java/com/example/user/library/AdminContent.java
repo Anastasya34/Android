@@ -21,10 +21,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent intent = getIntent();
         setContentView(R.layout.admin_left_panel);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
@@ -37,7 +34,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminBooksUsersFragment.class.newInstance()).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminBooksFragment.class.newInstance()).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -93,9 +90,18 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.info_book:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
-                // Выполняем переход на ProposalActivity:
-                fragmentClass = AdminBooksUsersFragment.class;
+                // Выполняем переход на UserMyProposalsFragment:
+                fragmentClass = AdminBooksFragment.class;
                 break;
+            case R.id.info_user:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                fragmentClass = AdminUsersFragment.class;
+                break;
+            case R.id.proposals:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                fragmentClass = AdminProposalsFragment.class;
+                break;
+
         }
 
 

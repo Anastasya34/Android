@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/user_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="18dp"
+        android:textColor="@android:color/black"
+        android:paddingTop = "12dp"
+        android:textSize="20sp"
+        android:text="Информация о читателе"/>
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:textColor="@android:color/black"
+        android:paddingTop = "12dp"
+        android:textSize="17sp"
+        android:text="Id: "/>
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:textColor="@android:color/black"
+        android:paddingTop = "12dp"
+        android:textSize="17sp"
+        android:text="ФИО:"/>
+
+    <TextView
+        android:id="@+id/user_login"
+        android:paddingTop = "12dp"
+        android:layout_marginLeft="18dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        android:text="Login: " />
+
+    <TextView
+        android:id="@+id/link_user_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="18dp"
+        android:lineSpacingMultiplier="0.8"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="@android:color/holo_blue_dark"
+        android:linksClickable="true"
+        android:textSize="17sp"
+        android:text="@string/link_user_profile"/>
+
+    <TextView
+        android:id="@+id/link_user_proposal_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="18dp"
+        android:lineSpacingMultiplier="0.8"
+        android:clickable="true"
+        android:focusable="true"
+        android:linksClickable="true"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="17sp"
+        android:text="@string/link_user_proposal_history"/>
+
+
+    <TextView
+        android:id="@+id/user_books_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="18dp"
+        android:lineSpacingMultiplier="0.8"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        android:text="@string/user_books_list"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ViewUsers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:scrollbars="vertical">
+    </android.support.v7.widget.RecyclerView>
+
+
+</LinearLayout>

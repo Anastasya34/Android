@@ -43,25 +43,5 @@
         android:textSize="18dp"
         android:text="@string/book_description" />
 
-        <TextView
-            android:id="@+id/user_email"
-            android:paddingTop = "4dp"
-            android:paddingLeft = "7dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/user_login"
-            android:textColor="@android:color/black"
-            android:textSize="18dp"
-            android:text="@string/book_description" />
-        <TextView
-            android:id="@+id/user_phone"
-            android:paddingTop = "4dp"
-            android:paddingLeft = "7dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/user_email"
-            android:textColor="@android:color/black"
-            android:textSize="18dp"
-            android:text="@string/book_description" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

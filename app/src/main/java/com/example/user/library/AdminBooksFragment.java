@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,17 +28,16 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdminBooksUsersFragment extends Fragment {
-    AdminBookListAdapter.ClickListener adminClickListener;
+public class AdminBooksFragment extends Fragment {
+    AdminBookListAdapter.BookClickListener adminBookClickListener;
     private EditText searchRequest;
     private RecyclerView booksView;
     private List<Book> books;
     private View rootView;
-
     private Intent startIntent;
     private RequestResultReceiver requestResultReceiver;
 
-    public AdminBooksUsersFragment() {
+    public AdminBooksFragment() {
         // Required empty public constructor
     }
 
@@ -56,17 +57,29 @@ public class AdminBooksUsersFragment extends Fragment {
 
         requestResultReceiver = new RequestResultReceiver(new Handler());
         startIntent = new Intent(rootView.getContext(), DbService.class);
-
-        String str = String.valueOf(searchRequest.getText());
-        if (str.length() == 0) {
-            str = "*";
-        }
-
-
         startIntent.putExtra("receiver", requestResultReceiver);
-        startIntent.putExtra("request", "SELECT book_id, bookname FROM book WHERE book.bookname LIKE '%" + searchRequest.getText() + "%';");
+        startIntent.putExtra("request", "SELECT book_id, bookname, fk_dorm, fk_room, fk_board, fk_cupboard FROM book WHERE book.bookname LIKE '%" + searchRequest.getText() + "%';");
         rootView.getContext().startService(startIntent);
-        adminClickListener = new AdminBookListAdapter.ClickListener() {
+        searchRequest.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String str = String.valueOf(searchRequest.getText());
+                startIntent.putExtra("receiver", requestResultReceiver);
+                startIntent.putExtra("request", "SELECT book_id, bookname FROM book WHERE book.bookname LIKE '%" + str + "%';");
+                rootView.getContext().startService(startIntent);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        adminBookClickListener = new AdminBookListAdapter.BookClickListener() {
             @Override
             public void onItemClick(int position, View v) {
                 // Создадим новый фрагмент
@@ -129,7 +142,7 @@ public class AdminBooksUsersFragment extends Fragment {
                             JSONObject rec = resultSet.getJSONObject(i);
                             books.add(new Book(rec.getString("bookname"), rec.getString("book_id")));
                         }
-                        AdminBookListAdapter adapter = new AdminBookListAdapter(books, adminClickListener);
+                        AdminBookListAdapter adapter = new AdminBookListAdapter(books, adminBookClickListener);
                         booksView.setAdapter(adapter);
 
                     } catch (JSONException e) {

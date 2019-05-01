@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class AdminBookListAdapter extends RecyclerView.Adapter<AdminBookListAdapter.BookViewHolder> {
     List<Book> books;
-    private ClickListener adminClickListener;
+    private BookClickListener adminBookClickListener;
 
     public class BookViewHolder extends RecyclerView.ViewHolder {
 
@@ -20,6 +21,7 @@ public class AdminBookListAdapter extends RecyclerView.Adapter<AdminBookListAdap
         TextView bookName;
         TextView bookDescription;
         ImageView bookImage;
+        private Button ussueProposalButton;
 
         BookViewHolder(View itemView) {
             super(itemView);
@@ -27,25 +29,33 @@ public class AdminBookListAdapter extends RecyclerView.Adapter<AdminBookListAdap
             bookName = itemView.findViewById(R.id.book_name);
             bookDescription = itemView.findViewById(R.id.book_info);
             bookImage = itemView.findViewById(R.id.book_icon);
-
-
+            ussueProposalButton =  itemView.findViewById(R.id.issue_proposal_button);
+            ussueProposalButton.setVisibility(View.GONE);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //User user = books.get(getLayoutPosition());
-                    adminClickListener.onItemClick(getAdapterPosition(), v);
+                    adminBookClickListener.onItemClick(getAdapterPosition(), v);
                 }
             });
         }
     }
 
-    public interface ClickListener {
+    public interface BookClickListener {
         void onItemClick(int position, View v);
     }
-
-    AdminBookListAdapter(List<Book> books, ClickListener adminClickListener){
+    AdminBookListAdapter(List<Book> books){
         this.books = books;
-        this.adminClickListener = adminClickListener;
+        this.adminBookClickListener = new BookClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+
+            }
+        };
+    }
+    AdminBookListAdapter(List<Book> books, BookClickListener adminBookClickListener){
+        this.books = books;
+        this.adminBookClickListener = adminBookClickListener;
     }
 
     @Override
