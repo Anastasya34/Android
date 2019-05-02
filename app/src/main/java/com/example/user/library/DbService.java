@@ -95,8 +95,9 @@ public class DbService extends IntentService {
                 e.printStackTrace();
                 resetConnection();
             }
-            Log.d("con", con.toString());
+
             if (con != null) {
+                Log.d("con", con.toString());
                 st = con.createStatement();
                 if (type != null && type.equals("update")) {
                     int n_strings = st.executeUpdate(query);

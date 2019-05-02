@@ -8,7 +8,7 @@ public class Book{
     String fk1_room;
     String fk1_board;
     String fk1_cupboard;
-    Boolean already_get;
+    Boolean already_get = false;
     int imageId;
 
     Book(String name, String description, int imageId){
