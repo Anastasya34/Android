@@ -59,14 +59,15 @@
                     android:id="@+id/view_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Автор"
+                    android:text="Авторы"
                     android:textSize="18sp"
                     android:visibility="visible" />
 
                 <EditText
                     android:id="@+id/author_search"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
                     tools:visibility="visible" />
@@ -80,13 +81,14 @@
                     android:id="@+id/themeView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Область знаний"
+                    android:text="Области знаний"
                     android:textSize="18sp" />
 
                 <EditText
                     android:id="@+id/themeSearch"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName" />
             </TableRow>

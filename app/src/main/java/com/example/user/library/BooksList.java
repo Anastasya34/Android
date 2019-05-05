@@ -42,7 +42,9 @@ public class BooksList extends Fragment {
     private List<Book> books;
     private Intent startIntent;
     private RequestResultReceiver requestResultReceiver;
+    ToggleButton searchingState;
     EditText themeSearch;
+    EditText authorsSearch;
     TextView authorLabel;
     TableRow rowAuthor;
     Button searchButton;
@@ -88,25 +90,66 @@ public class BooksList extends Fragment {
         authorLabel = rootView.findViewById(R.id.view_author);
         rowAuthor = rootView.findViewById(R.id.row_author);
         themeSearch = rootView.findViewById(R.id.themeSearch);
+        authorsSearch = rootView.findViewById(R.id.author_search);
         searchButton = rootView.findViewById(R.id.searchButton);
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String str = String.valueOf(themeSearch.getText());
+
+
+                String authorsString = String.valueOf(authorsSearch.getText());
+                String nameString = String.valueOf(searchRequest.getText());
+                String themeString = String.valueOf(themeSearch.getText());
+
+                if (authorsString.isEmpty() && nameString.isEmpty() && themeString.isEmpty())
+                    return;
+
+                boolean authorsFlag = authorsString.matches(".*\\w+.*");
+                boolean nameFlag = nameString.matches(".*\\w+.*");
+                boolean themeFlag = false;//authorsString.matches("\\w+");//заглушка
+
+                StringBuilder request = new StringBuilder();
+                request.append("with ");
+                String tableRequest = "";
+                if (authorsFlag) {
+                    request.append(authorsRequest(authorsString));
+                    tableRequest = "booksT";
+                }
+                if (nameFlag) {
+                    if (authorsFlag) request.append(", ");
+                    request.append(nameRequest(nameString, authorsFlag));
+                    tableRequest = "booksTS";
+                }
+                if (themeFlag) {
+                    if (authorsFlag || nameFlag) request.append(", ");
+                    request.append(themeRequest(themeString));
+                    tableRequest = "booksTT";
+                }
+                request.append("select book.book_id, bookname, fk_dorm, fk_room, fk_board, fk_cupboard\n" + "from ").append(tableRequest).append(", book\n").append("where ").append(tableRequest).append(".book_id = book.book_id\n").append("order by ");
+                if (nameFlag || themeFlag)
+                    request.append("Rank DESC ");
+                if (authorsFlag) {
+                    if (nameFlag || themeFlag)
+                        request.append(", ");
+                    request.append("match DESC ");
+                }
+
+                Log.d("ADVSearch", request.toString());
                 startIntent.putExtra("receiver", requestResultReceiver);
-                startIntent.putExtra("request", "select book.book_id, bookname from book, themebook, theme where theme.themename like \'%" + themeSearch.getText() + "%\' and themebook.theme_id = theme.theme_id and themebook.book_id = book.book_id;");
+                startIntent.putExtra("request", request.toString());//"select book.book_id, bookname, fk_dorm, fk_room, fk_board, fk_cupboard from book, themebook, theme where theme.themename like \'%" + themeSearch.getText() + "%\' and themebook.theme_id = theme.theme_id and themebook.book_id = book.book_id;");
                 rootView.getContext().startService(startIntent);
             }
         });
 
-        ToggleButton searchingState = rootView.findViewById(R.id.toggleButton_searching);
+        searchingState = rootView.findViewById(R.id.toggleButton_searching);
         searchingState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     Log.d("books", "textParam");
                     //rowAuthor.setLayoutParams(textParam);
-                    authorLabel.setLayoutParams(textParam);
+                    //authorLabel.setLayoutParams(textParam);
                     //rowAuthor.getVirtualChildAt(1).setLayoutParams(new LinearLayout.LayoutParams
                     //        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,1f));
 
@@ -142,10 +185,12 @@ public class BooksList extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String str = String.valueOf(searchRequest.getText());
-                startIntent.putExtra("receiver", requestResultReceiver);
-                startIntent.putExtra("request", "SELECT * FROM book WHERE book.bookname LIKE '%" + str + "%';");//"SELECT * FROM book WHERE FREETEXT( book.bookname, \'" + str + "\'); ");//
-                rootView.getContext().startService(startIntent);
+                if (!searchingState.isChecked()) {
+                    String str = String.valueOf(searchRequest.getText());
+                    startIntent.putExtra("receiver", requestResultReceiver);
+                    startIntent.putExtra("request", "SELECT * FROM book WHERE book.bookname LIKE '%" + str + "%';");//"SELECT * FROM book WHERE FREETEXT( book.bookname, \'" + str + "\'); ");//
+                    rootView.getContext().startService(startIntent);
+                }
             }
 
             @Override
@@ -207,7 +252,6 @@ public class BooksList extends Fragment {
 
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            books = new ArrayList<>();
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("data", resultData.getString("SQLException"));
@@ -365,5 +409,77 @@ public class BooksList extends Fragment {
         }
 
     }
+
+    static String authorsRequest(String authors) {
+        //деление строки на авторов и получение их ФИО
+        String[] authorsMas = authors.split(",(\\W|\\b|$)");
+        StringBuilder authorsRequest = new StringBuilder();
+        authorsRequest.append("authors (author_id) " +
+                "as ( " +
+                "select author_id " +
+                "from author " +
+                "where ");
+        boolean firstAuthors = true;
+        for (String author : authorsMas) {
+            if (!firstAuthors)
+                authorsRequest.append(" or ");
+            boolean firstAuthor = true;
+
+            authorsRequest.append("(");
+            for (String s : author.split("\\W(\\b|\\s|$)")) {
+                if (!firstAuthor)
+                    authorsRequest.append("and ");
+
+                authorsRequest.append("CONCAT(\' \',authorfirstname,\' \',authorsecondname,\' \',authorsurname) like \'% ").append(s).append("%\' ");
+                firstAuthor = false;
+            }
+
+            authorsRequest.append(")");
+            firstAuthors = false;
+
+        }
+        authorsRequest.append(
+                "), " +
+                        "booksT as " +
+                        "(" +
+                        "select fk_book_id as book_id, count(fk_book_id) as match " +
+                        "from bookauthor " +
+                        "where fk_author_id IN (Select authors.author_id from authors) " +
+                        "group by fk_book_id " +
+                        ") "
+        );
+        Log.d("Author", authorsRequest.toString());
+        return String.valueOf(authorsRequest);
+    }
+
+    static String nameRequest(String name, boolean authorsFlag) {
+        StringBuilder request = new StringBuilder();
+        request.append(
+                "booksTS as (\n" +
+                        "select book_id, ");
+        if (authorsFlag) request.append("match, ");
+        request.append("RANK\n from ");
+        if (authorsFlag) request.append("booksT, ");
+        request.append("FREETEXTTABLE(book, bookname, \'").append(name).append("\') AS KEY_TBL\n");
+        if (authorsFlag) request.append("where book_id = KEY_TBL.[KEY]\n");
+        request.append(")\n");
+        return request.toString();
+    }
+
+    static String themeRequest(String themes) {
+        StringBuilder request = new StringBuilder();
+        request.append(
+                "booksTT as(\n" +
+                        "select themebook.book_id, max(match) as match, sum(booksTS.Rank+KEY_T.RANK) as rank\n" +
+                        "from booksTS, themebook \n" +
+                        "INNER JOIN FREETEXTTABLE(theme, themename, 'методические') AS KEY_T\n" +
+                        "ON themebook.theme_id = KEY_T.[KEY]\n" +
+                        "where themebook.book_id = booksTS.book_id\n" +
+                        "group by themebook.book_id\n" +
+                        ")\n"
+        );
+        return request.toString();
+    }
+
 
 }
