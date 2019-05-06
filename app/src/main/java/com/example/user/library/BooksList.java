@@ -107,7 +107,7 @@ public class BooksList extends Fragment {
 
                 boolean authorsFlag = authorsString.matches(".*\\w+.*");
                 boolean nameFlag = nameString.matches(".*\\w+.*");
-                boolean themeFlag = false;//authorsString.matches("\\w+");//заглушка//TODO: снять заглушку после реализации
+                boolean themeFlag = themeString.matches(".*\\w+.*");
 
                 StringBuilder request = new StringBuilder();
                 request.append("with ");
@@ -123,7 +123,7 @@ public class BooksList extends Fragment {
                 }
                 if (themeFlag) {
                     if (authorsFlag || nameFlag) request.append(", ");
-                    request.append(themeRequest(themeString));
+                    request.append(themeRequest(themeString, authorsFlag, nameFlag));
                     tableRequest = "booksTT";
                 }
                 request.append("select book.book_id, bookname, fk_dorm, fk_room, fk_board, fk_cupboard\n" + "from ").append(tableRequest).append(", book\n").append("where ").append(tableRequest).append(".book_id = book.book_id\n").append("order by ");
@@ -469,18 +469,32 @@ public class BooksList extends Fragment {
         return request.toString();
     }
 
-    static String themeRequest(String themes) { //TODO: реализовать
+    static String themeRequest(String themes, boolean authorsFlag, boolean nameFlag) {
+        String table = "";
+        if (authorsFlag)
+            table = "booksT";
+        if (nameFlag)
+            table = "booksTS";
         StringBuilder request = new StringBuilder();
         request.append(
                 "booksTT as(\n" +
-                        "select themebook.book_id, max(match) as match, sum(booksTS.Rank+KEY_T.RANK) as rank\n" +
-                        "from booksTS, themebook \n" +
-                        "INNER JOIN FREETEXTTABLE(theme, themename, 'методические') AS KEY_T\n" +
-                        "ON themebook.theme_id = KEY_T.[KEY]\n" +
-                        "where themebook.book_id = booksTS.book_id\n" +
-                        "group by themebook.book_id\n" +
-                        ")\n"
-        );
+                        "select themebook.book_id, ");
+        if (authorsFlag)
+            request.append("max(match) as match, ");
+        request.append("sum(");
+        if (nameFlag)
+            request.append("booksTS.Rank+");
+        request.append("KEY_T.RANK) as rank\n" +
+                "from ");
+        if (nameFlag || authorsFlag)
+            request.append(table).append(", ");
+        request.append("themebook \n" +
+                "INNER JOIN FREETEXTTABLE(theme, themename, \'").append(themes).append("\') AS KEY_T\n" +
+                "ON themebook.theme_id = KEY_T.[KEY]\n");
+        if (nameFlag || authorsFlag)
+            request.append("where themebook.book_id = ").append(table).append(".book_id\n");
+        request.append("group by themebook.book_id\n" +
+                ")\n");
         return request.toString();
     }
 
