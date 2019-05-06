@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AdminProposalHistoryFragment extends Fragment {
+public class AdminProposalsUserHistoryFragment extends Fragment {
     public static final String USER_ID = "user_id";
     public static String user_id = "-1";
     public static Map<String, Proposal> bookIdForProposal;
     View rootView;
-    //private ActiveProposalActivity.RequestResultReceiver requestResultReceiver;
+    //private ActiveProposalActivity.SelectProposalsReceiver requestResultReceiver;
     private RecyclerView recyclerView;
     private ProposalAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -35,8 +35,8 @@ public class AdminProposalHistoryFragment extends Fragment {
     private ArrayMap<Integer, String> stasusDictionary = new ArrayMap<>();
     private Intent startIntent;
     private Intent startIntentBook;
-    private AdminProposalHistoryFragment.RequestResultReceiver requestProposalReceiver;
-    private AdminProposalHistoryFragment.RequestBookReceiver requestBookReceiver;
+    private AdminProposalsUserHistoryFragment.RequestResultReceiver requestProposalReceiver;
+    private AdminProposalsUserHistoryFragment.RequestBookReceiver requestBookReceiver;
     String querySelectBook;
 
     @Override
@@ -46,8 +46,8 @@ public class AdminProposalHistoryFragment extends Fragment {
         if (getArguments() != null) {
             user_id = getArguments().getString(USER_ID);
         }
-        requestProposalReceiver = new AdminProposalHistoryFragment.RequestResultReceiver(new Handler());
-        requestBookReceiver = new AdminProposalHistoryFragment.RequestBookReceiver(new Handler());
+        requestProposalReceiver = new AdminProposalsUserHistoryFragment.RequestResultReceiver(new Handler());
+        requestBookReceiver = new AdminProposalsUserHistoryFragment.RequestBookReceiver(new Handler());
         startIntent = new Intent(getActivity(), DbService.class);
         startIntentBook = new Intent(getActivity(), DbService.class);
         fillStatusDictionary();
@@ -66,7 +66,7 @@ public class AdminProposalHistoryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.active_proposal, container, false);
+        rootView = inflater.inflate(R.layout.fragment_proposals, container, false);
         TextView userProposalText = rootView.findViewById(R.id.current_proposal);
         userProposalText.setText("Заявки читателя");
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rViewProposal);

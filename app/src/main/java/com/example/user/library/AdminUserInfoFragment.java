@@ -116,10 +116,10 @@ public class AdminUserInfoFragment  extends Fragment {
 
     public void clickProposalHistory(View v) {
         Bundle args = new Bundle();
-        args.putString(AdminProposalHistoryFragment.USER_ID, user_id);
+        args.putString(AdminProposalsUserHistoryFragment.USER_ID, user_id);
 
         Fragment fragment = null;
-        Class fragmentClass = AdminProposalHistoryFragment.class;
+        Class fragmentClass = AdminProposalsUserHistoryFragment.class;
 
         if (fragmentClass != null) {
 

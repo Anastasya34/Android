@@ -15,6 +15,7 @@
     <string name="create_proposal">Создать заявку</string>
     <string name="current_proposal">Текущие заявки:</string>
     <string name="title_activity_menu_library">MenuLibrary</string>
+    <string name="process_button">Обработать</string>
 
 
     <string-array name="proposal_list_item">
@@ -44,11 +45,17 @@
     <string name="Edit">Редактирование</string>
     <string name="link_user_profile"><u>Профиль пользователя</u></string>
     <string name="link_user_proposal_history"><u>Посмотреть историю заявок</u></string>
-    <string name="user_books_list">Список книг на руках у пользователя: </string>
+    <string name="user_books_list">Список книг на руках у пользователя</string>
     <string name="save_process">Сохранение...</string>
     <string name="confirm_return">Оформить возврат книги</string>
     <string name="add_book">Оформить заявку</string>
     <string name="cancel_proposal">Отменить заявку</string>
+    <string name="disband_button">Расформировать</string>
+    <string name="approve_return">Подтвердить возврат</string>
+    <string name="consider_button">Рассмотреть</string>
+    <string name="approve_button">Подтвердить</string>
+    <string name="reject_button">Отклонить</string>
+
 
 
 

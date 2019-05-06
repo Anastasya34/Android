@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 userLoginFlag = true;
                                 startIntent.putExtra("receiver", requestResultReceiver);
-                                startIntent.putExtra("request", "SELECT * FROM [administration] " +
+                                startIntent.putExtra("request", "SELECT admin_id FROM [administration] " +
                                         "WHERE adminlogin = '" + username.getText().toString() + "' AND adminpassword = '" + password.getText().toString() + "'");
                                 startService(startIntent);
                             }
@@ -141,8 +141,9 @@ public class MainActivity extends AppCompatActivity {
                             if (userLoginFlag) {
                                 userLoginFlag = false;
                                 int adminId = rec.getInt("admin_id");
+                                Log.d("adminId",String.valueOf(adminId));
                                 Intent intent = new Intent(MainActivity.this, AdminContent.class);
-                                intent.putExtra("admin_id", adminId);
+                                intent.putExtra(Constants.ADMIN_ID, adminId);
                                 startActivity(intent);
                             } else {
                                 int userreader_id = rec.getInt("userreader_id");
