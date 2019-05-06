@@ -297,51 +297,6 @@ public class BooksList extends Fragment {
 
     }
 
-    private class RequestAdvSearchResultReceiver extends ResultReceiver {
-
-        RequestAdvSearchResultReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            List<Book> books = new ArrayList<>();
-            switch (resultCode) {
-                case DbService.REQUEST_ERROR:
-                    Log.d("data", resultData.getString("SQLException"));
-
-                    break;
-
-                case DbService.REQUEST_SUCCESS:
-                    String jsonString = resultData.getString("JSONString");
-                    try {
-                        JSONArray resultSet = new JSONArray(jsonString);
-
-                        if (resultSet.length() == 0) {
-                            Log.d("data", "пустой");
-                            break;
-                        }
-
-                        for (int i = 0; i < resultSet.length(); ++i) {
-                            JSONObject rec = resultSet.getJSONObject(i);
-                            books.add(new Book(rec.getString("bookname"), rec.getString("book_id")));
-                        }
-
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Log.d("data", resultData.getString("JSONString"));
-                    break;
-            }
-            BookListAdapter adapter = new BookListAdapter(books, issuePropoasalClickListener);
-            booksView.setAdapter(adapter);
-            super.onReceiveResult(resultCode, resultData);
-        }
-
-    }
     private class SelectUserBooksReceiver extends ResultReceiver {
 
         SelectUserBooksReceiver(Handler handler) {
