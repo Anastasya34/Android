@@ -66,7 +66,7 @@ public class UserMyProposalsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.active_proposal, container, false);
+        rootView = inflater.inflate(R.layout.fragment_proposals, container, false);
         spinner = rootView.findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rViewProposal);

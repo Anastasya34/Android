@@ -41,10 +41,23 @@
             android:layout_toEndOf="@+id/book_cover" />
 
         <TextView
-            android:id="@+id/proposal_status"
+            android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/book_name"
+            android:layout_toRightOf="@+id/book_cover"
+            android:textColor="@android:color/black"
+            android:paddingTop = "4dp"
+            android:paddingLeft = "7dp"
+            android:textSize="21dp"
+            android:text = "user_name"
+            android:layout_toEndOf="@+id/book_cover" />
+
+        <TextView
+            android:id="@+id/proposal_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_name"
             android:layout_toRightOf="@+id/book_cover"
             android:textColor="@android:color/black"
             android:paddingTop = "4dp"

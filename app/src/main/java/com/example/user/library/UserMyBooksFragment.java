@@ -63,7 +63,7 @@ public class UserMyBooksFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.active_proposal, container, false);
+        rootView = inflater.inflate(R.layout.fragment_proposals, container, false);
         TextView userProposalText = rootView.findViewById(R.id.current_proposal);
         spinner = rootView.findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);

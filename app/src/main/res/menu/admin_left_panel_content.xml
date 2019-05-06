@@ -4,7 +4,14 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-
+        <item
+            android:id="@+id/all_proposals"
+            android:textSize = "20sp"
+            android:title="Все заявки" />
+        <item
+            android:id="@+id/my_proposals"
+            android:textSize = "20sp"
+            android:title="Мои заявки" />
         <item
             android:id="@+id/info_book"
             android:textSize = "20sp"
@@ -14,9 +21,10 @@
             android:textSize = "20sp"
             android:title="Пользователи" />
         <item
-            android:id="@+id/proposals"
+            android:id="@+id/proposals_history"
             android:textSize = "20sp"
-            android:title="Заявки" />
+            android:title="История заявок" />
+
     </group>
 
 </menu>

@@ -10,7 +10,9 @@ public class Book{
     String fk1_cupboard;
     Boolean already_get = false;
     int imageId;
-
+    Book(String bookId){
+        this.bookId = bookId;
+    }
     Book(String name, String description, int imageId){
         this.name = name;
         this.description = description;
@@ -22,7 +24,10 @@ public class Book{
         this.description = description;
         this.imageId = 0;
     }
-
+    public Book(String bookId, Integer countBooks) {
+        this.bookId = bookId;
+        this.countBooks = countBooks;
+    }
 
     public Book(String bookId, String name, String fk1_dorm, String fk1_room, String fk1_board, String fk1_cupboard, Boolean already_get) {
         this.bookId = bookId;

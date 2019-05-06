@@ -16,7 +16,7 @@ import android.view.MenuItem;
 
 public class AdminContent extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawer;
-    private int user_id = -1;
+    private int admin_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,17 +24,24 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.admin_left_panel);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mDrawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
+        Intent intent = getIntent();
+        admin_id = intent.getIntExtra(Constants.ADMIN_ID, -1);
+        Log.d("AdminContent admin_id", String.valueOf(admin_id));
+        mDrawer = (DrawerLayout) findViewById(R.id.adm_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.admin_nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.adm_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         try {
-            fragmentManager.beginTransaction().replace(R.id.container, (Fragment) AdminBooksFragment.class.newInstance()).commit();
+            Bundle args = new Bundle();
+            args.putInt(Constants.ADMIN_ID, admin_id);
+            Fragment startFragment = (Fragment) AdminAllProposalsFragment.class.newInstance();
+            startFragment.setArguments(args);
+            fragmentManager.beginTransaction().replace(R.id.container, startFragment).commit();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -45,7 +52,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -86,8 +93,17 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         Bundle args = new Bundle();
-
+        args.putInt(Constants.ADMIN_ID, admin_id);
+        Log.d("args", args.toString());
         switch (id) {
+            case R.id.all_proposals:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                fragmentClass = AdminAllProposalsFragment.class;
+                break;
+            case R.id.my_proposals:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                fragmentClass = AdminMyProposals_Main.class;
+                break;
             case R.id.info_book:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 // Выполняем переход на UserMyProposalsFragment:
@@ -97,9 +113,9 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 fragmentClass = AdminUsersFragment.class;
                 break;
-            case R.id.proposals:
+            case R.id.proposals_history:
                 Log.d("onOptionsItemSelected", String.valueOf(id));
-                fragmentClass = AdminProposalsFragment.class;
+                fragmentClass = AdminHistoryProposalsFragment.class;
                 break;
 
         }
@@ -123,7 +139,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
             item.setChecked(true);
             // Выводим выбранный пункт в заголовке
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.admin_drawer_layout);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.adm_drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }
 
