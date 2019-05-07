@@ -140,7 +140,7 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
 
             // Вставляем фрагмент, заменяя текущий фрагмент
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack("menu").commit();
             // Выделяем выбранный пункт меню в шторке
             item.setChecked(true);
             // Выводим выбранный пункт в заголовке

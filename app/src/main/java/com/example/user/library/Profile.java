@@ -258,10 +258,10 @@ public class Profile extends Fragment {
                 } else {
                     setEditTextMasState(false);
                     //password_row
-                    password_row.setVisibility(View.INVISIBLE);
+                    password_row.setVisibility(View.GONE);
                     //save button
-                    saveEditButton.setVisibility(View.INVISIBLE);
-                    status.setVisibility(View.INVISIBLE);
+                    saveEditButton.setVisibility(View.GONE);
+                    status.setVisibility(View.GONE);
                     dormList.setEnabled(false);
                     TextView v = (TextView) dormList.getSelectedView();
                     v.setTextColor(Color.BLACK);

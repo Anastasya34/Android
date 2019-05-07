@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -42,12 +43,16 @@ public class BooksList extends Fragment {
     private List<Book> books;
     private Intent startIntent;
     private RequestResultReceiver requestResultReceiver;
+    TableLayout advSearch;
     ToggleButton searchingState;
     EditText themeSearch;
     EditText authorsSearch;
+    EditText nameSearch;
     TextView authorLabel;
     TableRow rowAuthor;
     Button searchButton;
+    Button simpleSearch;
+    LinearLayout simpleSearchLiner;
     LinearLayout.LayoutParams textParam;
     LinearLayout.LayoutParams textParam1;
 
@@ -78,6 +83,16 @@ public class BooksList extends Fragment {
 
         rootView = inflater.inflate(R.layout.fragment_books_list, container, false);
 
+        advSearch = rootView.findViewById(R.id.tableSearch);
+        simpleSearchLiner = rootView.findViewById(R.id.simpleSearchLinear);
+        simpleSearch = rootView.findViewById(R.id.simpleSearchButton);
+        simpleSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchingState.setChecked(false);
+            }
+        });
+
         booksView = rootView.findViewById(R.id.ViewBooks);
         LinearLayoutManager llm = new LinearLayoutManager(rootView.getContext());
         booksView.setLayoutManager(llm);
@@ -92,6 +107,7 @@ public class BooksList extends Fragment {
         themeSearch = rootView.findViewById(R.id.themeSearch);
         authorsSearch = rootView.findViewById(R.id.author_search);
         searchButton = rootView.findViewById(R.id.searchButton);
+        nameSearch = rootView.findViewById(R.id.name_search);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +115,7 @@ public class BooksList extends Fragment {
 
 
                 String authorsString = String.valueOf(authorsSearch.getText());
-                String nameString = String.valueOf(searchRequest.getText());
+                String nameString = String.valueOf(nameSearch.getText());
                 String themeString = String.valueOf(themeSearch.getText());
 
                 if (authorsString.isEmpty() && nameString.isEmpty() && themeString.isEmpty())
@@ -148,17 +164,13 @@ public class BooksList extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
                     Log.d("books", "textParam");
-                    //rowAuthor.setLayoutParams(textParam);
-                    //authorLabel.setLayoutParams(textParam);
-                    //rowAuthor.getVirtualChildAt(1).setLayoutParams(new LinearLayout.LayoutParams
-                    //        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,1f));
+                    advSearch.setVisibility(View.VISIBLE);
+                    simpleSearchLiner.setVisibility(View.GONE);
 
                 } else {
                     Log.d("books", "setHeight");
-                    //rowAuthor.setLayoutParams(textParam1);
-                    //rowAuthor.getVirtualChildAt(0).setLayoutParams(textParam1);
-                    //rowAuthor.getVirtualChildAt(1).setLayoutParams(textParam1);
-
+                    advSearch.setVisibility(View.GONE);
+                    simpleSearchLiner.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -188,7 +200,7 @@ public class BooksList extends Fragment {
                 if (!searchingState.isChecked()) {
                     String str = String.valueOf(searchRequest.getText());
                     startIntent.putExtra("receiver", requestResultReceiver);
-                    startIntent.putExtra("request", "SELECT * FROM book WHERE book.bookname LIKE '%" + str + "%';");//"SELECT * FROM book WHERE FREETEXT( book.bookname, \'" + str + "\'); ");//
+                    startIntent.putExtra("request", "SELECT * FROM book WHERE book.bookname LIKE '%" + str + "%';");
                     rootView.getContext().startService(startIntent);
                 }
             }

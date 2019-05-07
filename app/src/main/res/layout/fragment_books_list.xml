@@ -11,42 +11,68 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TableLayout
-            android:id="@+id/tableSearch"
+        <LinearLayout
+            android:id="@+id/simpleSearchLinear"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ToggleButton
+                android:id="@+id/toggleButton_searching"
+                android:layout_width="44dp"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_menu_manage"
+                android:textIsSelectable="false"
+                android:textOff=""
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <EditText
+                android:id="@+id/book_search"
+                style="@android:style/Widget.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:hint="@string/searchingText"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:targetApi="o" />
+        </LinearLayout>
+
+        <TableLayout
+            android:id="@+id/tableSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/simpleSearchLinear">
+
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
-                <ToggleButton
-                    android:id="@+id/toggleButton_searching"
-                    style="?attr/searchViewStyle"
-                    android:layout_width="44dp"
+                <TextView
+                    android:id="@+id/view_name"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:textAppearance="@style/TextAppearance.AppCompat"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout_editor_absoluteX="0dp" />
+                    android:text="Название"
+                    android:textSize="18sp" />
 
                 <EditText
-                    android:id="@+id/book_search"
-                    style="@android:style/Widget.EditText"
+                    android:id="@+id/name_search"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:autofillHints=""
-                    android:hint="@string/searchingText"
-                    android:inputType="text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:targetApi="o" />
+                    android:ems="10"
+                    android:inputType="textPersonName" />
             </TableRow>
 
             <TableRow
@@ -102,6 +128,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="поиск" />
+
+                <Button
+                    android:id="@+id/simpleSearchButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="простой поиск" />
             </TableRow>
         </TableLayout>
 
@@ -109,7 +141,6 @@
             android:id="@+id/ViewBooks"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"

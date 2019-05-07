@@ -134,7 +134,7 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
 
             // Вставляем фрагмент, заменяя текущий фрагмент
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack("adminMenu").commit();
             // Выделяем выбранный пункт меню в шторке
             item.setChecked(true);
             // Выводим выбранный пункт в заголовке
