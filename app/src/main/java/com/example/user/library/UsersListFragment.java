@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -54,7 +55,7 @@ public class UsersListFragment extends Fragment {
                 "  WHERE [userreader_id] IN (SELECT \n" +
                 "      [fk_userreader]\n" +
                 "  FROM [dbo].[proposal]\n" +
-                "  WHERE [book1_id] = '"+book_id+"' AND [bookstatus] = 4)";
+                "  WHERE [book1_id] = '"+book_id+"' AND [bookstatus] = 5)";
         Intent startIntent = new Intent(rootView.getContext(), DbService.class);
 
 
@@ -65,28 +66,28 @@ public class UsersListFragment extends Fragment {
         userClickListener = new UserListAdapter.UserClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                // Создадим новый фрагмент
-                /*Fragment fragment = null;
-                Class fragmentClass = null;
                 Bundle args = new Bundle();
-                fragmentClass = UsersListFragment.class;
-                args.putString(UsersListFragment.BOOK_ID, books.get(position).description);
-                try {
-                    fragment = (Fragment) fragmentClass.newInstance();
-                    fragment.setArguments(args);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("Error", e.getMessage());
+                args.putInt(Profile.ARG_USER_ID, Integer.valueOf(users.get(position).userId));
+                args.putBoolean(Profile.ARG_EDITABLE, false);
+
+                Fragment fragment = null;
+                Class fragmentClass = Profile.class;
+
+                if (fragmentClass != null) {
+
+                    try {
+                        fragment = (Fragment) fragmentClass.newInstance();
+                        fragment.setArguments(args);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.d("Error", e.getMessage());
+
+                    }
+                    // Вставляем фрагмент, заменяя текущий фрагмент
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
 
                 }
-
-                // Вставляем фрагмент, заменяя текущий фрагмент
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
-                // Выделяем выбранный пункт меню в шторке
-
-                Log.d("!position", String.valueOf(position));
-                //Log.d("!id", String.valueOf(id));*/
             }
         };
 
