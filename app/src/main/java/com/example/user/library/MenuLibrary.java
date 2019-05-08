@@ -99,6 +99,8 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("id", -1);
                 editor.apply();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 super.onBackPressed();
                 break;
 
