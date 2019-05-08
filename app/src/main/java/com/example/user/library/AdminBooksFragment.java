@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ToggleButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +49,8 @@ public class AdminBooksFragment extends Fragment {
         // Inflate the layout for this fragment
 
         rootView = inflater.inflate(R.layout.fragment_books_list, container, false);
+        ToggleButton searchingState = rootView.findViewById(R.id.toggleButton_searching);
+        searchingState.setVisibility(View.GONE);
 
         booksView = rootView.findViewById(R.id.ViewBooks);
         LinearLayoutManager llm = new LinearLayoutManager(rootView.getContext());
