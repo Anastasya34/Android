@@ -3,6 +3,7 @@ package com.example.user.library;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,13 +34,15 @@ public class MainActivity extends AppCompatActivity {
     private RequestResultReceiver requestResultReceiver;
     private boolean bound = false;
     private boolean userLoginFlag = false;
-
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         // Связываемся с элементами нашего интерфейса:
         username = (EditText) findViewById(R.id.edit_user);
@@ -68,6 +71,21 @@ public class MainActivity extends AppCompatActivity {
         };
 
         if (!bound) bindService(startIntent, sConn, BIND_AUTO_CREATE);
+
+        int id = sharedPreferences.getInt("id", 0);
+        if (id > 0) {
+            if (sharedPreferences.getBoolean("user", true)) {
+                Log.d("userreader_id", String.valueOf(id));
+                Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+                intent.putExtra("user_id", id);
+                startActivity(intent);
+            } else {
+                Log.d("adminId", String.valueOf(id));
+                Intent intent = new Intent(MainActivity.this, AdminContent.class);
+                intent.putExtra(Constants.ADMIN_ID, id);
+                startActivity(intent);
+            }
+        }
     }
 
 
@@ -146,12 +164,18 @@ public class MainActivity extends AppCompatActivity {
                             if (userLoginFlag) {
                                 userLoginFlag = false;
                                 int adminId = rec.getInt("admin_id");
+                                editor.putBoolean("user", false);
+                                editor.putInt("id", adminId);
+                                editor.apply();
                                 Log.d("adminId",String.valueOf(adminId));
                                 Intent intent = new Intent(MainActivity.this, AdminContent.class);
                                 intent.putExtra(Constants.ADMIN_ID, adminId);
                                 startActivity(intent);
                             } else {
                                 int userreader_id = rec.getInt("userreader_id");
+                                editor.putBoolean("user", true);
+                                editor.putInt("id", userreader_id);
+                                editor.apply();
                                 Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
                                 intent.putExtra("user_id", userreader_id);
                                 startActivity(intent);
