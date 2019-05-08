@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +50,17 @@ public class AdminHistoryProposalsFragment extends Fragment {
 
     }
 
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_proposals, container, false);
+        TextView textView = rootView.findViewById(R.id.current_proposal);
+        textView.setVisibility(View.GONE);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.rViewProposal);
+        spinner = rootView.findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
+        startIntent(querySelectProposals, selectProposalReceiver, "select");
+        return rootView;
+    }
 
     public void startIntent(String queryRequest, ResultReceiver startReceiver, String type){
         Intent startIntent = new Intent(rootView.getContext(), DbService.class);
