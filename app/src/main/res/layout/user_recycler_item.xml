@@ -1,0 +1,47 @@
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/userCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textColor="@android:color/black"
+        android:paddingTop = "4dp"
+        android:paddingLeft = "7dp"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_id"
+        android:textColor="@android:color/black"
+        android:paddingTop = "4dp"
+        android:paddingLeft = "7dp"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/user_login"
+        android:paddingTop = "4dp"
+        android:paddingLeft = "7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_name"
+        android:textColor="@android:color/black"
+        android:textSize="18dp"
+        android:text="@string/book_description" />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Profile">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:stretchColumns="2,1,2">
+
+                <TextView
+                    android:id="@+id/profile_View"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Profile"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <Switch
+                    android:id="@+id/editMode_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:switchPadding="10dp"
+                    android:text="@string/Edit" />
+            </LinearLayout>
+
+            <TableLayout
+                android:id="@+id/profile_Table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="start"
+                android:stretchColumns="1,2">
+
+                <TableRow
+                    android:id="@+id/firstName_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/firstName_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_weight="2"
+                        android:text="@string/firstName"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/firstName_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="3"
+                        android:inputType="none|textPersonName" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/secondName_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/secondName_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_weight="2"
+                        android:text="@string/secondName"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/secondName_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="3"
+                        android:ems="10"
+
+                        android:inputType="textPersonName" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/surName_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/surName_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_weight="2"
+                        android:text="@string/surName"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/surName_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="3"
+                        android:ems="10"
+                        android:inputType="textPersonName" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/birthday_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/birthday_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_weight="2"
+                        android:text="@string/birthday"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/birthday_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="1"
+                        android:layout_weight="3"
+                        android:ems="10"
+                        android:inputType="date" />
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/dormitories_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/dormitories_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:layout_weight="2"
+                        android:gravity="center_vertical"
+                        android:text="@string/dormitories"
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/dormitories_spinner"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_column="1"
+                        android:layout_weight="3"
+                        android:spinnerMode="dropdown" />
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/room_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/room_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/room"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/room_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:inputType="number" />
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/phone_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/phone_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/phone"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/phone_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:inputType="phone" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/email_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/email_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="E-mail"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/email_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:inputType="textEmailAddress" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/login_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/login_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/login"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/login_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:ems="10"
+                        android:inputType="textPersonName" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/password_Row"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:id="@+id/password_View"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/password"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/password_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:inputType="textPassword" />
+                </TableRow>
+            </TableLayout>
+
+            <Button
+                android:id="@+id/saveEdit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_weight="0"
+                android:text="@string/save"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/status_View"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/save_process"
+                android:textSize="24sp"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</FrameLayout>

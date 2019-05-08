@@ -1,66 +1,117 @@
 package com.example.user.library;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.ResultReceiver;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+public class MainActivity extends AppCompatActivity {
 
-public class MainActivity extends  AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
-    final static String MSSQL_DB = "jdbc:jtds:sqlserver://ASUS;databaseName=library;integratedSecurity=true";
-    final static String MSSQL_LOGIN = "AllowUser";
-    final static String MSSQL_PASS= "AllowUser";
-    private static final int LOADER_ID = 734;
+    final String LOG_TAG = "Library";
+
     // Объявляем об использовании следующих объектов:
     private EditText username;
     private EditText password;
-    private Button login;
     private TextView loginLocked;
+
+    private Intent startIntent;
+    private ServiceConnection sConn;
+    private DbService dbService;
+    private RequestResultReceiver requestResultReceiver;
+    private boolean bound = false;
+    private boolean userLoginFlag = false;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         // Связываемся с элементами нашего интерфейса:
         username = (EditText) findViewById(R.id.edit_user);
         password = (EditText) findViewById(R.id.edit_password);
-        login = (Button) findViewById(R.id.button_login);
         loginLocked = (TextView) findViewById(R.id.login_locked);
-        Bundle asyncTaskLoaderParams = new Bundle();
-        Log.i("onCreate!", "loader");
-        LoaderManager loaderManager = getSupportLoaderManager();
-        //Loader<String> loader = loaderManager.getLoader(LOADER_ID);
-        loaderManager.initLoader(LOADER_ID, asyncTaskLoaderParams,this);
 
+        Log.i("onCreate!", "loader");
+
+        requestResultReceiver = new RequestResultReceiver(new Handler());
+        startIntent = new Intent(MainActivity.this, DbService.class);
+
+        sConn = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                Log.d(LOG_TAG, "MainActivity onServiceConnected");
+                DbService.DbBinder binder = (DbService.DbBinder) iBinder;
+                dbService = binder.getService();
+                bound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d(LOG_TAG, "MainActivity onServiceDisconnected");
+                bound = false;
+            }
+        };
+
+        if (!bound) bindService(startIntent, sConn, BIND_AUTO_CREATE);
+
+        int id = sharedPreferences.getInt("id", 0);
+        if (id > 0) {
+            if (sharedPreferences.getBoolean("user", true)) {
+                Log.d("userreader_id", String.valueOf(id));
+                Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+                intent.putExtra("user_id", id);
+                startActivity(intent);
+            } else {
+                Log.d("adminId", String.valueOf(id));
+                Intent intent = new Intent(MainActivity.this, AdminContent.class);
+                intent.putExtra(Constants.ADMIN_ID, id);
+                startActivity(intent);
+            }
         }
+    }
+
 
     // Обрабатываем нажатие кнопки "Войти":
     public void Login(View view) {
+        Log.d("Main", "Login");
+        loginLocked.setVisibility(View.INVISIBLE);
 
-        Bundle asyncTaskLoaderParams = new Bundle();
-        asyncTaskLoaderParams.putString("Button", "Login");
-        asyncTaskLoaderParams.putString("Password", password.getText().toString());
-        asyncTaskLoaderParams.putString("UserName", username.getText().toString());
+        if (username.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
+            loginLocked.setText("Все поля должны быть заполнены!");
+            loginLocked.setTextColor(Color.RED);
+            loginLocked.setVisibility(View.VISIBLE);
+        } else {
+            loginLocked.setText("Авторизация...");
+            loginLocked.setTextColor(Color.BLACK);
+            loginLocked.setVisibility(View.VISIBLE);
 
-        LoaderManager loaderManager = getSupportLoaderManager();
-        loaderManager.restartLoader(LOADER_ID, asyncTaskLoaderParams,this);
+            userLoginFlag = false;
+
+            startIntent.putExtra("receiver", requestResultReceiver);
+            startIntent.putExtra("request", "SELECT * FROM [userreader] " +
+                    "WHERE userlogin = '" + username.getText().toString() + "' AND userpassword = '" + password.getText().toString() + "'");
+            startService(startIntent);
+        }
+
+
     }
 
     // Обрабатываем нажатие кнопки "Зарегистироваться":
@@ -70,102 +121,90 @@ public class MainActivity extends  AppCompatActivity implements LoaderManager.Lo
         startActivity(intent);
     }
 
-    @Override
-    public Loader<String> onCreateLoader(int id,final Bundle args) {
-        return new AsyncTaskLoader<String>(this) {
-            @Override
-            public void onStartLoading() {
-                //similar to onPreExecute of AsyncTask
-                Log.d("StartLoad!", "start");
-                if (args==null) return;
-                forceLoad();
 
-            }
+    private class RequestResultReceiver extends ResultReceiver {
 
-            @Override
-            public String loadInBackground() {
-                Log.d("!loadInBackground","kjhgf");
+        public RequestResultReceiver(Handler handler) {
+            super(handler);
+        }
 
-                //similar to doInBackground of AsyncTask
-                JSONArray resultSet = new JSONArray();
-                try {
-                    Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                    Connection con = null;
-                    Statement st = null;
-                    ResultSet result1 = null;
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            loginLocked.setTextColor(Color.RED);
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+                    loginLocked.setText("Ошибка подключения");
+                    loginLocked.setVisibility(View.VISIBLE);
+                    dbService.resetConnection();
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
                     try {
-                        con = DriverManager.getConnection(MSSQL_DB, MSSQL_LOGIN, MSSQL_PASS);
-                        if (con != null) {
-                            Log.d("!Success!", "con");
-                            st = con.createStatement();
-                            String buttonType =  args.getString("Button");
-                            if (buttonType == "Login"){
-                                String username = args.getString("UserName");
-                                String password = args.getString("Password");
-                                result1 = st.executeQuery("SELECT * FROM [library].[dbo].[userreader] " +
-                                                            "WHERE userlogin = '"+username+"' AND userpassword = '"+password+"'");
-                                //Log.d("result", String.valueOf(result1.next()));
-                                //Log.d("result", String.valueOf(result1.first()));
+                        JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            if (userLoginFlag) {
+                                Log.d("data", "Неверный логин или пароль");
+                                loginLocked.setText("Неверный логин или пароль");
+                                loginLocked.setVisibility(View.VISIBLE);
+                            } else {
+                                userLoginFlag = true;
+                                startIntent.putExtra("receiver", requestResultReceiver);
+                                startIntent.putExtra("request", "SELECT admin_id FROM [administration] " +
+                                        "WHERE adminlogin = '" + username.getText().toString() + "' AND adminpassword = '" + password.getText().toString() + "'");
+                                startService(startIntent);
+                            }
+                        } else {
+                            loginLocked.setText("Авторизация успешна");
+                            loginLocked.setTextColor(Color.GREEN);
+                            loginLocked.setVisibility(View.VISIBLE);
 
-                                if (result1.next()){
-                                    Intent intent = new Intent(MainActivity.this, ContentActivity.class);
-                                    startActivity(intent);
-                                    return  null;
-                                }
-                                else {
-                                    result1 = st.executeQuery("SELECT * FROM [library].[dbo].[administration] " +
-                                            "WHERE adminlogin = '"+username+"' AND adminpassword = '"+password+"'");
-
-                                    if (result1.next()){
-                                        Intent intent = new Intent(MainActivity.this, ContentActivity.class);
-                                        startActivity(intent);
-                                    }
-                                    else {
-                                        return "Not Found";
-                                        //loginLocked.setVisibility(View.VISIBLE);
-
-                                    }
-                                }
-
+                            JSONObject rec = resultSet.getJSONObject(0);
+                            if (userLoginFlag) {
+                                userLoginFlag = false;
+                                int adminId = rec.getInt("admin_id");
+                                editor.putBoolean("user", false);
+                                editor.putInt("id", adminId);
+                                editor.apply();
+                                Log.d("adminId",String.valueOf(adminId));
+                                Intent intent = new Intent(MainActivity.this, AdminContent.class);
+                                intent.putExtra(Constants.ADMIN_ID, adminId);
+                                startActivity(intent);
+                            } else {
+                                int userreader_id = rec.getInt("userreader_id");
+                                editor.putBoolean("user", true);
+                                editor.putInt("id", userreader_id);
+                                editor.apply();
+                                Intent intent = new Intent(MainActivity.this, MenuLibrary.class);
+                                intent.putExtra("user_id", userreader_id);
+                                startActivity(intent);
+                                Log.d("data", resultData.getString("JSONString"));
                             }
                         }
-                    } catch (SQLException e) {
-                        Log.d("!Error!", e.toString());
-
+                    } catch (JSONException e) {
                         e.printStackTrace();
-                    } finally {
-                        try {
-                            if (result1 != null) result1.close();
-                            if (st != null) st.close();
-                            if (con != null) con.close();
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e.getMessage());
-                        }
                     }
-                } catch (ClassNotFoundException e) {
-                    Log.d("!ClassNotFoundException", e.toString());
 
-                    e.printStackTrace();
-                }
-                return "";
+                    break;
             }
-        };
+            super.onReceiveResult(resultCode, resultData);
+        }
+
     }
 
-
     @Override
-    public void onLoadFinished(Loader<String> loader, String data) {
-        //Log.d("data", data);
-        if (data !=null && data == "Not Found"){
-            Log.d("data", data);
-            loginLocked.setText("Неверный логин или пароль");
-            loginLocked.setVisibility(View.VISIBLE);
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bound) {
+            unbindService(sConn);
+            bound = false;
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<String> loader) {
-        Log.d("!onLoaderReset","kjhgf");
+    protected void onStop() {
+        super.onStop();
 
     }
 
