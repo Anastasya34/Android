@@ -1,4 +1,5 @@
 package com.example.user.library;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,13 +115,13 @@ public class AdminMyProposals_UsersBooks extends Fragment {
                             userIdForBook.put(userId, new User(userId));
                         }
                         Log.d("After", bookIdForBook.keySet().toString());
-                        if (bookIdForBook.keySet().size() > 0) {
+                        if (!bookIdForBook.keySet().isEmpty()) {
                             String booksId = bookIdForBook.keySet().toString()
                                     .replace("[", "(")
                                     .replace("]", ")");
                             System.out.println(querySelectBook + booksId);
                             startIntent(querySelectBook + booksId, selectBookReceiver, "select");
-                            if (userIdForBook.keySet().size() > 0) {
+                            if (!userIdForBook.keySet().isEmpty()) {
                                 String usersId = userIdForBook.keySet().toString()
                                         .replace("[", "(")
                                         .replace("]", ")");

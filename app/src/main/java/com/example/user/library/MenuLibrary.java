@@ -1,6 +1,7 @@
 package com.example.user.library;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -55,18 +56,27 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//        }
+        FragmentManager manager = getSupportFragmentManager();
+        if (manager.getBackStackEntryCount() > 0) {
+            manager.popBackStack();
         } else {
-            super.onBackPressed();
+            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+            homeIntent.addCategory(Intent.CATEGORY_HOME);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(homeIntent);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.menu_library, menu);
+        getMenuInflater().inflate(R.menu.bar_menu, menu);
         return true;
     }
 
@@ -75,14 +85,27 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.menuAbout:
+                //Toast.makeText(this, "You clicked about", Toast.LENGTH_SHORT).show();
+                break;
 
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
-            return true;
-        }*/
+            case R.id.menuSettings:
+                //Toast.makeText(this, "You clicked settings", Toast.LENGTH_SHORT).show();
+                break;
 
-        return super.onOptionsItemSelected(item);
+            case R.id.menuLogout:
+                SharedPreferences sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("id", -1);
+                editor.apply();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                super.onBackPressed();
+                break;
+
+        }
+        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -140,7 +163,8 @@ public class MenuLibrary extends AppCompatActivity implements NavigationView.OnN
 
             // Вставляем фрагмент, заменяя текущий фрагмент
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack("menu").commit();
             // Выделяем выбранный пункт меню в шторке
             item.setChecked(true);
             // Выводим выбранный пункт в заголовке

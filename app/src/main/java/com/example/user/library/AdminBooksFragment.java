@@ -99,7 +99,7 @@ public class AdminBooksFragment extends Fragment {
 
                 // Вставляем фрагмент, заменяя текущий фрагмент
                 FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack("adminBooks").commit();
                 // Выделяем выбранный пункт меню в шторке
 
                 Log.d("!position", String.valueOf(position));

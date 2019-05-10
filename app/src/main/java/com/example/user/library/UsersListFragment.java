@@ -85,7 +85,7 @@ public class UsersListFragment extends Fragment {
                     }
                     // Вставляем фрагмент, заменяя текущий фрагмент
                     FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+                    fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getClass().getName()).commit();
 
                 }
             }

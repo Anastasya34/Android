@@ -1,10 +1,10 @@
 package com.example.user.library;
 
-import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -133,7 +133,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
             fragment.setArguments(args);
             // Вставляем фрагмент, заменяя текущий фрагмент
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getTag()).commit();
         } catch (java.lang.InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -155,7 +155,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
             fragment.setArguments(args);
             // Вставляем фрагмент, заменяя текущий фрагмент
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getTag()).commit();
         } catch (java.lang.InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -184,7 +184,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
             }
             // Вставляем фрагмент, заменяя текущий фрагмент
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getTag()).commit();
 
         }
     }
@@ -207,7 +207,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
             }
             // Вставляем фрагмент, заменяя текущий фрагмент
             FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getTag()).commit();
 
 
         }
@@ -223,7 +223,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
                 fragment.setArguments(args);
                 // Вставляем фрагмент, заменяя текущий фрагмент
                 FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getTag()).commit();
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("Error", e.getMessage());

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -118,7 +119,7 @@ public class Profile extends Fragment {
                 getContext(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                String date = String.valueOf(day) + "." + String.valueOf(month + 1) + "." + String.valueOf(year);
+                String date = day + "." + (month + 1) + "." + year;
                 birthday.setText(date);
             }
         }, 1990, 1, 1);
@@ -203,7 +204,6 @@ public class Profile extends Fragment {
         status = view.findViewById(R.id.status_View);
 
         dormList = view.findViewById(R.id.dormitories_spinner);
-        dormList.setEnabled(false);
         AdapterRequestResultReceiver adapterRequestResultReceiver = new AdapterRequestResultReceiver(new Handler());
 
         dormAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, new ArrayList<String>());
@@ -258,13 +258,13 @@ public class Profile extends Fragment {
                 } else {
                     setEditTextMasState(false);
                     //password_row
-                    password_row.setVisibility(View.INVISIBLE);
+                    password_row.setVisibility(View.GONE);
                     //save button
-                    saveEditButton.setVisibility(View.INVISIBLE);
-                    status.setVisibility(View.INVISIBLE);
+                    saveEditButton.setVisibility(View.GONE);
+                    status.setVisibility(View.GONE);
                     dormList.setEnabled(false);
-                    //TextView v = (TextView) dormList.getSelectedItem();
-                    //v.setTextColor(Color.BLACK);
+                    TextView v = (TextView) dormList.getSelectedView();
+                    v.setTextColor(Color.BLACK);
                 }
             }
         });
@@ -273,7 +273,6 @@ public class Profile extends Fragment {
         startIntent.putExtra("type", "select");
         startIntent.putExtra("request", "SELECT * FROM [userreader] WHERE userreader_id = " + String.valueOf(mUser_id) + ";");
         getActivity().startService(startIntent);
-
 
         return view;
     }
@@ -346,9 +345,9 @@ public class Profile extends Fragment {
                         secondName.setText(rec.getString("usersecondname"));
                         surName.setText(rec.getString("usersurname"));
 
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             LocalDate date = LocalDate.parse(rec.getString("birthday"));
-                            String dateString = String.valueOf(date.getDayOfMonth()) + "." + String.valueOf(date.getMonthValue() + 1) + "." + String.valueOf(date.getYear());
+                            String dateString = date.getDayOfMonth() + "." + (date.getMonthValue() + 1) + "." + date.getYear();
                             birthday.setText(dateString);
                             Log.d("data", String.valueOf(date.getYear()));
                             datePickerDialog.getDatePicker().updateDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
@@ -359,12 +358,17 @@ public class Profile extends Fragment {
                         login.setText(rec.getString("userlogin"));
                         user_password = rec.getString("userpassword"); //TODO: нормальную проверку
 
+                        dormList.setEnabled(false);
                         dormList.setSelection(dormAdapter.getPosition(rec.getString("fk_dorm")));
+                        dormList.setSelected(true);
 
                         startIntent.putExtra("receiver", new RequestResultIntReceiver(new Handler()));
                         startIntent.putExtra("type", "select");
                         startIntent.putExtra("request", "SELECT roomnumber FROM [room] WHERE room_id = " + rec.getString("fk_room"));
                         getActivity().startService(startIntent);
+
+                        TextView v = (TextView) dormList.getSelectedView();
+                        if (v != null) v.setTextColor(Color.BLACK);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -436,6 +440,8 @@ public class Profile extends Fragment {
                         } else {
                             room.setText(String.valueOf(resultSet.getJSONObject(0).getInt("roomnumber")));
                         }
+                        TextView v = (TextView) dormList.getSelectedView(); // тут точно получаем список dorm
+                        v.setTextColor(Color.BLACK);
                         break;
 
                     } catch (JSONException e) {
