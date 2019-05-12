@@ -24,6 +24,11 @@
             android:id="@+id/proposals_history"
             android:textSize = "20sp"
             android:title="История заявок" />
+        <item
+            android:id="@+id/add_new_book"
+            android:textSize = "20sp"
+            android:title="@string/add_new_book" />
+
 
     </group>
 
