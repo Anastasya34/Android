@@ -190,7 +190,6 @@ public class AdminAddBookFragment extends Fragment {
                     "           ,[bookavailability]\n" +
                     "           ,[amountpage]\n" +
                     "           ,[amountinstances]\n" +
-                    "           ,[publishyear]\n" +
                     "     VALUES\n" +
                     "           (" + roomId +
                     "           , " + selectedDormitory +
@@ -199,8 +198,7 @@ public class AdminAddBookFragment extends Fragment {
                     "           , 'fgfh'" +
                     "           , 1" +
                     "           , 123" +
-                    "           , 11" +
-                    "           , 'lkjhg'";
+                    "           , 11)" ;
             Log.d("addBook", query);
             Log.d("selectBoardQuery",query);
             return null;
