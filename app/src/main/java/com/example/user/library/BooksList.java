@@ -75,6 +75,7 @@ public class BooksList extends Fragment {
         insertProposalReceiver = new BooksList.InsertProposalReceiver(new Handler());
         selectUserBooksReceiver = new SelectUserBooksReceiver(new Handler());
         userBooks = new ArrayList<>();
+        books = new ArrayList<>();
     }
 
     @Override
