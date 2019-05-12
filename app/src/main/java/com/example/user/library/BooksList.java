@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import org.json.JSONArray;
@@ -250,6 +251,7 @@ public class BooksList extends Fragment {
                 "," + books.get(position).bookId +")";
         Log.d("Query Insert", query);
         Intent startIntentInsert = new Intent(rootView.getContext(), DbService.class);
+        insertProposalReceiver.setPosition(position);
         startIntentInsert.putExtra("receiver", insertProposalReceiver);
         startIntentInsert.putExtra("type", "update");
         startIntentInsert.putExtra("request", query);
@@ -352,13 +354,18 @@ public class BooksList extends Fragment {
     }
     private class InsertProposalReceiver extends ResultReceiver {
 
+        int position = -1;
+
         InsertProposalReceiver(Handler handler) {
             super(handler);
         }
 
+        void setPosition(int position) {
+            this.position = position;
+        }
+
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            List<Book> books = new ArrayList<>();
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("data", resultData.getString("SQLException"));
@@ -366,12 +373,22 @@ public class BooksList extends Fragment {
                     break;
 
                 case DbService.REQUEST_SUCCESS:
+                    // возвращает количество вставленных или измененных строк
+                    int n_strings = resultData.getInt("n_strings");
+                    if (n_strings > 0) {
+                        Log.d("data", "заявка оформлена");
+                        Toast.makeText(rootView.getContext(),
+                                "Заявка оформлена",
+                                Toast.LENGTH_LONG).show();
+                        books.get(position).already_get = true;
+                        BookListAdapter adapter = new BookListAdapter(books, issuePropoasalClickListener);
+                        booksView.setAdapter(adapter);
+                    } else {
+                        Log.e("data", "заявка не оформлена");
+                    }
 
-                    Log.d("data", "fffffffffffffffffff");
                     break;
             }
-            BookListAdapter adapter = new BookListAdapter(books);
-            booksView.setAdapter(adapter);
             super.onReceiveResult(resultCode, resultData);
         }
 
