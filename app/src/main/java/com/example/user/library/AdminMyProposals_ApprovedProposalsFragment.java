@@ -37,7 +37,7 @@ public class AdminMyProposals_ApprovedProposalsFragment extends Fragment{
     public static Map<String, User> userIdForBook;
     private SelectUsersReceiver selectUsersReceiver;
     String querySelectUsers =  "SELECT [userreader_id], [usersurname],[userfirstname],[usersecondname], [userlogin],[email] FROM [dbo].[userreader] WHERE [userreader_id] IN %s";
-    String querySelectProposals = "SELECT proposal_id, book1_id, bookstatus, fk_userreader, issuedate FROM [proposal] WHERE fk_admin = %s AND bookstatus = 4";
+    String querySelectProposals = "SELECT proposal_id, book1_id, bookstatus, fk_userreader, issuedate FROM [proposal] WHERE fk_admin = %s AND bookstatus = 2";
     String querySelectBook = "SELECT book_id, bookname FROM [book] WHERE book_id IN ";
     String queryUpdateProposal = "UPDATE [proposal] SET bookstatus = 8 WHERE proposal_id = %s;";
 
@@ -49,6 +49,7 @@ public class AdminMyProposals_ApprovedProposalsFragment extends Fragment{
             admin_id = getArguments().getInt(Constants.ADMIN_ID);
         }
         querySelectProposals = String.format(querySelectProposals, String.valueOf(admin_id));
+        Log.d("querySelectProposals", querySelectProposals);
         selectProposalReceiver = new SelectProposalsReceiver(new Handler());
         selectBookReceiver = new SelectBookReceiver(new Handler());
         selectUsersReceiver = new SelectUsersReceiver(new Handler());

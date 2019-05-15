@@ -25,6 +25,11 @@ public class Book{
         this.description = description;
         this.imageId = 0;
     }
+    public Book(String bookId, String bookname, Boolean already_get) {
+        this.bookId = bookId;
+        this.name = bookname;
+        this.already_get = already_get;
+    }
     public Book(String bookId, Integer countBooks) {
         this.bookId = bookId;
         this.countBooks = countBooks;

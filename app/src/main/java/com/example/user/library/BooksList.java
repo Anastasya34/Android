@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import org.json.JSONArray;
@@ -55,9 +56,12 @@ public class BooksList extends Fragment {
     LinearLayout simpleSearchLiner;
     LinearLayout.LayoutParams textParam;
     LinearLayout.LayoutParams textParam1;
-
+    String bookplace_id = "";
+    String book_id = "";
+    private SelectAvailableBookReciver selectAvailableBookReciver;
     private InsertProposalReceiver insertProposalReceiver;
     private SelectUserBooksReceiver selectUserBooksReceiver;
+    private UpdateBookAvialbilityReceiver updateBookAvialbilityReceiver;
     private List<String> userBooks;
     public BooksList() {
         // Required empty public constructor
@@ -73,6 +77,8 @@ public class BooksList extends Fragment {
         requestResultReceiver = new RequestResultReceiver(new Handler());
         insertProposalReceiver = new BooksList.InsertProposalReceiver(new Handler());
         selectUserBooksReceiver = new SelectUserBooksReceiver(new Handler());
+        selectAvailableBookReciver = new SelectAvailableBookReciver(new Handler());
+        updateBookAvialbilityReceiver = new UpdateBookAvialbilityReceiver(new Handler());
         userBooks = new ArrayList<>();
     }
 
@@ -176,7 +182,7 @@ public class BooksList extends Fragment {
         });
         searchRequest = rootView.findViewById(R.id.book_search);
         //узнаем какие книги уже есть у пользователя, чтобы скрыть на них кнопку "оформить заявку"
-        String selectUserBooksQuery = "SELECT book1_id FROM [proposal] WHERE fk_userreader = "+String.valueOf(user_id)+" AND bookstatus IN (0,2,4,5,6)";
+        String selectUserBooksQuery = "SELECT book1_id, bookplace_id FROM [proposal] WHERE fk_userreader = "+String.valueOf(user_id)+" AND bookstatus IN (0,2,4,5,6)";
         Intent selectUserBooks =  new Intent(rootView.getContext(), DbService.class);
         selectUserBooks.putExtra("receiver", selectUserBooksReceiver);
         selectUserBooks.putExtra("request", selectUserBooksQuery);
@@ -185,7 +191,7 @@ public class BooksList extends Fragment {
         requestResultReceiver = new RequestResultReceiver(new Handler());
         startIntent = new Intent(rootView.getContext(), DbService.class);
         startIntent.putExtra("receiver", requestResultReceiver);
-        startIntent.putExtra("request", "SELECT book_id, bookname, fk_dorm, fk_room, fk_board, fk_cupboard FROM book WHERE book.bookname LIKE \'%" + searchRequest.getText() + "%\';");
+        startIntent.putExtra("request", "SELECT book_id, bookname FROM book WHERE book.bookname LIKE \'%" + searchRequest.getText() + "%\';");
         rootView.getContext().startService(startIntent);
 
 
@@ -220,42 +226,164 @@ public class BooksList extends Fragment {
         return rootView;
     }
     public void onClickIssuePropoasalButton(int position, View v){
-        GregorianCalendar currentDate = new GregorianCalendar();
-        java.sql.Date date = new java.sql.Date(currentDate.getTimeInMillis());
-        java.sql.Time time = new java.sql.Time(currentDate.getTimeInMillis());
+        book_id = books.get(position).bookId;
+        //SELECT найти доступную книгу
+        String selectAvailableBookPlace = "SELECT  TOP 1 [id_bookplace]\n" +
+                "      ,[book_id]\n" +
+                "      ,[room_id]\n" +
+                "      ,[dorm_id]\n" +
+                "      ,[cupboard_id]\n" +
+                "      ,[board_id]\n" +
+                "      ,[bookavailability]\n" +
+                "  FROM [dbo].[bookplace] WHERE ([bookavailability] = 1 AND [book_id] = " + book_id + ")";
+        selectAvailableBookReciver.setPosition(position);
+        startIntent(selectAvailableBookPlace, selectAvailableBookReciver, "select");
 
-        GregorianCalendar returnBookDate = new GregorianCalendar();
-        returnBookDate.add(Calendar.MONTH, 1);
-        java.sql.Date returnBookDate_ = new java.sql.Date(returnBookDate.getTimeInMillis());
-        java.sql.Time returnBookTime = new java.sql.Time(returnBookDate.getTimeInMillis());
-        String query = "INSERT INTO [dbo].[proposal]" +
-                " ([bookstatus]" +
-                ",[issuedate]" +
-                ",[returndate]" +
-                ",[fk_userreader]" +
-                ",[fk1_dorm]" +
-                ",[fk1_room]" +
-                ",[fk1_board]" +
-                " ,[fk1_cupboard]" +
-                ",[book1_id])" +
-                " VALUES(" +
-                "0" +
-                ",'" + date.toString() + "T"+time.toString() +"'"+
-                ",'" + returnBookDate_.toString() + "T"+returnBookTime.toString() +"'"+
-                "," + String.valueOf(user_id)+
-                ",'" + books.get(position).fk1_dorm +"'"+
-                "," + books.get(position).fk1_room +
-                "," + books.get(position).fk1_board +
-                "," + books.get(position).fk1_cupboard +
-                "," + books.get(position).bookId +")";
-        Log.d("Query Insert", query);
-        Intent startIntentInsert = new Intent(rootView.getContext(), DbService.class);
-        startIntentInsert.putExtra("receiver", insertProposalReceiver);
-        startIntentInsert.putExtra("type", "update");
-        startIntentInsert.putExtra("request", query);
-        rootView.getContext().startService(startIntentInsert);
     }
+    private class SelectAvailableBookReciver extends ResultReceiver {
+        int position = -1;
 
+        SelectAvailableBookReciver(Handler handler) {
+            super(handler);
+        }
+
+        void setPosition(int position) {
+            this.position = position;
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("SelectAvailableBookReciver", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+
+                        if (resultSet.length() == 0) {
+                            Log.d("data", "пустой");
+                            Toast toast = Toast.makeText(rootView.getContext(),"Нет доступных книг", Toast.LENGTH_LONG);
+                            toast.show();
+                            break;
+                        }
+
+                        GregorianCalendar currentDate = new GregorianCalendar();
+                        java.sql.Date date = new java.sql.Date(currentDate.getTimeInMillis());
+                        java.sql.Time time = new java.sql.Time(currentDate.getTimeInMillis());
+
+                        GregorianCalendar returnBookDate = new GregorianCalendar();
+                        returnBookDate.add(Calendar.MONTH, 1);
+                        java.sql.Date returnBookDate_ = new java.sql.Date(returnBookDate.getTimeInMillis());
+                        java.sql.Time returnBookTime = new java.sql.Time(returnBookDate.getTimeInMillis());
+
+                        for (int i = 0; i < resultSet.length(); ++i) {
+                            JSONObject rec = resultSet.getJSONObject(i);
+                            bookplace_id = rec.getString("id_bookplace");
+                        }
+                        Log.d("bookplace_id", bookplace_id);
+
+                        String query = "INSERT INTO [dbo].[proposal]" +
+                                " ([bookstatus]" +
+                                ",[issuedate]" +
+                                ",[returndate]" +
+                                ",[fk_userreader]" +
+                                ",[bookplace_id]" +
+                                ",[book1_id])" +
+                                " VALUES(" +
+                                "0" +
+                                ",'" + date.toString() + "T"+time.toString() +"'"+
+                                ",'" + returnBookDate_.toString() + "T"+returnBookTime.toString() +"'"+
+                                "," + String.valueOf(user_id)+
+                                "," + bookplace_id +
+                                "," + book_id +")";
+                        Log.d("Query Insert", query);
+                        insertProposalReceiver.setPosition(position);
+                        startIntent(query, insertProposalReceiver,"update" );
+
+                        String updateBookAvialbilityBookAvialbility = "UPDATE [dbo].[bookplace] SET [bookavailability] = 0 WHERE [id_bookplace] = " + bookplace_id;
+                        startIntent(updateBookAvialbilityBookAvialbility, updateBookAvialbilityReceiver,"update" );
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.d("data", resultData.getString("JSONString"));
+                    break;
+            }
+
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+    private class UpdateBookAvialbilityReceiver extends ResultReceiver {
+
+        int position = -1;
+        UpdateBookAvialbilityReceiver(Handler handler) {
+            super(handler);
+        }
+
+        void setPosition(int position) {
+            this.position = position;
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    // возвращает количество вставленных или измененных строк
+                    int n_strings = resultData.getInt("n_strings");
+                    Log.e("data", String.valueOf(n_strings));
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+    private class InsertProposalReceiver extends ResultReceiver {
+
+        int position = -1;
+        InsertProposalReceiver(Handler handler) {
+            super(handler);
+        }
+
+        void setPosition(int position) {
+            this.position = position;
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    // возвращает количество вставленных или измененных строк
+                    int n_strings = resultData.getInt("n_strings");
+                    if (n_strings > 0) {
+                        Log.d("data", "заявка оформлена");
+                        Toast.makeText(rootView.getContext(),
+                                "Заявка оформлена",
+                                Toast.LENGTH_LONG).show();
+                        books.get(position).already_get = true;
+                        BookListAdapter adapter = new BookListAdapter(books, issuePropoasalClickListener);
+                        booksView.setAdapter(adapter);
+                    } else {
+                        Log.e("data", "заявка не оформлена");
+                    }
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
     private class RequestResultReceiver extends ResultReceiver {
 
         RequestResultReceiver(Handler handler) {
@@ -266,8 +394,7 @@ public class BooksList extends Fragment {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
-                    Log.d("data", resultData.getString("SQLException"));
-
+                    Log.d("RequestResultReceiver", resultData.getString("SQLException"));
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -287,10 +414,6 @@ public class BooksList extends Fragment {
                             Boolean already_get = userBooks.indexOf(rec.getString("book_id")) != -1;
                             books.add(new Book(rec.getString("book_id"),
                                     rec.getString("bookname"),
-                                    rec.getString("fk_dorm"),
-                                    rec.getString("fk_board"),
-                                    rec.getString("fk_room"),
-                                    rec.getString("fk_cupboard"),
                                     already_get ));
                         }
 
@@ -350,32 +473,7 @@ public class BooksList extends Fragment {
         }
 
     }
-    private class InsertProposalReceiver extends ResultReceiver {
 
-        InsertProposalReceiver(Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            List<Book> books = new ArrayList<>();
-            switch (resultCode) {
-                case DbService.REQUEST_ERROR:
-                    Log.d("data", resultData.getString("SQLException"));
-
-                    break;
-
-                case DbService.REQUEST_SUCCESS:
-
-                    Log.d("data", "fffffffffffffffffff");
-                    break;
-            }
-            BookListAdapter adapter = new BookListAdapter(books);
-            booksView.setAdapter(adapter);
-            super.onReceiveResult(resultCode, resultData);
-        }
-
-    }
 
     static String authorsRequest(String authors) {
         //деление строки на авторов и получение их ФИО
@@ -465,5 +563,12 @@ public class BooksList extends Fragment {
         return request.toString();
     }
 
+    public void startIntent(String queryRequest, ResultReceiver startReceiver, String type){
+        Intent startIntent = new Intent(rootView.getContext(), DbService.class);
+        startIntent.putExtra("request", queryRequest);
+        startIntent.putExtra("receiver", startReceiver);
+        startIntent.putExtra("type", type);
+        rootView.getContext().startService(startIntent);
+    }
 
 }

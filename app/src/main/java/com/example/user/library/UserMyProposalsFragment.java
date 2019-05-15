@@ -43,8 +43,10 @@ public class UserMyProposalsFragment extends Fragment {
     private UserMyProposalsFragment.RequestResultReceiver selectProposalReceiver;
     private UserMyProposalsFragment.RequestBookReceiver selectBookReceiver;
     private UserMyProposalsFragment.UpdateProposalReceiver updateProposalReceiver;
-    String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = %s AND bookstatus IN (0,2)";
-    String queryUpdateProposal = "UPDATE [proposal] SET bookstatus = '%s' WHERE fk_userreader = %s AND book1_id = %s;";
+    private UpdateBookAvialbilityReceiver updateBookAvialbilityReceiver;
+    String querySelectProposals = "SELECT book1_id, bookstatus, issuedate, bookplace_id FROM [proposal] WHERE fk_userreader = %s AND bookstatus IN (0,2)";
+    String queryUpdateProposal = "UPDATE [proposal] SET bookstatus = %s WHERE fk_userreader = %s AND book1_id = %s ;";
+    String updateBookAvialbility = "UPDATE [dbo].[bookplace] SET [bookavailability] = 1 WHERE [id_bookplace] = %s";
 
     String querySelectBook;
 
@@ -58,9 +60,9 @@ public class UserMyProposalsFragment extends Fragment {
 
         selectProposalReceiver = new UserMyProposalsFragment.RequestResultReceiver(new Handler());
         selectBookReceiver = new UserMyProposalsFragment.RequestBookReceiver(new Handler());
+        updateProposalReceiver = new UserMyProposalsFragment.UpdateProposalReceiver(new Handler());
+        updateBookAvialbilityReceiver = new UpdateBookAvialbilityReceiver(new Handler());
         startIntent = new Intent(getActivity(), DbService.class);
-        startIntentBook = new Intent(getActivity(), DbService.class);
-
 
     }
 
@@ -74,11 +76,8 @@ public class UserMyProposalsFragment extends Fragment {
         //запрос
         Log.d("User ID", String.valueOf(user_id));
         querySelectProposals = String.format(querySelectProposals, String.valueOf(user_id));//"SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = "+String.valueOf(user_id) + " AND bookstatus IN (4,5)";
-        //startIntent.putExtra("receiver", requestResultReceiver);
-        startIntent.putExtra("request", querySelectProposals);
-        startIntent.putExtra("receiver", selectProposalReceiver);
-        startIntent.putExtra("type", "select");
-        getActivity().startService(startIntent);
+        startIntent(querySelectProposals, selectProposalReceiver, "select");
+
         bookReturnClickListener = new ProposalAdapter.BookReturnClickListener(){
             @Override
             public void onBookReturnButtonClick(int position, View v) {
@@ -89,24 +88,25 @@ public class UserMyProposalsFragment extends Fragment {
     }
 
     public void onClickCancelButton(int position, View v){
-        updateProposalReceiver = new UserMyProposalsFragment.UpdateProposalReceiver(new Handler());
-        Intent startIntentUpdate = new Intent(getActivity(), DbService.class);
-        String bookId = proposals.get(position).bookId;
-        Log.d("onClickReturnBook", bookId);
-        String queryUpdate = String.format(queryUpdateProposal, String.valueOf(1), String.valueOf(user_id), bookId);
-        Log.d("query", queryUpdate);
-        startIntentUpdate.putExtra("request", queryUpdate);
-        startIntentUpdate.putExtra("receiver", updateProposalReceiver);
-        startIntentUpdate.putExtra("type", "update");
-        getActivity().startService(startIntentUpdate);
         spinner.setVisibility(View.VISIBLE);
+        String bookId = proposals.get(position).bookId;
+        String bookplace_id = proposals.get(position).bookplace_id;
+        Log.d("onClickReturnBook", bookId);
+
+        String queryUpdate = String.format(queryUpdateProposal, String.valueOf(1), String.valueOf(user_id), bookId);
+        startIntent(queryUpdate, updateProposalReceiver, "update");
+
+        String queryUpdateAvialBook = String.format(updateBookAvialbility, bookplace_id);
+        startIntent(queryUpdateAvialBook, updateBookAvialbilityReceiver, "update");
+        Log.d("queryUpdateAvialBook", queryUpdateAvialBook);
+
         bookReturnClickListener = new ProposalAdapter.BookReturnClickListener(){
             @Override
             public void onBookReturnButtonClick(int position, View v) {
                 onClickCancelButton(position, v);
             }
         };
-        getActivity().startService(startIntent);
+        startIntent(querySelectProposals, selectProposalReceiver, "select");
         spinner.setVisibility(View.GONE);
     }
 
@@ -128,7 +128,7 @@ public class UserMyProposalsFragment extends Fragment {
                     Log.d("Response", jsonString);
                     try {
                         int bookStatus;
-                        String  bookId;
+                        String  bookId, bookplaceId;
                         JSONArray resultSet = new JSONArray(jsonString);
                         proposals = new ArrayList<>();
                         bookIdForProposal = new HashMap<>();
@@ -137,8 +137,9 @@ public class UserMyProposalsFragment extends Fragment {
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject row = resultSet.getJSONObject(i);
                             bookId = row.getString("book1_id");
+                            bookplaceId =  row.getString("bookplace_id");
                             bookStatus = Integer.valueOf(row.getString("bookstatus"));
-                            bookIdForProposal.put(bookId, new Proposal(bookId,0, Constants.stasusDictionary.get(bookStatus), row.getString("issuedate") ));
+                            bookIdForProposal.put(bookId, new Proposal(bookId,Constants.stasusDictionary.get(bookStatus), row.getString("issuedate"), bookplaceId,0 ));
                         }
                         Log.d("After", bookIdForProposal.keySet().toString());
                         if (bookIdForProposal.keySet().size() > 0) {
@@ -147,10 +148,8 @@ public class UserMyProposalsFragment extends Fragment {
                                     .replace("[", "(")
                                     .replace("]", ")");
                             System.out.println(querySelectBook + booksId);
-                            startIntentBook.putExtra("request", querySelectBook + booksId);
-                            startIntentBook.putExtra("receiver", selectBookReceiver);
-                            startIntentBook.putExtra("type", "select");
-                            getActivity().startService(startIntentBook);
+                            startIntent(querySelectBook + booksId, selectBookReceiver,"select");
+
                         }
                         else{
                             mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment");
@@ -236,6 +235,42 @@ public class UserMyProposalsFragment extends Fragment {
             super.onReceiveResult(resultCode, resultData);
         }
 
+    }
+    private class UpdateBookAvialbilityReceiver extends ResultReceiver {
+
+        int position = -1;
+        UpdateBookAvialbilityReceiver(Handler handler) {
+            super(handler);
+        }
+
+        void setPosition(int position) {
+            this.position = position;
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    // возвращает количество вставленных или измененных строк
+                    int n_strings = resultData.getInt("n_strings");
+                    Log.e("data", String.valueOf(n_strings));
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    public void startIntent(String queryRequest, ResultReceiver startReceiver, String type){
+        Intent startIntent = new Intent(rootView.getContext(), DbService.class);
+        startIntent.putExtra("request", queryRequest);
+        startIntent.putExtra("receiver", startReceiver);
+        startIntent.putExtra("type", type);
+        rootView.getContext().startService(startIntent);
     }
 
 }
