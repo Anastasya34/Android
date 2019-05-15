@@ -14,7 +14,14 @@ public class Proposal{
     public String userId;
     public String userLogin;
     public String proposalId;
-
+    public String bookplace_id;
+    public Proposal(String bookId, String proposalStatus, String proposalcreateDate, String bookplace_id, int imageId) {
+        this.bookId = bookId;
+        this.imageId = imageId;
+        this.proposalStatus = proposalStatus;
+        this.proposalcreateDate = proposalcreateDate;
+        this.bookplace_id = bookplace_id;
+    }
     public Proposal(String bookId, int imageId, String proposalStatus, String proposalcreateDate) {
         this.bookId = bookId;
         this.imageId = imageId;

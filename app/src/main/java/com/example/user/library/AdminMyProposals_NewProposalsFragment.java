@@ -51,6 +51,7 @@ public class AdminMyProposals_NewProposalsFragment extends Fragment{
             admin_id = getArguments().getInt(Constants.ADMIN_ID);
         }
         querySelectProposals = String.format(querySelectProposals, String.valueOf(admin_id));
+        Log.d("querySelectProposals", querySelectProposals);
         selectProposalReceiver = new SelectProposalsReceiver(new Handler());
         selectBookReceiver = new SelectBookReceiver(new Handler());
         selectUsersReceiver = new SelectUsersReceiver(new Handler());
