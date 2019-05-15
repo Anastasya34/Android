@@ -1,11 +1,14 @@
 package com.example.user.library;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.icu.util.Calendar;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -47,20 +51,21 @@ public class AdminAddBookFragment extends Fragment {
     private SelectThemeReceiver selectThemeReceiver;
     private InsertThemeReceiver insertThemeReceiver;
     private InsertBookThemeReceiver insertBookThemeReceiver;
-    volatile String genre = "";
-    volatile String publisment = "";
-    volatile String bookObject = "";
+    volatile EditText publisment;
+    volatile EditText bookObject;
     volatile String roomId = "";
     volatile String boardId = "";
     volatile String cupBoardId = "";
     volatile String authorId = "";
     volatile String bookId = "";
     volatile Boolean check = true;
+    volatile EditText genre;
     String bookNameStr;
+    TextView errorMessage;
     EditText bookName;
     EditText amountPage;
     EditText publishYear;
-    EditText roomNumber;
+    EditText roomNumber, boardNumber, cupBoardNumber;
     Boolean endTask = false;
     private List<Author> newAuthors;
     private List<String> newThemes;
@@ -103,16 +108,17 @@ public class AdminAddBookFragment extends Fragment {
         addAuthor(rootView);
         addTheme(rootView);
         bookName =  (EditText)rootView.findViewById(R.id.book_name_value);
-        genre = ((EditText)rootView.findViewById(R.id.genre_book_value)).getText().toString();
-        publisment = ((EditText)rootView.findViewById(R.id.book_publishment_value)).getText().toString();
-        bookObject = ((EditText)rootView.findViewById(R.id.book_object_value)).getText().toString();
-        roomNumber = rootView.findViewById(R.id.room_value);
-        //author = rootView.findViewById(R.id.book_author_value);
-        EditText boardNumber = rootView.findViewById(R.id.board_value);
+        genre = ((EditText)rootView.findViewById(R.id.genre_book_value));
+        bookObject = rootView.findViewById(R.id.book_object_value);
+        publisment = (EditText)rootView.findViewById(R.id.book_publishment_value);
+            publishYear =  ((EditText)rootView.findViewById(R.id.publishyear_value));
+            amountPage =  ((EditText)rootView.findViewById(R.id.amount_page_value));
+            roomNumber = rootView.findViewById(R.id.room_value);
+        boardNumber = rootView.findViewById(R.id.board_value);
+        cupBoardNumber = rootView.findViewById(R.id.сupboard_value);
+        errorMessage = rootView.findViewById(R.id.errorMessage);
 
-        amountPage =  ((EditText)rootView.findViewById(R.id.amount_page_value));
-        publishYear =  ((EditText)rootView.findViewById(R.id.publishyear_value));
-        Spinner dormList = (Spinner) rootView.findViewById(R.id.dormitories);
+            Spinner dormList = (Spinner) rootView.findViewById(R.id.dormitories);
         ArrayAdapter<String> dormAdapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_spinner_item, new ArrayList<String>());
         // Определяем разметку для использования при выборе элемента
         dormAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -162,6 +168,11 @@ public class AdminAddBookFragment extends Fragment {
     }
   //=====================BOOK===============================================================
     public void addBook(View v) {
+        if (!validFields()){
+            authors.clear();
+            themes.clear();
+            return;
+        }
         check = true;
         bookNameStr = bookName.getText().toString();
         String roomNumer_ = roomNumber.getText().toString();
@@ -209,9 +220,12 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("SelectRoomReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
+                    String pyblishyear_ = "%s-01-01";
                     String jsonString = resultData.getString("JSONString");
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
@@ -224,6 +238,7 @@ public class AdminAddBookFragment extends Fragment {
                                     "           ,[fk_board]\n" +
                                     "           ,[bookname]\n" +
                                     "           ,[bookavailability]\n" +
+                                    "           ,[publishyear]\n" +
                                     "           ,[amountpage])" +
                                     "     VALUES( " + roomId +
                                     "           , '" + selectedDormitory +"'"+
@@ -231,6 +246,7 @@ public class AdminAddBookFragment extends Fragment {
                                     "           , " + boardId +
                                     "           , '" + bookName.getText().toString()+"'" +
                                     "           , 1" +
+                                    "           , '" + String.format(pyblishyear_, publishYear.getText().toString()) +"'"+
                                     "           , " + amountPage.getText().toString() + ")" ;
                             Log.d("addBook", query);
                             Log.d("selectBoardQuery",query);
@@ -241,9 +257,9 @@ public class AdminAddBookFragment extends Fragment {
                         bookId = row.getString("book_id");
                         Log.d("bookId", bookId);
                         if (check) {
-                            Toast toast = Toast.makeText(rootView.getContext(),
+                            Toast toast2 = Toast.makeText(rootView.getContext(),
                                     "Книга уже существует в базе данных", Toast.LENGTH_SHORT);
-                            toast.show();
+                            toast2.show();
                             check = false;
                         }
 
@@ -268,6 +284,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("data", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -281,15 +299,8 @@ public class AdminAddBookFragment extends Fragment {
                     check = false;
                     //get bookId
                     startIntent(query, selectBookReceiver, "select");
+
                     //add Author
-                    for (View view : allEds){
-                        EditText surname = view.findViewById(R.id.authorsurname_value);
-                        EditText firstname = view.findViewById(R.id.authorname_value);
-                        EditText secondname = view.findViewById(R.id.authorsecondname_value);
-                        authors.add(new Author(firstname.getText().toString(),
-                                secondname.getText().toString(),
-                                surname.getText().toString()));
-                    }
                     String selectAuthors = "SELECT [author_id], [authorsurname],[authorfirstname], [authorsecondname]   FROM [dbo].[author] WHERE " + authors.get(0).toSelectString();
                     for (int i = 1; authors.size() > 1 && i < authors.size(); i++ ){
                         selectAuthors = selectAuthors + " OR " + authors.get(i).toSelectString();
@@ -297,12 +308,11 @@ public class AdminAddBookFragment extends Fragment {
                     Log.d("selectAuthors", selectAuthors);
                     startIntent(selectAuthors, selectAuthorReceiver, "select");
                     new InsertBookAuthorTask().execute();
+
                     //add Theme
                     String selectThemes = "SELECT [theme_id], [themename] FROM [dbo].[theme] WHERE [themename] IN ( ";
-                    for (View view : allThemes){
-                        EditText theme = (EditText) view;
-                        themes.add(theme.getText().toString());
-                        selectThemes = selectThemes + "'" +theme.getText().toString()+"', ";
+                    for (String theme : themes){
+                        selectThemes = selectThemes + "'" +theme+"', ";
                     }
                     //не может быть ситауции, где тема не заполнена
                     selectThemes = selectThemes.substring(0, selectThemes.lastIndexOf(",")) + ")";
@@ -336,6 +346,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("SelectThemeReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -391,6 +403,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("InsertThemeReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -439,11 +453,31 @@ public class AdminAddBookFragment extends Fragment {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == DbService.REQUEST_ERROR){
                 Log.d("InsertBookThemeReceiver", resultData.getString("SQLException"));
+                Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                toast.show();
             }
-            themesIds.clear();
-            themes.clear();
-            allThemes.clear();
-            super.onReceiveResult(resultCode, resultData);
+            else {
+                Toast toast = Toast.makeText(rootView.getContext(),"Книга успешно добавлена", Toast.LENGTH_SHORT);
+                toast.show();
+                super.onReceiveResult(resultCode, resultData);
+                Class fragmentClass = AdminAddBookFragment.class;
+                Fragment fragment = null;
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack("adminMenu").commit();
+                //
+            }
+
+
+
+
         }
 
     }
@@ -468,6 +502,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("SelectAuthorReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -526,6 +562,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("InsertAuthorReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -639,6 +677,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("SelectRoomReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -676,6 +716,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("SelectBoardReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -714,6 +756,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("SelectRoomReceiver", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -762,6 +806,8 @@ public class AdminAddBookFragment extends Fragment {
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("data", resultData.getString("SQLException"));
+                    Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
+                    toast.show();
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -804,5 +850,110 @@ public class AdminAddBookFragment extends Fragment {
         startIntent.putExtra("receiver", startReceiver);
         startIntent.putExtra("type", type);
         rootView.getContext().startService(startIntent);
+    }
+
+    private Boolean validFields(){
+        if (bookName.getText().toString().isEmpty()
+                || genre.getText().toString().isEmpty()
+                || bookObject.getText().toString().isEmpty()
+                || publisment.getText().toString().isEmpty()
+                || publishYear.getText().toString().isEmpty()
+                || amountPage.getText().toString().isEmpty()
+                || roomNumber.getText().toString().isEmpty()
+                || boardNumber.getText().toString().isEmpty()
+                || cupBoardNumber.getText().toString().isEmpty()) {
+
+            errorMessage.setTextColor(Color.RED);
+            errorMessage.setText("Все поля должны быть заполнены");
+            errorMessage.setVisibility(View.VISIBLE);
+            return false;
+        }
+        for (View view : allThemes){
+            EditText theme = (EditText) view;
+            if (!theme.getText().toString().isEmpty()) {
+                themes.add(theme.getText().toString());
+            }
+            else{
+                errorMessage.setTextColor(Color.RED);
+                errorMessage.setText("Все поля должны быть заполнены");
+                errorMessage.setVisibility(View.VISIBLE);
+                return false;
+            }
+        }
+        for (View view : allEds){
+            String surname = ((EditText) view.findViewById(R.id.authorsurname_value)).getText().toString();
+            String firstname = ((EditText) view.findViewById(R.id.authorname_value)).getText().toString();
+            String secondname = ((EditText)view.findViewById(R.id.authorsecondname_value)).getText().toString();
+            if (!firstname.isEmpty() && !secondname.isEmpty() && !surname.isEmpty()) {
+                authors.add(new Author(firstname, secondname, surname));
+            }
+            else{
+                errorMessage.setTextColor(Color.RED);
+                errorMessage.setText("Все поля должны быть заполнены");
+                errorMessage.setVisibility(View.VISIBLE);
+                authors.clear();
+                return false;
+            }
+        }
+        try {
+            if (publishYear.getText().toString().length() != 4){
+                errorMessage.setTextColor(Color.RED);
+                errorMessage.setText("Неверно введен год издательства");
+                errorMessage.setVisibility(View.VISIBLE);
+                return false;
+            }
+            int publishmentYear = Integer.valueOf(publishYear.getText().toString());
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            if (publishmentYear < 1800 ||  currentYear < publishmentYear){
+                errorMessage.setTextColor(Color.RED);
+                errorMessage.setText("Неверно введен год издательства");
+                errorMessage.setVisibility(View.VISIBLE);
+                return false;
+            }
+        }
+
+        catch (NumberFormatException ex){
+            errorMessage.setTextColor(Color.RED);
+            errorMessage.setText("Неверно введен год издательства");
+            errorMessage.setVisibility(View.VISIBLE);
+            return false;
+        }
+        try {
+            int amountpage = Integer.valueOf(amountPage.getText().toString());
+        }
+        catch (NumberFormatException ex){
+            errorMessage.setTextColor(Color.RED);
+            errorMessage.setText("Неверно введено количество страниц");
+            errorMessage.setVisibility(View.VISIBLE);
+            return false;
+        }
+        try {
+            int amountpage = Integer.valueOf(roomNumber.getText().toString());
+        }
+        catch (NumberFormatException ex){
+            errorMessage.setTextColor(Color.RED);
+            errorMessage.setText("Неверно введен номер комнаты");
+            errorMessage.setVisibility(View.VISIBLE);
+            return false;
+        }
+        try {
+            int amountpage = Integer.valueOf(boardNumber.getText().toString());
+        }
+        catch (NumberFormatException ex){
+            errorMessage.setTextColor(Color.RED);
+            errorMessage.setText("Неверно введен номер шкафа");
+            errorMessage.setVisibility(View.VISIBLE);
+            return false;
+        }
+        try {
+            int amountpage = Integer.valueOf(cupBoardNumber.getText().toString());
+        }
+        catch (NumberFormatException ex){
+            errorMessage.setTextColor(Color.RED);
+            errorMessage.setText("Неверно введен номер полки");
+            errorMessage.setVisibility(View.VISIBLE);
+            return false;
+        }
+        return true;
     }
 }

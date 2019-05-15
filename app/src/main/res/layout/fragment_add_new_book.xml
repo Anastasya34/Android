@@ -91,6 +91,20 @@
                 android:inputType="textPersonName" />
 
             <TextView
+                android:id="@+id/book_object_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:layout_marginTop="20dp"
+                android:text="Предмет книги" />
+
+            <EditText
+                android:id="@+id/book_object_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+            <TextView
                 android:id="@+id/theme_book_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,20 +143,6 @@
                 android:ems="10" />
 
             <TextView
-                android:id="@+id/book_object_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:layout_marginTop="20dp"
-                android:text="Предмет книги" />
-
-            <EditText
-                android:id="@+id/book_object_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10" />
-
-            <TextView
                 android:id="@+id/publishyear_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -155,7 +155,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="numberDecimal" />
+                android:maxLength="4"
+                android:inputType="date" />
+
+
+
 
             <TextView
                 android:id="@+id/login_text"
@@ -169,7 +173,9 @@
                 android:id="@+id/amount_page_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10" />
+                android:ems="10"
+                android:maxLength="4"
+                android:inputType="date"/>
             <TextView
                 android:id="@+id/dormitories_text"
                 android:layout_width="wrap_content"
@@ -234,7 +240,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:onClick="addBook"
                 android:text="Добавить книгу" />
 
             <TextView
@@ -248,16 +253,6 @@
                 android:textSize="18sp"
                 android:visibility="invisible" />
 
-
-            <!--TextView android:id="@+id/lnkLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Already Registered? Login here"
-            android:gravity="center"
-            android:textSize="15dp"
-            android:textColor="#3F51B5"
-            android:onClick="test"/-->
         </LinearLayout>
 
         <Space
