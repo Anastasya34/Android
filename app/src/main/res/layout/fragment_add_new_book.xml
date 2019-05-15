@@ -91,6 +91,30 @@
                 android:inputType="textPersonName" />
 
             <TextView
+                android:id="@+id/theme_book_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textSize="17sp"
+                android:text="@string/theme_book"/>
+
+
+
+            <LinearLayout
+                android:id = "@+id/themeLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="vertical"></LinearLayout>
+
+            <Button
+                android:id="@+id/add_theme_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Добавить область знаний" />
+            <TextView
                 android:id="@+id/book_publishment_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,6 +124,20 @@
 
             <EditText
                 android:id="@+id/book_publishment_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+            <TextView
+                android:id="@+id/book_object_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:layout_marginTop="20dp"
+                android:text="Предмет книги" />
+
+            <EditText
+                android:id="@+id/book_object_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10" />
