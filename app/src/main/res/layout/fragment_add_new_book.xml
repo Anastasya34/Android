@@ -40,21 +40,32 @@
                 android:id="@+id/book_author_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="17sp"
                 android:layout_marginTop="20dp"
                 android:text="@string/author_book" />
 
-            <EditText
-                android:id="@+id/book_author"
+
+
+            <LinearLayout
+                android:id = "@+id/mainLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName" />
+                android:layout_marginLeft="15dp"
+                android:orientation="vertical"></LinearLayout>
 
+            <Button
+                android:id="@+id/add_author_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Добавить автора" />
             <TextView
                 android:id="@+id/book_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:textSize="17sp"
                 android:text="@string/book_name" />
 
             <EditText
@@ -69,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:inputType="textPersonName"
+                android:textSize="17sp"
                 android:text="@string/genre_book"/>
 
             <EditText
@@ -80,9 +91,34 @@
                 android:inputType="textPersonName" />
 
             <TextView
+                android:id="@+id/theme_book_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textSize="17sp"
+                android:text="@string/theme_book"/>
+
+
+
+            <LinearLayout
+                android:id = "@+id/themeLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:orientation="vertical"></LinearLayout>
+
+            <Button
+                android:id="@+id/add_theme_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Добавить область знаний" />
+            <TextView
                 android:id="@+id/book_publishment_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="17sp"
                 android:layout_marginTop="20dp"
                 android:text="@string/publishment_book" />
 
@@ -93,10 +129,25 @@
                 android:ems="10" />
 
             <TextView
+                android:id="@+id/book_object_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:layout_marginTop="20dp"
+                android:text="Предмет книги" />
+
+            <EditText
+                android:id="@+id/book_object_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+            <TextView
                 android:id="@+id/publishyear_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:textSize="17sp"
                 android:text="@string/publish_year_book" />
 
             <EditText
@@ -111,6 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:textSize="17sp"
                 android:text="Количество страниц" />
 
             <EditText
@@ -122,6 +174,7 @@
                 android:id="@+id/dormitories_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="17sp"
                 android:layout_marginTop="20dp"
                 android:text="Общежитие" />
 
@@ -134,6 +187,7 @@
                 android:id="@+id/rooms_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="17sp"
                 android:layout_marginTop="20dp"
                 android:text=" Комната" />
 
@@ -147,6 +201,7 @@
             <TextView
                 android:id="@+id/board_text"
                 android:layout_width="wrap_content"
+                android:textSize="17sp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Номер шкафа" />
@@ -163,6 +218,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:textSize="17sp"
                 android:text="Номер полки" />
 
             <EditText

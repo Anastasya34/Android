@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,61 +14,100 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AdminAddBookFragment extends Fragment {
     View rootView;
     String selectedDormitory;
+    volatile  Map<Author, String> authorsIds;
+    volatile  Map<String, String> themesIds;
     private SelectDormitoryReceiver selectDormitoryReceiver;
-    private InsertBookReceiver insertBookReceiver;
     private SelectRoomReceiver selectRoomReceiver;
     private SelectBoardReceiver selectBoardReceiver;
     private SelectCupBoardReceiver selectCupBoardReceiver;
-    volatile String roomId;
-    volatile String boardId;
-    volatile String cupBoardId;
+
+    private SelectBookReceiver selectBookReceiver;
+    private InsertBookReceiver insertBookReceiver;
+
+    private SelectAuthorReceiver selectAuthorReceiver;
+    private InsertAuthorReceiver insertAuthorReceiver;
+    private InsertBookAuthorReceiver insertBookAuthorReceiver;
+
+    private SelectThemeReceiver selectThemeReceiver;
+    private InsertThemeReceiver insertThemeReceiver;
+    private InsertBookThemeReceiver insertBookThemeReceiver;
+    volatile String genre = "";
+    volatile String publisment = "";
+    volatile String bookObject = "";
+    volatile String roomId = "";
+    volatile String boardId = "";
+    volatile String cupBoardId = "";
+    volatile String authorId = "";
+    volatile String bookId = "";
+    volatile Boolean check = true;
+    String bookNameStr;
     EditText bookName;
     EditText amountPage;
     EditText publishYear;
     EditText roomNumber;
     Boolean endTask = false;
+    private List<Author> newAuthors;
+    private List<String> newThemes;
+    private List<View> allEds;
+    private List<View> allThemes;
+    volatile ArrayList<Author> authors;
+    volatile ArrayList<String> themes;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        allEds = new ArrayList<View>();
+        allThemes = new ArrayList<>();
+        authors = new ArrayList<>();
+        themes = new ArrayList<>();
+        authorsIds = new HashMap<>();
+        themesIds = new HashMap<>();
+        newAuthors = new ArrayList<>();
+        newThemes = new ArrayList<>();
         selectDormitoryReceiver = new SelectDormitoryReceiver(new Handler());
         selectBoardReceiver = new SelectBoardReceiver(new Handler());
         selectRoomReceiver = new SelectRoomReceiver(new Handler());
         selectCupBoardReceiver = new SelectCupBoardReceiver(new Handler());
+
+        selectBookReceiver = new SelectBookReceiver(new Handler());
+        insertBookReceiver = new InsertBookReceiver(new Handler());
+
+        selectAuthorReceiver = new SelectAuthorReceiver(new Handler());
+        insertAuthorReceiver = new InsertAuthorReceiver(new Handler());
+        insertBookAuthorReceiver = new InsertBookAuthorReceiver(new Handler());
+
+        selectThemeReceiver = new SelectThemeReceiver(new Handler());
+        insertThemeReceiver = new InsertThemeReceiver(new Handler());
+        insertBookThemeReceiver = new InsertBookThemeReceiver(new Handler());
+
     }
 
         @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_add_new_book, container, false);
+        addAuthor(rootView);
+        addTheme(rootView);
         bookName =  (EditText)rootView.findViewById(R.id.book_name_value);
+        genre = ((EditText)rootView.findViewById(R.id.genre_book_value)).getText().toString();
+        publisment = ((EditText)rootView.findViewById(R.id.book_publishment_value)).getText().toString();
+        bookObject = ((EditText)rootView.findViewById(R.id.book_object_value)).getText().toString();
         roomNumber = rootView.findViewById(R.id.room_value);
-
-        roomNumber.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+        //author = rootView.findViewById(R.id.book_author_value);
         EditText boardNumber = rootView.findViewById(R.id.board_value);
 
         amountPage =  ((EditText)rootView.findViewById(R.id.amount_page_value));
@@ -103,28 +140,457 @@ public class AdminAddBookFragment extends Fragment {
                    addBook(v);
                 }
             });
+            Button addAuthor = rootView.findViewById(R.id.add_author_button);
+            addAuthor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //User user = books.get(getLayoutPosition());
+                    Log.d("addBooK", "addBooik");
+                    addAuthor(v);
+                }
+            });
+            Button addTheme = rootView.findViewById(R.id.add_theme_button);
+            addTheme.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //User user = books.get(getLayoutPosition());
+                    Log.d("addBooK", "addBooik");
+                    addTheme(v);
+                }
+            });
         return rootView;
     }
-
-    // Обрабатываем нажатие кнопки "Зарегистрироваться":
-    public void addBook(View view) {
+  //=====================BOOK===============================================================
+    public void addBook(View v) {
+        check = true;
+        bookNameStr = bookName.getText().toString();
         String roomNumer_ = roomNumber.getText().toString();
         String selectRoomQuery = "SELECT [room_id]  FROM [dbo].[room] WHERE [roomnumber] = "+roomNumer_+" AND [fk_dorm] = '"+selectedDormitory+"'";
         startIntent(selectRoomQuery, selectRoomReceiver, "select");
-        new sendInsertTask().execute(selectedDormitory);
-        new sendInsertTask2().execute(selectedDormitory);
-
-
-        // startIntent(query, insertBookReceiver, "insert");
-
+        new SelectCupBoardIdTask().execute();
+        new SelectBoardIdTask().execute();
+        new CheckExistTask().execute(bookName.getText().toString(), amountPage.getText().toString());
 
     }
-    private class sendInsertTask extends AsyncTask<String, Void, String> {
-
+    private class CheckExistTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... strings) {
+            do {
+            synchronized (boardId) {
+                try {
+                    boardId.wait(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        } while (boardId.length() == 0);
+
+        String query = "SELECT [book_id] FROM [dbo].[book] WHERE" +
+                "     bookname = '"+strings[0]+"' " +
+                " AND fk_room = " + roomId +
+                " AND fk_dorm = '"+selectedDormitory+"'" +
+                " AND fk_board = " + boardId +
+                " AND fk_cupboard = " + cupBoardId;
+
+        startIntent(query, selectBookReceiver, "select");
+            return null;
+        }
+    }
+
+    private class SelectBookReceiver extends ResultReceiver {
+
+        SelectBookReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("SelectRoomReceiver", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            String query = "\n" +
+                                    "INSERT INTO [dbo].[book]\n" +
+                                    "           ([fk_room]\n" +
+                                    "           ,[fk_dorm]\n" +
+                                    "           ,[fk_cupboard]\n" +
+                                    "           ,[fk_board]\n" +
+                                    "           ,[bookname]\n" +
+                                    "           ,[bookavailability]\n" +
+                                    "           ,[amountpage])" +
+                                    "     VALUES( " + roomId +
+                                    "           , '" + selectedDormitory +"'"+
+                                    "           , " + cupBoardId+
+                                    "           , " + boardId +
+                                    "           , '" + bookName.getText().toString()+"'" +
+                                    "           , 1" +
+                                    "           , " + amountPage.getText().toString() + ")" ;
+                            Log.d("addBook", query);
+                            Log.d("selectBoardQuery",query);
+                            startIntent(query, insertBookReceiver, "update");
+                            break;
+                        }
+                        JSONObject row = resultSet.getJSONObject(0);
+                        bookId = row.getString("book_id");
+                        Log.d("bookId", bookId);
+                        if (check) {
+                            Toast toast = Toast.makeText(rootView.getContext(),
+                                    "Книга уже существует в базе данных", Toast.LENGTH_SHORT);
+                            toast.show();
+                            check = false;
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    private class InsertBookReceiver extends ResultReceiver {
+
+        InsertBookReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("data", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    Log.d("data", "пусто");
+                    String query = "SELECT [book_id] FROM [dbo].[book] WHERE" +
+                            "     bookname = '"+bookNameStr+"' " +
+                            " AND fk_room = " + roomId +
+                            " AND fk_dorm = '"+selectedDormitory+"'" +
+                            " AND fk_board = " + boardId +
+                            " AND fk_cupboard = " + cupBoardId;
+                    check = false;
+                    //get bookId
+                    startIntent(query, selectBookReceiver, "select");
+                    //add Author
+                    for (View view : allEds){
+                        EditText surname = view.findViewById(R.id.authorsurname_value);
+                        EditText firstname = view.findViewById(R.id.authorname_value);
+                        EditText secondname = view.findViewById(R.id.authorsecondname_value);
+                        authors.add(new Author(firstname.getText().toString(),
+                                secondname.getText().toString(),
+                                surname.getText().toString()));
+                    }
+                    String selectAuthors = "SELECT [author_id], [authorsurname],[authorfirstname], [authorsecondname]   FROM [dbo].[author] WHERE " + authors.get(0).toSelectString();
+                    for (int i = 1; authors.size() > 1 && i < authors.size(); i++ ){
+                        selectAuthors = selectAuthors + " OR " + authors.get(i).toSelectString();
+                    }
+                    Log.d("selectAuthors", selectAuthors);
+                    startIntent(selectAuthors, selectAuthorReceiver, "select");
+                    new InsertBookAuthorTask().execute();
+                    //add Theme
+                    String selectThemes = "SELECT [theme_id], [themename] FROM [dbo].[theme] WHERE [themename] IN ( ";
+                    for (View view : allThemes){
+                        EditText theme = (EditText) view;
+                        themes.add(theme.getText().toString());
+                        selectThemes = selectThemes + "'" +theme.getText().toString()+"', ";
+                    }
+                    //не может быть ситауции, где тема не заполнена
+                    selectThemes = selectThemes.substring(0, selectThemes.lastIndexOf(",")) + ")";
+                    Log.d("selectThemes", selectThemes);
+                    startIntent(selectThemes, selectThemeReceiver, "select");
+                    new InsertThemeBookTask().execute();
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+    //=====================theme=============================================
+    public void addTheme(View view){
+        LinearLayout themeLayout = rootView.findViewById(R.id.themeLinearLayout);
+        EditText newTheme = new  EditText(rootView.getContext());
+        newTheme.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        allThemes.add(newTheme);
+        themeLayout.addView(newTheme);
+    }
+
+    private class SelectThemeReceiver extends ResultReceiver {
+
+        SelectThemeReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("SelectThemeReceiver", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    String themeId, themeName;
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            Log.d("SelectAuthorReceiver", "пусто");
+                        }
+                        for (int i = 0; i < resultSet.length(); i++) {
+                            JSONObject row = resultSet.getJSONObject(i);
+                            themeId = row.getString("theme_id");
+                            themeName = row.getString("themename");
+                            themesIds.put(themeName, themeId) ;
+                        }
+                        Log.d("themesIds", String.valueOf(themesIds.size()));
+                        Log.d("themes", String.valueOf(themes.size()));
+
+                        String insertThemes = "INSERT INTO [dbo].[theme] ([themename]) VALUES\n";
+                        int oldLen = insertThemes.length();
+                        for (String theme: themes){
+                            if (themesIds.get(theme) == null){
+                                insertThemes = insertThemes + " ( '"+theme+"' ), ";
+                                newThemes.add(theme);
+                            }
+                        }
+                        if (oldLen != insertThemes.length()){
+                            insertThemes = insertThemes.substring(0, insertThemes.lastIndexOf(","));
+                            Log.d("insertThemes", insertThemes);
+                            startIntent(insertThemes, insertThemeReceiver, "update");
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    private class InsertThemeReceiver extends ResultReceiver {
+
+        InsertThemeReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("InsertThemeReceiver", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String selectThemes = "SELECT [theme_id], [themename] FROM [dbo].[theme] WHERE [themename] IN ( ";
+                    for (String theme : newThemes){
+                        selectThemes = selectThemes + "'" +theme+"', ";
+                    }
+                    selectThemes = selectThemes.substring(0, selectThemes.lastIndexOf(",")) +")";
+                    Log.d("selectThemes", selectThemes);
+                    startIntent(selectThemes, selectThemeReceiver, "select");
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    public class InsertThemeBookTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            do {
+                synchronized (themesIds) {
+                    try {
+                        themesIds.wait(100);
+                    } catch (InterruptedException e) {
+                        Log.d("error", e.toString());
+                    }
+                }
+
+            } while (themesIds.size() != themes.size());
+            String insertThemeBook = "INSERT INTO  [dbo].[themebook] ([theme_id],[book_id]) VALUES ";
+            for (String fk_theme_id: themesIds.values()){
+                insertThemeBook = insertThemeBook + "(" +  fk_theme_id  + ", " + bookId +"),";
+            }
+            insertThemeBook = insertThemeBook.substring(0, insertThemeBook.lastIndexOf(","));
+            Log.d("insertBookAuthor",insertThemeBook);
+            startIntent(insertThemeBook, insertBookThemeReceiver, "update");
+            return null;
+        }
+    }
+    private class InsertBookThemeReceiver extends ResultReceiver {
+        InsertBookThemeReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (resultCode == DbService.REQUEST_ERROR){
+                Log.d("InsertBookThemeReceiver", resultData.getString("SQLException"));
+            }
+            themesIds.clear();
+            themes.clear();
+            allThemes.clear();
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    //=====================author=============================================
+
+    public void addAuthor(View view) {
+        LinearLayout mainLayout = rootView.findViewById(R.id.mainLinearLayout);
+        final View autorView = getLayoutInflater().inflate(R.layout.author_layout, null);
+        allEds.add(view);
+        mainLayout.addView(autorView);
+    }
+    private class SelectAuthorReceiver extends ResultReceiver {
+
+        SelectAuthorReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("SelectAuthorReceiver", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String jsonString = resultData.getString("JSONString");
+                    String authorId, authorName, authorSecondName, authorSurname;
+                    try {
+                        JSONArray resultSet = new JSONArray(jsonString);
+                        if (resultSet.length() == 0) {
+                            Log.d("SelectAuthorReceiver", "пусто");
+                        }
+                        for (int i = 0; i < resultSet.length(); i++) {
+                            JSONObject row = resultSet.getJSONObject(i);
+                            authorId = row.getString("author_id");
+                            authorName = row.getString("authorfirstname");
+                            authorSecondName = row.getString("authorsecondname");
+                            authorSurname = row.getString("authorsurname");
+                            authorsIds.put(new Author(authorName,authorSecondName,authorSurname), authorId) ;
+                        }
+                        Log.d("authorsIds", String.valueOf(authorsIds.size()));
+                        Log.d("author", String.valueOf(authors.size()));
+
+                        String insertAuthors = "INSERT INTO [dbo].[author] ([authorsurname],[authorfirstname],[authorsecondname]) VALUES\n";
+                        int lenInsert = insertAuthors.length();
+                        for (Author author: authors){
+                            if (authorsIds.get(author) == null){
+                                insertAuthors = insertAuthors + author.toInsertString()+", ";
+                                newAuthors.add(author);
+                            }
+                        }
+                        if (lenInsert != insertAuthors.length()){
+                            insertAuthors = insertAuthors.substring(0, insertAuthors.lastIndexOf(","));
+                            Log.d("insertAuthors", insertAuthors);
+                            startIntent(insertAuthors, insertAuthorReceiver, "update");
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
 
 
+    private class InsertAuthorReceiver extends ResultReceiver {
+
+        InsertAuthorReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            switch (resultCode) {
+                case DbService.REQUEST_ERROR:
+                    Log.d("InsertAuthorReceiver", resultData.getString("SQLException"));
+                    break;
+
+                case DbService.REQUEST_SUCCESS:
+                    String selectAuthors = "SELECT [author_id], [authorsurname],[authorfirstname], [authorsecondname]   FROM [dbo].[author] WHERE " + newAuthors.get(0).toSelectString();
+                    for (int i = 1; newAuthors.size() > 1 && i < newAuthors.size(); i++ ){
+                        selectAuthors = selectAuthors + " OR " + newAuthors.get(i).toSelectString();
+                    }
+                    Log.d("selectAuthors", selectAuthors);
+                    startIntent(selectAuthors, selectAuthorReceiver, "select");
+                    break;
+            }
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+    public class InsertBookAuthorTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            do {
+                synchronized (authorsIds) {
+                    try {
+                        authorsIds.wait(100);
+                    } catch (InterruptedException e) {
+                        Log.d("error", e.toString());
+                    }
+                }
+
+            } while (authorsIds.size() != authors.size());
+            String insertBookAuthor = "INSERT INTO [dbo].[bookauthor]\n" +
+                    "           ([fk_book_id]\n" +
+                    "           ,[fk_author_id])\n" +
+                    "     VALUES\n" ;
+            for (String fk_author_id: authorsIds.values()){
+                insertBookAuthor = insertBookAuthor + "(" + bookId + ", "+  fk_author_id +"),";
+            }
+            insertBookAuthor = insertBookAuthor.substring(0, insertBookAuthor.lastIndexOf(","));
+            startIntent(insertBookAuthor, insertBookAuthorReceiver, "update");
+            Log.d("insertBookAuthor",insertBookAuthor);
+            return null;
+        }
+    }
+
+    private class InsertBookAuthorReceiver extends ResultReceiver {
+        InsertBookAuthorReceiver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            if (resultCode == DbService.REQUEST_ERROR){
+                    Log.d("InsertReceiver", resultData.getString("SQLException"));
+            }
+            authorsIds.clear();
+            authors.clear();
+            allEds.clear();
+            super.onReceiveResult(resultCode, resultData);
+        }
+
+    }
+
+
+    //=================================================================================
+    private class SelectCupBoardIdTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
             do {
                 synchronized (roomId) {
                     try {
@@ -134,18 +600,15 @@ public class AdminAddBookFragment extends Fragment {
                     }
                 }
             } while (roomId.length() == 0);
-
             String selectCupBoardQuery = "SELECT [cupboard_id]  FROM [dbo].[cupboard] WHERE [fk_room] = " + roomId;
             startIntent(selectCupBoardQuery, selectCupBoardReceiver, "select");
             Log.d("selectCupBoardQuery",selectCupBoardQuery);
             return null;
         }
     }
-    private class sendInsertTask2 extends AsyncTask<String, Void, String> {
-
+    private class SelectBoardIdTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... strings) {
-
 
             do {
                 synchronized (cupBoardId) {
@@ -159,51 +622,12 @@ public class AdminAddBookFragment extends Fragment {
 
             String selectBoardQuery = "SELECT [board_id]  FROM [dbo].[board] WHERE [fk_cupboard] = " + cupBoardId;
             startIntent(selectBoardQuery, selectBoardReceiver, "select");
-
             Log.d("selectBoardQuery",selectBoardQuery);
             return null;
         }
     }
-    private class sendInsertTask3 extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
 
 
-            do {
-                synchronized (boardId) {
-                    try {
-                        boardId.wait(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } while (boardId.length() == 0);
-
-            String query = "\n" +
-                    "INSERT INTO [dbo].[book]\n" +
-                    "           ([fk_room]\n" +
-                    "           ,[fk_dorm]\n" +
-                    "           ,[fk_cupboard]\n" +
-                    "           ,[fk_board]\n" +
-                    "           ,[bookname]\n" +
-                    "           ,[bookavailability]\n" +
-                    "           ,[amountpage]\n" +
-                    "           ,[amountinstances]\n" +
-                    "     VALUES\n" +
-                    "           (" + roomId +
-                    "           , " + selectedDormitory +
-                    "           , " + cupBoardId+
-                    "           , " + boardId +
-                    "           , 'fgfh'" +
-                    "           , 1" +
-                    "           , 123" +
-                    "           , 11)" ;
-            Log.d("addBook", query);
-            Log.d("selectBoardQuery",query);
-            return null;
-        }
-    }
     private class SelectCupBoardReceiver extends ResultReceiver {
 
         SelectCupBoardReceiver(Handler handler) {
@@ -251,7 +675,7 @@ public class AdminAddBookFragment extends Fragment {
 
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
-                    Log.d("SelectRoomReceiver", resultData.getString("SQLException"));
+                    Log.d("SelectBoardReceiver", resultData.getString("SQLException"));
                     break;
 
                 case DbService.REQUEST_SUCCESS:
@@ -259,7 +683,7 @@ public class AdminAddBookFragment extends Fragment {
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
                         if (resultSet.length() == 0) {
-                            Log.d("SelectRoomReceiver", "пусто");
+                            Log.d("SelectBoardReceiver", "пусто");
                             break;
                         }
                         for (int i = 0; i < resultSet.length(); i++) {
@@ -374,61 +798,6 @@ public class AdminAddBookFragment extends Fragment {
 
     }
 
-    private class InsertBookReceiver extends ResultReceiver {
-
-        InsertBookReceiver(Handler handler) {
-            super(handler);
-        }
-
-        private ArrayAdapter adapter = null;
-
-        void setArgs(ArrayAdapter adapter) {
-            this.adapter = adapter;
-        }
-
-        @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-
-            ArrayList<String> list = new ArrayList<>();
-
-            switch (resultCode) {
-                case DbService.REQUEST_ERROR:
-                    Log.d("data", resultData.getString("SQLException"));
-                    break;
-
-                case DbService.REQUEST_SUCCESS:
-                    String jsonString = resultData.getString("JSONString");
-                    try {
-                        JSONArray resultSet = new JSONArray(jsonString);
-                        if (resultSet.length() == 0) {
-                            Log.d("data", "пусто");
-                            break;
-                        }
-
-                        for (int i = 0; i < resultSet.length(); i++) {
-                            JSONObject o = resultSet.getJSONObject(i);
-                            list.add(o.getString(o.keys().next()));
-                        }
-
-                        if (adapter != null) {
-                            adapter.clear();
-
-                            for (String s : list) {
-                                Log.d("List", s);
-                                adapter.add(s);
-                            }
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    break;
-            }
-            super.onReceiveResult(resultCode, resultData);
-        }
-
-    }
     public void startIntent(String queryRequest, ResultReceiver startReceiver, String type){
         Intent startIntent = new Intent(rootView.getContext(), DbService.class);
         startIntent.putExtra("request", queryRequest);
