@@ -66,13 +66,18 @@ public class AdminMyProposals_NewProposalsFragment extends Fragment{
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rViewProposal);
         spinner = rootView.findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);
-        startIntent(querySelectProposals, selectProposalReceiver, "select");
-        bookApprovedClickListener = new ProposalAdapter.BookReturnClickListener(){
+        bookApprovedClickListener = new ProposalAdapter.BookReturnClickListener() {
             @Override
             public void onBookReturnButtonClick(int position, View v) {
                 onClickApprovedButton(position, v);
             }
         };
+        mAdapter = new ProposalAdapter(rootView.getContext(), proposals = new ArrayList<>(), bookApprovedClickListener, proposalType);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(mAdapter);
+        startIntent(querySelectProposals, selectProposalReceiver, "select");
+        Log.d(this.getTag(), "onCreateView");
+
         return rootView;
     }
     void  onClickApprovedButton(int position, View v){
@@ -100,9 +105,10 @@ public class AdminMyProposals_NewProposalsFragment extends Fragment{
 
     }
     void setAdapter(){
-        mAdapter = new ProposalAdapter(rootView.getContext(), proposals, bookApprovedClickListener, proposalType);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(mAdapter);
+        //mAdapter = new ProposalAdapter(rootView.getContext(), proposals, bookApprovedClickListener, proposalType);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
     private class SelectProposalsReceiver extends ResultReceiver {
 
@@ -114,10 +120,9 @@ public class AdminMyProposals_NewProposalsFragment extends Fragment{
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             int bookStatus;
             String  proposalId, bookId, userId;
-            proposals = new ArrayList<>();
+            proposals.clear();
             bookIdForBook = new HashMap<>();
             userIdForBook = new HashMap<>();
-            proposals = new ArrayList<>();
             switch (resultCode) {
                 case DbService.REQUEST_SUCCESS:
                     String jsonString = resultData.getString("JSONString");

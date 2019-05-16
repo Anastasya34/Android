@@ -57,6 +57,9 @@ public class AdminMyProposalsFragment extends Fragment {
         spinner = rootView.findViewById(R.id.progressBar1);
         spinner.setVisibility(View.GONE);
         startIntent(querySelectProposals, selectProposalReceiver, "select");
+        mAdapter = new ProposalAdapter(rootView.getContext(), proposals = new ArrayList<>(), processClickListener, "AdminMyProposalsFragment");
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(mAdapter);
         return rootView;
     }
 
@@ -86,7 +89,7 @@ public class AdminMyProposalsFragment extends Fragment {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             int bookStatus;
             String  bookId, userId;
-            proposals = new ArrayList<>();
+            proposals.clear();
             bookIdForProposal = new HashMap<>();
 
             switch (resultCode) {
@@ -116,9 +119,10 @@ public class AdminMyProposalsFragment extends Fragment {
                             startIntent(querySelectBook + booksId, selectBookReceiver, "select");
                         }
                         else{
-                            mAdapter = new ProposalAdapter(rootView.getContext(),proposals, processClickListener, "AdminMyProposalsFragment");
-                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                            recyclerView.setAdapter(mAdapter);
+                            //mAdapter = new ProposalAdapter(rootView.getContext(),proposals, processClickListener, "AdminMyProposalsFragment");
+                            //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            //recyclerView.setAdapter(mAdapter);
+                            mAdapter.notifyDataSetChanged();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -156,13 +160,14 @@ public class AdminMyProposalsFragment extends Fragment {
                             bookIdForProposal.get(bookId).bookName = bookName;
                             Log.d("bookname", bookIdForProposal.get(bookId).bookName);
                         }
-
-                        proposals = new ArrayList<>(bookIdForProposal.values());
+                        proposals.clear();
+                        proposals.addAll(bookIdForProposal.values());
                         Log.d("prpsize", String.valueOf(proposals.size()));
-                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, processClickListener, "AdminMyProposalsFragment");
+                        //mAdapter = new ProposalAdapter(rootView.getContext(),proposals, processClickListener, "AdminMyProposalsFragment");
                         // use a linear layout manager
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerView.setAdapter(mAdapter);
+                        //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        //recyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         Log.d("Error", e.toString());
                         e.printStackTrace();
