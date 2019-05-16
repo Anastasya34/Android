@@ -3,4 +3,3 @@
     <item android:drawable="@drawable/custom_editor_bkg_focused" android:state_focused="true" />
     <item android:drawable="@drawable/custom_editor_bkg_normal" />
 </selector>
-

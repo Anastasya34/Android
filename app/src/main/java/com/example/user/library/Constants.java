@@ -3,8 +3,9 @@ package com.example.user.library;
 import android.support.v4.util.ArrayMap;
 
 public class Constants {
-    final static  int PAGE_COUNT = 4;
-    public static String tabTitles[] = new String[] { "Новые", "Одобрены", "Возврат","У читателя" };
+    final static  int PAGE_COUNT = 3;
+   // public static String tabTitles[] = new String[] { "Новые", "Одобрены", "Возврат","У читателя" };
+    public static String tabTitles[] = new String[] { "Новые", "Возврат","У читателя" };
     public static final String ADMIN_ID = "admin_id";
     public static final String USER_ID = "user_id";
     public static ArrayMap<Integer, String> stasusDictionary = new ArrayMap<Integer, String>() {

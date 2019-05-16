@@ -102,7 +102,7 @@ public class AdminAddBookFragment extends Fragment {
 
     }
 
-        @Override
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_add_new_book, container, false);
         addAuthor(rootView);
@@ -111,62 +111,62 @@ public class AdminAddBookFragment extends Fragment {
         genre = ((EditText)rootView.findViewById(R.id.genre_book_value));
         bookObject = rootView.findViewById(R.id.book_object_value);
         publisment = (EditText)rootView.findViewById(R.id.book_publishment_value);
-            publishYear =  ((EditText)rootView.findViewById(R.id.publishyear_value));
-            amountPage =  ((EditText)rootView.findViewById(R.id.amount_page_value));
-            roomNumber = rootView.findViewById(R.id.room_value);
+        publishYear =  ((EditText)rootView.findViewById(R.id.publishyear_value));
+        amountPage =  ((EditText)rootView.findViewById(R.id.amount_page_value));
+        roomNumber = rootView.findViewById(R.id.room_value);
         boardNumber = rootView.findViewById(R.id.board_value);
         cupBoardNumber = rootView.findViewById(R.id.сupboard_value);
         errorMessage = rootView.findViewById(R.id.errorMessage);
 
-            Spinner dormList = (Spinner) rootView.findViewById(R.id.dormitories);
+        Spinner dormList = (Spinner) rootView.findViewById(R.id.dormitories);
         ArrayAdapter<String> dormAdapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_spinner_item, new ArrayList<String>());
         // Определяем разметку для использования при выборе элемента
         dormAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Применяем адаптер к элементу spinner
         dormList.setAdapter(dormAdapter);
         dormList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    // Получаем выбранный объект
-                    selectedDormitory = (String) parent.getItemAtPosition(position);
-                    Log.d("item", selectedDormitory);
-                }
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Получаем выбранный объект
+                selectedDormitory = (String) parent.getItemAtPosition(position);
+                Log.d("item", selectedDormitory);
+            }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            });
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         selectDormitoryReceiver.setArgs(dormAdapter);
         startIntent("SELECT namedorm_id FROM [dormitory]", selectDormitoryReceiver, "select" );
-            Button addBook = rootView.findViewById(R.id.add_new_book_button);
-            addBook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //User user = books.get(getLayoutPosition());
-                   addBook(v);
-                }
-            });
-            Button addAuthor = rootView.findViewById(R.id.add_author_button);
-            addAuthor.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //User user = books.get(getLayoutPosition());
-                    Log.d("addBooK", "addBooik");
-                    addAuthor(v);
-                }
-            });
-            Button addTheme = rootView.findViewById(R.id.add_theme_button);
-            addTheme.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //User user = books.get(getLayoutPosition());
-                    Log.d("addBooK", "addBooik");
-                    addTheme(v);
-                }
-            });
+        Button addBook = rootView.findViewById(R.id.add_new_book_button);
+        addBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //User user = books.get(getLayoutPosition());
+                addBook(v);
+            }
+        });
+        Button addAuthor = rootView.findViewById(R.id.add_author_button);
+        addAuthor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //User user = books.get(getLayoutPosition());
+                Log.d("addBooK", "addBooik");
+                addAuthor(v);
+            }
+        });
+        Button addTheme = rootView.findViewById(R.id.add_theme_button);
+        addTheme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //User user = books.get(getLayoutPosition());
+                Log.d("addBooK", "addBooik");
+                addTheme(v);
+            }
+        });
         return rootView;
     }
-  //=====================BOOK===============================================================
+    //=====================BOOK===============================================================
     public void addBook(View v) {
         if (!validFields()){
             authors.clear();
@@ -187,23 +187,23 @@ public class AdminAddBookFragment extends Fragment {
         @Override
         protected String doInBackground(String... strings) {
             do {
-            synchronized (boardId) {
-                try {
-                    boardId.wait(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (boardId) {
+                    try {
+                        boardId.wait(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        } while (boardId.length() == 0);
+            } while (boardId.length() == 0);
 
-        String query = "SELECT [book_id] FROM [dbo].[book] WHERE" +
-                "     bookname = '"+strings[0]+"' " +
-                " AND fk_room = " + roomId +
-                " AND fk_dorm = '"+selectedDormitory+"'" +
-                " AND fk_board = " + boardId +
-                " AND fk_cupboard = " + cupBoardId;
+            String query = "SELECT [book_id] FROM [dbo].[book] WHERE" +
+                    "     bookname = '"+strings[0]+"' " +
+                    " AND fk_room = " + roomId +
+                    " AND fk_dorm = '"+selectedDormitory+"'" +
+                    " AND fk_board = " + boardId +
+                    " AND fk_cupboard = " + cupBoardId;
 
-        startIntent(query, selectBookReceiver, "select");
+            startIntent(query, selectBookReceiver, "select");
             return null;
         }
     }
@@ -614,7 +614,7 @@ public class AdminAddBookFragment extends Fragment {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (resultCode == DbService.REQUEST_ERROR){
-                    Log.d("InsertReceiver", resultData.getString("SQLException"));
+                Log.d("InsertReceiver", resultData.getString("SQLException"));
             }
             authorsIds.clear();
             authors.clear();
