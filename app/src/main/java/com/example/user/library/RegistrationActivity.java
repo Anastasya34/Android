@@ -45,7 +45,6 @@ public class RegistrationActivity extends AppCompatActivity { //implements Loade
     private EditText email;
     private EditText roomValue;
     private EditText birthday;
-
     private Intent startIntent;
     private UpdateResultReceiver updateResultReceiver;
     private DatePickerDialog datePickerDialog;

@@ -165,7 +165,7 @@ public class UserProposalsHistoryFragment extends Fragment {
 
                         proposals = new ArrayList<>(bookIdForProposal.values());
                         Log.d("prpsize", String.valueOf(proposals.size()));
-                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment");
+                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserProposalsHistoryFragment");
                         // use a linear layout manager
                         layoutManager = new LinearLayoutManager(rootView.getContext());
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

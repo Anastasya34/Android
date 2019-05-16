@@ -40,7 +40,7 @@ public class UserMyBooksFragment extends Fragment {
     private UserMyBooksFragment.RequestResultReceiver selectProposalReceiver;
     private UserMyBooksFragment.RequestBookReceiver selectBookReceiver;
     private UserMyBooksFragment.UpdateProposalReceiver updateProposalReceiver;
-    String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = %s AND bookstatus IN (4,5)";
+    String querySelectProposals = "SELECT book1_id, bookstatus, issuedate FROM [proposal] WHERE fk_userreader = %s AND bookstatus IN (5,6)";
     String queryUpdateProposal = "UPDATE [proposal] SET bookstatus = '%s' WHERE fk_userreader = %s AND book1_id = %s;";
 
     String querySelectBook;
@@ -92,7 +92,7 @@ public class UserMyBooksFragment extends Fragment {
         Intent startIntentUpdate = new Intent(getActivity(), DbService.class);
         String bookId = proposals.get(position).bookId;
         Log.d("onClickReturnBook", bookId);
-        String queryUpdate = String.format(queryUpdateProposal, String.valueOf(5), String.valueOf(user_id), bookId);
+        String queryUpdate = String.format(queryUpdateProposal, String.valueOf(6), String.valueOf(user_id), bookId);
         Log.d("query", queryUpdate);
         startIntentUpdate.putExtra("request", queryUpdate);
         startIntentUpdate.putExtra("receiver", updateProposalReceiver);

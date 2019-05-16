@@ -55,6 +55,13 @@
     <string name="consider_button">Рассмотреть</string>
     <string name="approve_button">Подтвердить</string>
     <string name="reject_button">Отклонить</string>
+    <string name="add_new_book">Добавить книгу</string>
+    <string name="author_book">Автор книги</string>
+    <string name="genre_book">Жанр</string>
+    <string name="theme_book">Область знаний</string>
+    <string name="amount_page_book">Количество страниц</string>
+    <string name="publishment_book">Издательство</string>
+    <string name="publish_year_book">Год издания</string>
 
 
 

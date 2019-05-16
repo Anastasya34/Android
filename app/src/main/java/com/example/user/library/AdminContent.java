@@ -141,7 +141,10 @@ public class AdminContent extends AppCompatActivity implements NavigationView.On
                 Log.d("onOptionsItemSelected", String.valueOf(id));
                 fragmentClass = AdminHistoryProposalsFragment.class;
                 break;
-
+            case R.id.add_new_book:
+                Log.d("onOptionsItemSelected", String.valueOf(id));
+                fragmentClass = AdminAddBookFragment.class;
+                break;
         }
 
 
