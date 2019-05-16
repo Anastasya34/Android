@@ -263,13 +263,6 @@ public class BooksList extends Fragment {
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
 
-                        if (resultSet.length() == 0) {
-                            Log.d("data", "пустой");
-                            Toast toast = Toast.makeText(rootView.getContext(),"Нет доступных книг", Toast.LENGTH_LONG);
-                            toast.show();
-                            break;
-                        }
-
                         GregorianCalendar currentDate = new GregorianCalendar();
                         java.sql.Date date = new java.sql.Date(currentDate.getTimeInMillis());
                         java.sql.Time time = new java.sql.Time(currentDate.getTimeInMillis());
@@ -278,6 +271,26 @@ public class BooksList extends Fragment {
                         returnBookDate.add(Calendar.MONTH, 1);
                         java.sql.Date returnBookDate_ = new java.sql.Date(returnBookDate.getTimeInMillis());
                         java.sql.Time returnBookTime = new java.sql.Time(returnBookDate.getTimeInMillis());
+                        if (resultSet.length() == 0) {
+                            String query = "INSERT INTO [dbo].[proposal]" +
+                                    " ([bookstatus]" +
+                                    ",[issuedate]" +
+                                    ",[returndate]" +
+                                    ",[fk_userreader]" +
+                                    ",[book1_id])" +
+                                    " VALUES(" +
+                                    "0" +
+                                    ",'" + date.toString() + "T"+time.toString() +"'"+
+                                    ",'" + returnBookDate_.toString() + "T"+returnBookTime.toString() +"'"+
+                                    "," + String.valueOf(user_id)+
+                                    "," + book_id +")";
+                            Log.d("Query Insert", query);
+                            insertProposalReceiver.setPosition(position);
+                            startIntent(query, insertProposalReceiver,"update" );
+
+                            break;
+                        }
+
 
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject rec = resultSet.getJSONObject(i);
