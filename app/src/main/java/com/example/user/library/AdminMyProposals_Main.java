@@ -1,16 +1,13 @@
 package com.example.user.library;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.FragmentManager;
 
 public class AdminMyProposals_Main extends Fragment {
     public static int admin_id = -1;
@@ -32,6 +29,8 @@ public class AdminMyProposals_Main extends Fragment {
         // Передаём ViewPager в TabLayout
         TabLayout tabLayout = rootView.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setCurrentItem(1);
+        Log.d(this.getTag(), "onCreateView");
         return rootView;
     }
 
