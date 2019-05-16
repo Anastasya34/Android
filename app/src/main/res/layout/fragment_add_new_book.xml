@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true"
@@ -89,6 +90,21 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName" />
+            <!--Button
+                android:id="@+id/button_add_genre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="добавить жанр"
+                tools:visibility="gone" />
+
+            <com.reginald.editspinner.EditSpinner
+                android:id="@+id/genre_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dropDownDrawable="@drawable/spinner"
+                app:dropDownDrawableSpacing="15dp"
+                app:dropDownDrawableWidth="25dp"
+                app:dropDownDrawableHeight="25dp" /-->
 
             <TextView
                 android:id="@+id/book_object_text"
@@ -98,11 +114,27 @@
                 android:layout_marginTop="20dp"
                 android:text="Предмет книги" />
 
+
             <EditText
                 android:id="@+id/book_object_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10" />
+            <!--Button
+                android:id="@+id/button_add_book_object"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="добавить предмет"
+                tools:visibility="gone" />
+
+            <com.reginald.editspinner.EditSpinner
+                android:id="@+id/book_object_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dropDownDrawable="@drawable/spinner"
+                app:dropDownDrawableSpacing="15dp"
+                app:dropDownDrawableWidth="25dp"
+                app:dropDownDrawableHeight="25dp" /-->
 
             <TextView
                 android:id="@+id/theme_book_text"
@@ -136,11 +168,27 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/publishment_book" />
 
+
             <EditText
                 android:id="@+id/book_publishment_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10" />
+            <!--Button
+                android:id="@+id/button_publishment_genre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="добавить издательство"
+                tools:visibility="gone" />
+
+            <com.reginald.editspinner.EditSpinner
+                android:id="@+id/publishment_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dropDownDrawable="@drawable/spinner"
+                app:dropDownDrawableSpacing="15dp"
+                app:dropDownDrawableWidth="25dp"
+                app:dropDownDrawableHeight="25dp" /-->
 
             <TextView
                 android:id="@+id/publishyear_text"

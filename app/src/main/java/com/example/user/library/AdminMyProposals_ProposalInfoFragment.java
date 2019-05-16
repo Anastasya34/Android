@@ -49,7 +49,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
             "      [book1_id]\n" +
             "  FROM [dbo].[proposal]\n" +
             "  WHERE [fk_userreader] = '"+user_id+"' AND [bookstatus] = 5)";
-    String queryUpdateApprovedProposal = "UPDATE [proposal] SET bookstatus = 4 WHERE proposal_id = %s;";
+    String queryUpdateApprovedProposal = "UPDATE [proposal] SET bookstatus = 5 WHERE proposal_id = %s;";
     String queryUpdateRejectedProposal = "UPDATE [proposal] SET bookstatus = 1 WHERE proposal_id = %s;";
 
     @Override
@@ -127,7 +127,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
 
         Bundle args = new Bundle();
         args.putInt(Constants.ADMIN_ID, admin_id);
-        Class fragmentClass = AdminMyProposals_Main.class;
+        Class fragmentClass = AdminAllProposalsFragment.class;
         try {
             Fragment fragment = (Fragment) fragmentClass.newInstance();
             fragment.setArguments(args);
