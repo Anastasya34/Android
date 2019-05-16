@@ -41,7 +41,7 @@ public class AdminMyProposals_Main extends Fragment {
         args.putInt(Constants.ADMIN_ID, admin_id);
         AdminMyProposals_PagaerAdapter adapter = new AdminMyProposals_PagaerAdapter(getFragmentManager(), rootView.getContext());
         adapter.addFragment(new AdminMyProposals_NewProposalsFragment(), args);
-        adapter.addFragment(new AdminMyProposals_ApprovedProposalsFragment(), args);
+        //adapter.addFragment(new AdminMyProposals_ApprovedProposalsFragment(), args);
         adapter.addFragment(new AdminMyProposals_ReturnProposalsFragment(), args);
         args.putString("admORuserId", "fk_admin");
         adapter.addFragment(new AdminMyProposals_UsersBooks(), args);
