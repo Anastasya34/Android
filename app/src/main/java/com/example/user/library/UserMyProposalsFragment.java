@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserMyProposalsFragment extends Fragment {
+    ProposalAdapter.ProposalClickListener proposalClickListener;
     private ProgressBar spinner;
     public static int user_id = -1;
     public static Map<String, Proposal> bookIdForProposal;
@@ -82,6 +83,37 @@ public class UserMyProposalsFragment extends Fragment {
             @Override
             public void onBookReturnButtonClick(int position, View v) {
                 onClickCancelButton(position, v);
+            }
+        };
+
+        proposalClickListener = new ProposalAdapter.ProposalClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                // Создадим новый фрагмент
+                Fragment fragment = null;
+                Class fragmentClass = null;
+                Bundle args = new Bundle();
+                fragmentClass = UserBookPlace.class;
+                Log.d("proposalClickListener", "tyt");
+                Log.d("proposal size", String.valueOf(proposals.size()));
+
+                args.putString(UserBookPlace.BOOK_ID, proposals.get(position).bookId);
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+                    fragment.setArguments(args);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("Error", e.getMessage());
+
+                }
+
+                // Вставляем фрагмент, заменяя текущий фрагмент
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+                // Выделяем выбранный пункт меню в шторке
+
+                Log.d("!position", String.valueOf(position));
+                //Log.d("!id", String.valueOf(id));
             }
         };
         return rootView;
@@ -150,6 +182,8 @@ public class UserMyProposalsFragment extends Fragment {
                             System.out.println(querySelectBook + booksId);
                             startIntent(querySelectBook + booksId, selectBookReceiver,"select");
 
+
+
                         }
                         else{
                             mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment");
@@ -197,7 +231,7 @@ public class UserMyProposalsFragment extends Fragment {
 
                         proposals = new ArrayList<>(bookIdForProposal.values());
                         Log.d("prpsize", String.valueOf(proposals.size()));
-                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment");
+                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment", proposalClickListener);
                         // use a linear layout manager
                         layoutManager = new LinearLayoutManager(rootView.getContext());
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
