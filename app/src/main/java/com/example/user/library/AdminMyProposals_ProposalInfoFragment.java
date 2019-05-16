@@ -349,4 +349,5 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
         }
 
     }
+
 }

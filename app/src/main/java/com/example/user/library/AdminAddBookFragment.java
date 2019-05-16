@@ -487,7 +487,7 @@ public class AdminAddBookFragment extends Fragment {
     public void addAuthor(View view) {
         LinearLayout mainLayout = rootView.findViewById(R.id.mainLinearLayout);
         final View autorView = getLayoutInflater().inflate(R.layout.author_layout, null);
-        allEds.add(view);
+        allEds.add(autorView);
         mainLayout.addView(autorView);
     }
     private class SelectAuthorReceiver extends ResultReceiver {
