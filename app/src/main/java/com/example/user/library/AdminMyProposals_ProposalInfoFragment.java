@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class AdminMyProposals_ProposalInfoFragment extends Fragment {
     View rootView;
     private ArrayList<Book> books;
-    private RecyclerView usersBookView;
+    private RecyclerView booksView;
     SelectUserBooKsReceiver selectUserBooksReceiver;
     User user;
     public static Integer admin_id = -1;
@@ -73,6 +73,10 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_proposalsinfo, container, false);
         TextView bookNameView = rootView.findViewById(R.id.book_name);
+        booksView = rootView.findViewById(R.id.ViewBooks);
+        LinearLayoutManager llm2 = new LinearLayoutManager(rootView.getContext());
+        booksView.setLayoutManager(llm2);
+        booksView.setHasFixedSize(true);
         bookNameView.setText("Название книги: "+bookName);
         TextView bookCount = rootView.findViewById(R.id.book_count);
         bookCount.setText("Количество экземпляров: "+String.valueOf(countBook));
@@ -306,7 +310,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
                             books.add(new Book(rec.getString("bookname"), rec.getString("book_id")));
                         }
                         AdminBookListAdapter adapter = new AdminBookListAdapter(books);
-                        usersBookView.setAdapter(adapter);
+                        booksView.setAdapter(adapter);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
