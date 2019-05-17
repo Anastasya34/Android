@@ -92,7 +92,10 @@ public class BooksList extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_books_list, container, false);
 
         //узнаем какие книги уже есть у пользователя, чтобы скрыть на них кнопку "оформить заявку"
-        String selectUserBooksQuery = "SELECT book1_id, bookplace_id FROM [proposal] WHERE fk_userreader = " + String.valueOf(user_id) + " AND bookstatus IN (0,2,4,5,6)";
+        String selectUserBooksQuery = "with booksProp as (\n" +
+                "SELECT book1_id as book_id, bookplace_id FROM proposal WHERE fk_userreader = " + user_id + " AND bookstatus IN (0,2,4,5,6)\n" +
+                ")\n" +
+                "select book_id from bookplace where bookavailability = 1 and not(book_id in (select book_id from booksProp)) group by book_id";
         Intent selectUserBooks = new Intent(rootView.getContext(), DbService.class);
         selectUserBooks.putExtra("receiver", selectUserBooksReceiver);
         selectUserBooks.putExtra("request", selectUserBooksQuery);
@@ -444,7 +447,7 @@ public class BooksList extends Fragment {
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject rec = resultSet.getJSONObject(i);
                             //books.add(new Book(rec.getString("bookname"), rec.getString("book_id")));
-                            Boolean already_get = userBooks.indexOf(rec.getString("book_id")) > -1;
+                            Boolean already_get = userBooks.indexOf(rec.getString("book_id")) == -1;
                             books.add(new Book(rec.getString("book_id"),
                                     rec.getString("bookname"),
                                     already_get ));
@@ -492,7 +495,7 @@ public class BooksList extends Fragment {
 
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject rec = resultSet.getJSONObject(i);
-                            userBooks.add(rec.getString("book1_id"));
+                            userBooks.add(rec.getString("book_id"));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
