@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 public class AdminMyProposals_Main extends Fragment {
     public static int admin_id = -1;
     View rootView;
+    AdminMyProposals_PagaerAdapter adapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,11 +27,12 @@ public class AdminMyProposals_Main extends Fragment {
         rootView = inflater.inflate(R.layout.tab_admin_proposals, container, false);
         // Получаем ViewPager и устанавливаем в него адаптер
         ViewPager viewPager = rootView.findViewById(R.id.viewpager);
+        adapter = new AdminMyProposals_PagaerAdapter(getFragmentManager(), rootView.getContext());
         setupViewPager(viewPager);
         // Передаём ViewPager в TabLayout
         TabLayout tabLayout = rootView.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(1);
+        viewPager.setCurrentItem(0);
         Log.d(this.getTag(), "onCreateView");
         return rootView;
     }
@@ -39,7 +42,6 @@ public class AdminMyProposals_Main extends Fragment {
 
         Bundle args = new Bundle();
         args.putInt(Constants.ADMIN_ID, admin_id);
-        AdminMyProposals_PagaerAdapter adapter = new AdminMyProposals_PagaerAdapter(getFragmentManager(), rootView.getContext());
         adapter.addFragment(new AdminMyProposals_NewProposalsFragment(), args);
         //adapter.addFragment(new AdminMyProposals_ApprovedProposalsFragment(), args);
         adapter.addFragment(new AdminMyProposals_ReturnProposalsFragment(), args);

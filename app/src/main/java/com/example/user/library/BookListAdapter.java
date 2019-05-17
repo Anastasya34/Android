@@ -72,6 +72,8 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
         if (books.get(i).already_get) {
             Log.d("already_get", books.get(i).bookId);
             bookViewHolder.ussueProposalButton.setVisibility(View.GONE);
+        } else {
+            bookViewHolder.ussueProposalButton.setVisibility(View.VISIBLE);
         }
         bookViewHolder.bookName.setText(books.get(i).name);
         bookViewHolder.bookDescription.setText(books.get(i).description);
