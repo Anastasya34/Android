@@ -67,7 +67,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
         selectUserReceiver = new SelectUserReceiver(new Handler());
         selectUserBooksReceiver = new SelectUserBooKsReceiver(new Handler());
         updateProposalReceiver = new UpdateProposalReceiver(new Handler());
-
+        books = new ArrayList<>();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +77,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
         LinearLayoutManager llm2 = new LinearLayoutManager(rootView.getContext());
         booksView.setLayoutManager(llm2);
         booksView.setHasFixedSize(true);
+        booksView.setVisibility(View.GONE);
         bookNameView.setText("Название книги: "+bookName);
         TextView bookCount = rootView.findViewById(R.id.book_count);
         bookCount.setText("Количество экземпляров: "+String.valueOf(countBook));
@@ -298,7 +299,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
                     String jsonString = resultData.getString("JSONString");
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
-                        books = new ArrayList<>();
+                        books.clear();
                         if (resultSet.length() == 0) {
                             Log.d("data", "пустой");
 
@@ -311,6 +312,11 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
                         }
                         AdminBookListAdapter adapter = new AdminBookListAdapter(books);
                         booksView.setAdapter(adapter);
+                        if (books.isEmpty()) {
+                            booksView.setVisibility(View.GONE);
+                        } else {
+                            booksView.setVisibility(View.VISIBLE);
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();

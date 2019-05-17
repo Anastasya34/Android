@@ -1,8 +1,8 @@
 package com.example.user.library;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
@@ -23,8 +23,7 @@ public class AdminMyProposals_PagaerAdapter extends FragmentPagerAdapter {
     }
 
     @Override public Fragment getItem(int position) {
-        Fragment currFragment =  mFragmentList.get(position);
-        return currFragment;
+        return mFragmentList.get(position);
     }
 
     @Override public CharSequence getPageTitle(int position) {

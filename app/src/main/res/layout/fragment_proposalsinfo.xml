@@ -5,146 +5,158 @@
     android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/book_info"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginLeft="18dp"
-        android:textColor="@android:color/black"
-        android:paddingTop = "12dp"
-        android:textSize="20sp"
-        android:text="Информация о книге"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/book_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        android:textColor="@android:color/black"
-        android:paddingTop = "12dp"
-        android:textSize="17sp"
-        android:text="Название: "/>
-
-    <TextView
-        android:id="@+id/book_count"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        android:textColor="@android:color/black"
-        android:paddingTop = "12dp"
-        android:textSize="17sp"
-        android:text="Количество экземпляров: "/>
-    <TextView
-        android:id="@+id/user_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginLeft="18dp"
-        android:textColor="@android:color/black"
-        android:paddingTop = "12dp"
-        android:textSize="20sp"
-        android:text="Информация о читателе"/>
-
-    <TextView
-        android:id="@+id/user_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        android:textColor="@android:color/black"
-        android:paddingTop = "12dp"
-        android:textSize="17sp"
-        android:text="Id: "/>
-
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        android:textColor="@android:color/black"
-        android:paddingTop = "12dp"
-        android:textSize="17sp"
-        android:text="ФИО:"/>
-
-    <TextView
-        android:id="@+id/user_login"
-        android:paddingTop = "12dp"
-        android:layout_marginLeft="18dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:textSize="17sp"
-        android:text="Login: " />
-
-    <TextView
-        android:id="@+id/link_user_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginLeft="18dp"
-        android:lineSpacingMultiplier="0.8"
-        android:clickable="true"
-        android:focusable="true"
-        android:textColor="@android:color/holo_blue_dark"
-        android:linksClickable="true"
-        android:textSize="17sp"
-        android:text="@string/link_user_profile"/>
-
-    <TextView
-        android:id="@+id/link_user_proposal_history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginLeft="18dp"
-        android:lineSpacingMultiplier="0.8"
-        android:clickable="true"
-        android:focusable="true"
-        android:linksClickable="true"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="17sp"
-        android:text="@string/link_user_proposal_history"/>
-
-    <TextView
-        android:id="@+id/user_books_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginLeft="18dp"
-        android:lineSpacingMultiplier="0.8"
-        android:textSize="17sp"
-        android:textColor="@android:color/holo_blue_dark"
-        android:text="@string/user_books_list"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/ViewBooksInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:scrollbars="vertical">
-
-    </android.support.v7.widget.RecyclerView>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/approved_button"
-            style="android:attr/buttonStyle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/approve_button" />
-        <Button
-            android:id="@+id/reject_button"
-            style="android:attr/buttonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/reject_button" />
-    </LinearLayout>
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/book_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:gravity="center_horizontal"
+                android:paddingTop="12dp"
+                android:text="Информация о книге"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
 
+            <TextView
+                android:id="@+id/book_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:paddingTop="12dp"
+                android:text="Название: "
+                android:textColor="@android:color/black"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/book_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:paddingTop="12dp"
+                android:text="Количество экземпляров: "
+                android:textColor="@android:color/black"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/user_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:gravity="center_horizontal"
+                android:paddingTop="12dp"
+                android:text="Информация о читателе"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/user_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:paddingTop="12dp"
+                android:text="Id: "
+                android:textColor="@android:color/black"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:paddingTop="12dp"
+                android:text="ФИО:"
+                android:textColor="@android:color/black"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/user_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:paddingTop="12dp"
+                android:text="Login: "
+                android:textColor="@android:color/black"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/link_user_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:lineSpacingMultiplier="0.8"
+                android:linksClickable="true"
+                android:text="@string/link_user_profile"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/link_user_proposal_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:lineSpacingMultiplier="0.8"
+                android:linksClickable="true"
+                android:text="@string/link_user_proposal_history"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/user_books_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:layout_marginTop="12dp"
+                android:lineSpacingMultiplier="0.8"
+                android:text="@string/user_books_list"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="17sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/approved_button"
+                    style="android:attr/buttonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/approve_button" />
+
+                <Button
+                    android:id="@+id/reject_button"
+                    style="android:attr/buttonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reject_button" />
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ViewBooksInfo"
+                android:layout_width="match_parent"
+                android:layout_height="324dp"
+                android:layout_weight="1"
+                android:scrollbars="vertical">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>

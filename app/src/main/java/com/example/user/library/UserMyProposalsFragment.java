@@ -1,23 +1,18 @@
 package com.example.user.library;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.util.ArrayMap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserMyProposalsFragment extends Fragment {
+    ProposalAdapter.ProposalClickListener proposalClickListener;
     private ProgressBar spinner;
     public static int user_id = -1;
     public static Map<String, Proposal> bookIdForProposal;
@@ -82,6 +78,37 @@ public class UserMyProposalsFragment extends Fragment {
             @Override
             public void onBookReturnButtonClick(int position, View v) {
                 onClickCancelButton(position, v);
+            }
+        };
+
+        proposalClickListener = new ProposalAdapter.ProposalClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                // Создадим новый фрагмент
+                Fragment fragment = null;
+                Class fragmentClass = null;
+                Bundle args = new Bundle();
+                fragmentClass = UserBookPlace.class;
+                Log.d("proposalClickListener", "tyt");
+                Log.d("proposal size", String.valueOf(proposals.size()));
+
+                args.putString(UserBookPlace.BOOK_ID, proposals.get(position).bookId);
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+                    fragment.setArguments(args);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("Error", e.getMessage());
+
+                }
+
+                // Вставляем фрагмент, заменяя текущий фрагмент
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getClass().getName()).commit();
+                // Выделяем выбранный пункт меню в шторке
+
+                Log.d("!position", String.valueOf(position));
+                //Log.d("!id", String.valueOf(id));
             }
         };
         return rootView;
@@ -150,6 +177,8 @@ public class UserMyProposalsFragment extends Fragment {
                             System.out.println(querySelectBook + booksId);
                             startIntent(querySelectBook + booksId, selectBookReceiver,"select");
 
+
+
                         }
                         else{
                             mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment");
@@ -197,7 +226,7 @@ public class UserMyProposalsFragment extends Fragment {
 
                         proposals = new ArrayList<>(bookIdForProposal.values());
                         Log.d("prpsize", String.valueOf(proposals.size()));
-                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment");
+                        mAdapter = new ProposalAdapter(rootView.getContext(),proposals, bookReturnClickListener, "UserMyProposalsFragment", proposalClickListener);
                         // use a linear layout manager
                         layoutManager = new LinearLayoutManager(rootView.getContext());
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
