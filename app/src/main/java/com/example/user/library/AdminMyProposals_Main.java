@@ -32,7 +32,7 @@ public class AdminMyProposals_Main extends Fragment {
         // Передаём ViewPager в TabLayout
         TabLayout tabLayout = rootView.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(0);
+        viewPager.setCurrentItem(1);
         Log.d(this.getTag(), "onCreateView");
         return rootView;
     }

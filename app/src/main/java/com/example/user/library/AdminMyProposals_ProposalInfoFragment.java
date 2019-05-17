@@ -228,7 +228,7 @@ public class AdminMyProposals_ProposalInfoFragment extends Fragment {
                 fragment.setArguments(args);
                 // Вставляем фрагмент, заменяя текущий фрагмент
                 FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, fragment).addToBackStack(this.getTag()).commit();
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d("Error", e.getMessage());

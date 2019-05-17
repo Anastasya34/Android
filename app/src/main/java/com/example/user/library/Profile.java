@@ -533,7 +533,7 @@ public class Profile extends Fragment {
                             Log.d("data", "пусто");
                         } else {
                             int roomsMax = resultSet.getJSONObject(0).getInt("maxRoom");
-                            Log.d("data", "user_id: " + roomsMax);
+                            Log.d("data", "maxRoom: " + roomsMax);
                             room.setFilters(new InputFilter[]{new RegistrationActivity.InputFilterMinMax(1, roomsMax)});
                             room.setText(room.getText());
                         }

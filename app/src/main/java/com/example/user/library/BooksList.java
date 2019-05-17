@@ -127,6 +127,13 @@ public class BooksList extends Fragment {
         searchButton = rootView.findViewById(R.id.searchButton);
         nameSearch = rootView.findViewById(R.id.name_search);
 
+        issuePropoasalClickListener = new BookListAdapter.ButtonClickListener() {
+            @Override
+            public void onButtonClick(int position, View v) {
+                onClickIssuePropoasalButton(position, v);
+            }
+        };
+
         bookAdapter = new BookListAdapter(books, issuePropoasalClickListener);
         booksView.setAdapter(bookAdapter);
 
@@ -241,12 +248,7 @@ public class BooksList extends Fragment {
             }
         });
 
-        issuePropoasalClickListener = new BookListAdapter.ButtonClickListener(){
-            @Override
-            public void onButtonClick(int position, View v) {
-                onClickIssuePropoasalButton(position, v);
-            }
-        };
+
         return rootView;
     }
     public void onClickIssuePropoasalButton(int position, View v){
