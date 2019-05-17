@@ -58,6 +58,7 @@ public class BooksList extends Fragment {
     LinearLayout.LayoutParams textParam1;
     String bookplace_id = "";
     String book_id = "";
+    BookListAdapter bookAdapter;
     private SelectAvailableBookReciver selectAvailableBookReciver;
     private InsertProposalReceiver insertProposalReceiver;
     private SelectUserBooksReceiver selectUserBooksReceiver;
@@ -90,6 +91,13 @@ public class BooksList extends Fragment {
 
         rootView = inflater.inflate(R.layout.fragment_books_list, container, false);
 
+        //узнаем какие книги уже есть у пользователя, чтобы скрыть на них кнопку "оформить заявку"
+        String selectUserBooksQuery = "SELECT book1_id, bookplace_id FROM [proposal] WHERE fk_userreader = " + String.valueOf(user_id) + " AND bookstatus IN (0,2,4,5,6)";
+        Intent selectUserBooks = new Intent(rootView.getContext(), DbService.class);
+        selectUserBooks.putExtra("receiver", selectUserBooksReceiver);
+        selectUserBooks.putExtra("request", selectUserBooksQuery);
+        rootView.getContext().startService(selectUserBooks);
+
         advSearch = rootView.findViewById(R.id.tableSearch);
         simpleSearchLiner = rootView.findViewById(R.id.simpleSearchLinear);
         simpleSearch = rootView.findViewById(R.id.simpleSearchButton);
@@ -115,6 +123,9 @@ public class BooksList extends Fragment {
         authorsSearch = rootView.findViewById(R.id.author_search);
         searchButton = rootView.findViewById(R.id.searchButton);
         nameSearch = rootView.findViewById(R.id.name_search);
+
+        bookAdapter = new BookListAdapter(books, issuePropoasalClickListener);
+        booksView.setAdapter(bookAdapter);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,17 +193,19 @@ public class BooksList extends Fragment {
             }
         });
         searchRequest = rootView.findViewById(R.id.book_search);
-        //узнаем какие книги уже есть у пользователя, чтобы скрыть на них кнопку "оформить заявку"
-        String selectUserBooksQuery = "SELECT book1_id, bookplace_id FROM [proposal] WHERE fk_userreader = "+String.valueOf(user_id)+" AND bookstatus IN (0,2,4,5,6)";
-        Intent selectUserBooks =  new Intent(rootView.getContext(), DbService.class);
-        selectUserBooks.putExtra("receiver", selectUserBooksReceiver);
-        selectUserBooks.putExtra("request", selectUserBooksQuery);
-        rootView.getContext().startService(selectUserBooks);
+
 
         requestResultReceiver = new RequestResultReceiver(new Handler());
         startIntent = new Intent(rootView.getContext(), DbService.class);
+        String searchString = String.valueOf(searchRequest.getText());
+        String searchRequestStr = "SELECT book_id, bookname FROM book";
+        if (searchString.isEmpty()) {
+            searchRequestStr += ";";
+        } else {
+            searchRequestStr += " WHERE book.bookname LIKE \'%" + searchRequest.getText() + "%\';";
+        }
         startIntent.putExtra("receiver", requestResultReceiver);
-        startIntent.putExtra("request", "SELECT book_id, bookname FROM book WHERE book.bookname LIKE \'%" + searchRequest.getText() + "%\';");
+        startIntent.putExtra("request", searchRequestStr);
         rootView.getContext().startService(startIntent);
 
 
@@ -206,8 +219,15 @@ public class BooksList extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (!searchingState.isChecked()) {
                     String str = String.valueOf(searchRequest.getText());
+                    String searchRequestStr = "SELECT book_id, bookname FROM book";
+                    if (str.isEmpty()) {
+                        searchRequestStr += ";";
+                    } else {
+                        searchRequestStr += " WHERE book.bookname LIKE \'%" + searchRequest.getText() + "%\';";
+                    }
+
                     startIntent.putExtra("receiver", requestResultReceiver);
-                    startIntent.putExtra("request", "SELECT * FROM book WHERE book.bookname LIKE '%" + str + "%';");
+                    startIntent.putExtra("request", searchRequestStr);
                     rootView.getContext().startService(startIntent);
                 }
             }
@@ -387,8 +407,7 @@ public class BooksList extends Fragment {
                                 "Заявка оформлена",
                                 Toast.LENGTH_LONG).show();
                         books.get(position).already_get = true;
-                        BookListAdapter adapter = new BookListAdapter(books, issuePropoasalClickListener);
-                        booksView.setAdapter(adapter);
+                        bookAdapter.notifyDataSetChanged();
                     } else {
                         Log.e("data", "заявка не оформлена");
                     }
@@ -425,7 +444,7 @@ public class BooksList extends Fragment {
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject rec = resultSet.getJSONObject(i);
                             //books.add(new Book(rec.getString("bookname"), rec.getString("book_id")));
-                            Boolean already_get = userBooks.indexOf(rec.getString("book_id")) != -1;
+                            Boolean already_get = userBooks.indexOf(rec.getString("book_id")) > -1;
                             books.add(new Book(rec.getString("book_id"),
                                     rec.getString("bookname"),
                                     already_get ));
@@ -439,8 +458,7 @@ public class BooksList extends Fragment {
                     Log.d("data", resultData.getString("JSONString"));
                     break;
             }
-            BookListAdapter adapter = new BookListAdapter(books, issuePropoasalClickListener);
-            booksView.setAdapter(adapter);
+            bookAdapter.notifyDataSetChanged();
             super.onReceiveResult(resultCode, resultData);
         }
 
@@ -454,7 +472,6 @@ public class BooksList extends Fragment {
 
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            List<Book> books = new ArrayList<>();
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
                     Log.d("data", resultData.getString("SQLException"));
@@ -470,6 +487,8 @@ public class BooksList extends Fragment {
                             Log.d("data", "пустой");
                             break;
                         }
+
+                        userBooks.clear();
 
                         for (int i = 0; i < resultSet.length(); ++i) {
                             JSONObject rec = resultSet.getJSONObject(i);
