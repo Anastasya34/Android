@@ -115,6 +115,15 @@
         android:textColor="@android:color/holo_blue_dark"
         android:text="@string/user_books_list"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ViewBooksInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:scrollbars="vertical">
+
+    </android.support.v7.widget.RecyclerView>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
