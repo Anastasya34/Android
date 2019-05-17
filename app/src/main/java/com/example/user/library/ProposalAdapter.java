@@ -14,6 +14,7 @@ import java.util.List;
 public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.ProposalViewHolder> {
     private Context context;
     List<Proposal> proposals;
+    private ProposalAdapter.ProposalClickListener proposalClickListener;
     private BookReturnClickListener bookReturnClickListener;
     private String type = "default";
     public interface BookReturnClickListener {
@@ -22,20 +23,48 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
     public ProposalAdapter(Context context, List<Proposal> proposals) {
         this.context = context;
         this.proposals = proposals;
+        this.proposalClickListener = new ProposalClickListener(){
+            @Override
+            public void onItemClick(int position, View v) {
+
+            }
+        };
     }
     public ProposalAdapter(Context context, List<Proposal> proposals,BookReturnClickListener bookReturnClickListener, String type, String userLogin) {
         this.context = context;
         this.proposals = proposals;
         this.bookReturnClickListener = bookReturnClickListener;
         this.type = type;
+        this.proposalClickListener = new ProposalClickListener(){
+            @Override
+            public void onItemClick(int position, View v) {
+
+            }
+        };
     }
     public ProposalAdapter(Context context, List<Proposal> proposals,BookReturnClickListener bookReturnClickListener, String type) {
         this.context = context;
         this.proposals = proposals;
         this.bookReturnClickListener = bookReturnClickListener;
         this.type = type;
+        this.proposalClickListener = new ProposalClickListener(){
+            @Override
+            public void onItemClick(int position, View v) {
+
+            }
+        };
+    }
+    public ProposalAdapter(Context context, List<Proposal> proposals,BookReturnClickListener bookReturnClickListener, String type, ProposalClickListener proposalClickListener) {
+        this.context = context;
+        this.proposals = proposals;
+        this.bookReturnClickListener = bookReturnClickListener;
+        this.type = type;
+        this.proposalClickListener = proposalClickListener;
     }
 
+    public interface ProposalClickListener {
+        void onItemClick(int position, View v);
+    }
     public class ProposalViewHolder extends RecyclerView.ViewHolder {
         private ImageView bookCover;
         private TextView bookName;
@@ -43,6 +72,8 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
         private TextView proposalcreateDate;
         private TextView userLogin;
         private Button button;
+
+
 
         public ProposalViewHolder(View itemView) {
             super(itemView);
@@ -54,6 +85,13 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
             proposalcreateDate = itemView.findViewById(R.id.proposal_date);
             button = itemView.findViewById(R.id.return_book_button);
             button.setVisibility(View.GONE);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //User user = books.get(getLayoutPosition());
+                    proposalClickListener.onItemClick(getAdapterPosition(), v);
+                }
+            });
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -108,6 +146,7 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
         Log.d("onCreateViewHolder", "test");
         View proposalCard = LayoutInflater.from(this.context).inflate(R.layout.proposal_card, parent, false);
         final ProposalAdapter.ProposalViewHolder vh =  new ProposalAdapter.ProposalViewHolder(proposalCard);
+
         return vh;
     }
 

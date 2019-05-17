@@ -62,6 +62,7 @@
     <string name="amount_page_book">Количество страниц</string>
     <string name="publishment_book">Издательство</string>
     <string name="publish_year_book">Год издания</string>
+    <string name="bookplace">Местоположение книги</string>
 
 
 

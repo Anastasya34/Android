@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id = "@+id/mainLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/bookplace"
+            android:paddingTop="12dp"
+            android:paddingBottom="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/bookplace"
+            android:textColor="@android:color/black"
+            android:textSize="24dp"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/dormitory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:textColor="@android:color/black"
+            android:paddingTop = "12dp"
+            android:textSize="17sp"
+            android:text="dormitory"/>
+
+        <TextView
+            android:id="@+id/room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:textColor="@android:color/black"
+            android:paddingTop = "12dp"
+            android:textSize="17sp"
+            android:text="room "/>
+
+        <TextView
+            android:id="@+id/board"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="18dp"
+            android:textColor="@android:color/black"
+            android:paddingTop = "12dp"
+            android:textSize="17sp"
+            android:text="board: "/>
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

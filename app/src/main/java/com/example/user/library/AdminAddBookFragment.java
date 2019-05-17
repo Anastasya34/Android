@@ -676,7 +676,7 @@ public class AdminAddBookFragment extends Fragment {
 
             switch (resultCode) {
                 case DbService.REQUEST_ERROR:
-                    Log.d("SelectRoomReceiver", resultData.getString("SQLException"));
+                    Log.d("SelectCupBoardReceiver", resultData.getString("SQLException"));
                     Toast toast = Toast.makeText(rootView.getContext(),"Что-то пошло не так, проверьте введенные данные", Toast.LENGTH_LONG);
                     toast.show();
                     break;
@@ -686,7 +686,7 @@ public class AdminAddBookFragment extends Fragment {
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
                         if (resultSet.length() == 0) {
-                            Log.d("SelectRoomReceiver", "пусто");
+                            Log.d("SelectCupBoardReceiver", "пусто");
                             break;
                         }
                         for (int i = 0; i < resultSet.length(); i++) {
