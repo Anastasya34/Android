@@ -80,6 +80,7 @@ public class BooksList extends Fragment {
         selectAvailableBookReciver = new SelectAvailableBookReciver(new Handler());
         updateBookAvialbilityReceiver = new UpdateBookAvialbilityReceiver(new Handler());
         userBooks = new ArrayList<>();
+        books = new ArrayList<>();
     }
 
     @Override
@@ -414,7 +415,7 @@ public class BooksList extends Fragment {
                     String jsonString = resultData.getString("JSONString");
                     try {
                         JSONArray resultSet = new JSONArray(jsonString);
-                        books = new ArrayList<>();
+                        books.clear();
                         if (resultSet.length() == 0) {
                             Log.d("data", "пустой");
 
